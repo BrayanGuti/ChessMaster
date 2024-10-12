@@ -1,16 +1,16 @@
 import './ChessCell.css'
-import { useMemo } from 'react'
 import { ChessPiece } from '../ChessPiece/ChessPiece'
+import { UseChessCellCharacteristics } from '../hooks/ChessCellCharacteristics'
 
 export function ChessCell({ cellInformation }: { cellInformation: ChessBoardCell }) {
-  const color = useMemo((): string => {
-    return (cellInformation.coordinates.row + cellInformation.coordinates.col) % 2 === 0 ? 'white' : 'black';
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const { color, corner, handleCellClick, youCanMoveHere, thisIsTheSelectedPiece } = UseChessCellCharacteristics(cellInformation)
 
   return (
-    <div className={`chess-cell ${color}`}>
-      <ChessPiece piece={cellInformation.piece} coords={cellInformation.coordinates} />
+    <div 
+      onClick={handleCellClick} 
+      className={`chess-cell ${color} ${youCanMoveHere} ${corner} ${thisIsTheSelectedPiece}`}
+    >
+      <ChessPiece piece={cellInformation.piece} />
     </div>
   )
 }

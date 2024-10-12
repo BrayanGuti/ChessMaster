@@ -2,10 +2,8 @@ import './ChessBoard.css'
 import { useChessManager } from '../store/useChessManager'
 import { ChessCell } from '../ChessCell/ChessCell'
 
-
-
 export function ChessBoard () {
-    const { positions } = useChessManager()
+    const positions = useChessManager(state => state.chessBoardpositions)
     return(
         <section className="chess-board">
             {positions.map((row) => (

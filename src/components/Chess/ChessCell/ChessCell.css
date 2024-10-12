@@ -1,14 +1,43 @@
 .chess-cell{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid black;
+  display: flex;
+  align-items: center;
+  border: 1px solid black;
+  justify-content: center;
 }
 
-.white{
-    background-color: white;
+.black {
+  background-color: #222; 
 }
 
-.black{
-    background-color: black;
+.white {
+  background-color: #DDD;
 }
+
+.thisIsTheSelectedPiece{
+  background-color: blue;
+}
+
+.youCanMoveHere{
+  background-color: green;
+}
+
+.youCanAttackHere{
+  background-color: red;
+}
+
+.cornerUpLeft {
+  border-top-left-radius: 15%;
+}
+
+.cornerUpRight {
+  border-top-right-radius: 15%;
+}
+
+.cornerDownLeft {
+  border-bottom-left-radius: 15%;
+}
+
+.cornerDownRight {
+  border-bottom-right-radius: 15%;
+}
+  

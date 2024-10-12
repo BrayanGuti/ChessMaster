@@ -1,14 +1,28 @@
+import { markCellsUnderAttack } from "./MarkCellsUnderAttack";
+
 export function startGame (): ChessBoardPositions {
+  // const Position = [
+  //   ['BRa8', 'BNb8', 'BBc8', 'BQd8', 'BKe8', 'BBf8', 'BNg8', 'BRh8'],
+  //   ['BPa7', 'BPb7', 'BPc7', 'BPd7', 'BPe7', 'BPf7', 'BPg7', 'BPh7'],
+  //   ['', '', '', '', '', '', '', ''],
+  //   ['', '', '', '', '', '', '', ''],
+  //   ['', '', '', '', '', '', '', ''],
+  //   ['', '', '', '', '', '', '', ''],
+  //   ['WPa2', 'WPb2', 'WPc2', 'WPd2', 'WPe2', 'WPf2', 'WPg2', 'WPh2'],
+  //   ['WRa1', 'WNb1', 'WBc1', 'WQd1', 'WKe1', 'WBf1', 'WNg1', 'WRh1']
+  // ]
+
   const Position = [
-    ['BRa8', 'BNb8', 'BBc8', 'BQd8', 'BKe8', 'BBf8', 'BNg8', 'BRh8'],
-    ['BPa7', 'BPb7', 'BPc7', 'BPd7', 'BPe7', 'BPf7', 'BPg7', 'BPh7'],
+    ['BR', '', '', '', 'BK', '', '', 'BR'],
     ['', '', '', '', '', '', '', ''],
     ['', '', '', '', '', '', '', ''],
     ['', '', '', '', '', '', '', ''],
     ['', '', '', '', '', '', '', ''],
-    ['WPa2', 'WPb2', 'WPc2', 'WPd2', 'WPe2', 'WPf2', 'WPg2', 'WPh2'],
-    ['WRa1', 'WNb1', 'WBc1', 'WQd1', 'WKe1', 'WBf1', 'WNg1', 'WRh1']
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['WR', '', '', '', 'WK', '', '', 'WR']
   ]
+
   
   const initialPosition = Position.map((row, rowIndex) => {
     const boardRow = row.map((piece, colIndex) => {
@@ -27,7 +41,7 @@ export function startGame (): ChessBoardPositions {
     **/
     if (piece === '') return {
                               piece: piece as ChessBoardCell['piece'],
-                              YouCanMoveHere: false, isUnderAttack: [],  
+                              YouCanMoveHere: false, isUnderAttackBy: [],  
                               hasMoved: true, 
                               cellName: cellName as ChessBoardCell['cellName'],
                               coordinates: coordinates 
@@ -36,7 +50,7 @@ export function startGame (): ChessBoardPositions {
     return {
             piece: piece as ChessBoardCell['piece'], 
             YouCanMoveHere: false, 
-            isUnderAttack: [], 
+            isUnderAttackBy: [], 
             hasMoved: false, 
             cellName: cellName as ChessBoardCell['cellName'], 
             coordinates: coordinates 
@@ -45,5 +59,5 @@ export function startGame (): ChessBoardPositions {
     return boardRow
   })
 
-  return initialPosition
+  return  markCellsUnderAttack(initialPosition)
 }

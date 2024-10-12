@@ -1,199 +1,197 @@
+type posiblesMoves = ChessBoardCell['coordinates'][]
+
 export function calculateAvailableMoves(
-    selectedPiece: ChessBoardCell['piece'], 
-    selectedCoordinates: ChessBoardCell['coordinates']
-  ): ChessBoardCell['coordinates'][] {
-    const {row, col} = selectedCoordinates
-    const posiblesMoves = []
+  selectedCell: ChessBoardCell, 
+  chessBoard: ChessBoardState['chessBoardpositions']
+): ChessBoardCell['coordinates'][] {
+  const { col, row } = selectedCell.coordinates;
+  const pieceColor = chessBoard[row][col].piece[0];
 
-    return (`${row}, ${col}, waza`)
+  const futurePossibleMoves = calculateFuturesMoves(selectedCell, chessBoard, false, true);
+  console.log(futurePossibleMoves)
+  const possibleMoves = futurePossibleMoves.filter(({ row: r, col: c }) => {
+    return chessBoard[r][c].piece[0] !== pieceColor;
+  })
 
-  //   if (pieceCell[0][1] === 'R') {
-  //     posiblesMoves = rookMove(chessBoard, row, col)
-  //   } else if (pieceCell[0][1] === 'B') {
-  //     posiblesMoves = bishopMove(chessBoard, row, col)
-  //   } else if (pieceCell[0][1] === 'N') {
-  //     posiblesMoves = knightMove(chessBoard, row, col)
-  //   } else if (pieceCell[0][1] === 'Q') {
-  //     posiblesMoves = bishopMove(chessBoard, row, col).concat(rookMove(chessBoard, row, col))
-  //   } else if (pieceCell[0][1] === 'K') {
-  //     posiblesMoves = kingMove(chessBoard, row, col, castle)
-  //   } else if (pieceCell[0][1] === 'P') {
-  //     posiblesMoves = pawnMove(pieceCell, chessBoard, row, col, CheckingPawnAttacks)
-  //   }
-  // return posiblesMoves
+  return possibleMoves;
 }
+
+export function calculateFuturesMoves(
+    selectedCell: ChessBoardCell, 
+    chessBoard: ChessBoardState['chessBoardpositions'],
+    CheckingPawnAttacks = true,
+    castle = false
+  ): posiblesMoves {
+    let posiblesMoves: posiblesMoves = []
+
+    const selectedCoordinates = selectedCell.coordinates
+    const pieceType = selectedCell.piece[1]
+
+    if (pieceType === 'R') {
+      posiblesMoves = rookMove(chessBoard, selectedCoordinates)
+    } else if (pieceType === 'B') {
+      posiblesMoves = bishopMove(chessBoard, selectedCoordinates)
+    } else if (pieceType === 'N') {
+      posiblesMoves = knightMove(selectedCoordinates)
+    } else if (pieceType === 'Q') {
+      posiblesMoves = bishopMove(chessBoard, selectedCoordinates).concat(rookMove(chessBoard, selectedCoordinates))
+    } else if (pieceType === 'K') {
+      posiblesMoves = kingMove(chessBoard, selectedCoordinates, castle)
+    } 
+    else if (pieceType === 'P') {
+      posiblesMoves = pawnMove(selectedCell, chessBoard, selectedCoordinates, CheckingPawnAttacks)
+    }
+  return posiblesMoves
+}
+
+function isOnBoard (row: number, col: number, boardSize = 8) {
+  return row >= 0 && row < boardSize && col >= 0 && col < boardSize
+}
+
+function rookMove(chessBoard: ChessBoardState['chessBoardpositions'], selectedCoordinates: ChessBoardCell['coordinates']): ChessBoardCell['coordinates'][] {
+  const { col, row } = selectedCoordinates 
+  const posiblesMoves: posiblesMoves = []
+
+  const directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]
+  directions.forEach(([rowDirection, colDirection]) => {
+    let newRow = row + rowDirection
+    let newCol = col + colDirection
+
+    while (isOnBoard(newRow, newCol)) {
+      posiblesMoves.push({ row: newRow, col: newCol })
+      if (chessBoard[newRow][newCol].piece !== '') break
+      newRow += rowDirection
+      newCol += colDirection
+    }
+  })
+
+  return posiblesMoves
+}
+
+function pawnMove (pieceCell: ChessBoardCell, chessBoard: ChessBoardState['chessBoardpositions'], selectedCoordinates: ChessBoardCell['coordinates'],CheckingPawnAttacks: boolean,): ChessBoardCell['coordinates'][] {
+  const { col, row } = selectedCoordinates 
+  const posiblesMoves: posiblesMoves = []
+  const firstMove = pieceCell.hasMoved
+  const pieceColor = pieceCell.piece[0]
+  const direction = pieceColor === 'W' ? -1 : 1
+
+  if (!CheckingPawnAttacks && isOnBoard(row + direction, col) && chessBoard[row + direction][col].piece === '') {
+    posiblesMoves.push({ row: row + direction, col: col })
+
+    if (!firstMove && chessBoard[row + 2 * direction][col].piece === '') {
+      posiblesMoves.push({ row: row + 2 * direction, col: col })
+    }
+  }
+
+  const possibleColumns = [col + 1, col - 1]
+  possibleColumns.forEach(column => {
+    const targetRow = row + direction
+    if (isOnBoard(targetRow, column) && (CheckingPawnAttacks || chessBoard[targetRow][column].piece !== '')) {
+      posiblesMoves.push({ row: targetRow, col: column})
+    }
+  })
+
+  return posiblesMoves
+}
+
+function bishopMove (chessBoard: ChessBoardState['chessBoardpositions'], selectedCoordinates: ChessBoardCell['coordinates']): ChessBoardCell['coordinates'][] {
+  const posiblesMoves: posiblesMoves = []
+  const { col, row } = selectedCoordinates 
+
+  const directions = [[1, 1], [-1, 1], [1, -1], [-1, -1]]
+  directions.forEach(([rowDirection, colDirection]) => {
+    let newRow = row + rowDirection
+    let newCol = col + colDirection
+
+    while (isOnBoard(newRow, newCol)) {
+      posiblesMoves.push({ row: newRow, col: newCol })
+      if (chessBoard[newRow][newCol].piece !== '') break
+      newRow += rowDirection
+      newCol += colDirection
+    }
+  })
+
+  return posiblesMoves
+}
+
+function knightMove (selectedCoordinates: ChessBoardCell['coordinates']): ChessBoardCell['coordinates'][] {
+  const posiblesMoves: posiblesMoves = []
+  const { col, row } = selectedCoordinates 
+
+  const directions = [[1, 2], [-1, 2], [1, -2], [-1, -2], [2, 1], [-2, 1], [2, -1], [-2, -1]]
+  directions.forEach(([rowDirection, colDirection]) => {
+    const newRow = row + rowDirection
+    const newCol = col + colDirection
+
+    if (isOnBoard(newRow, newCol)) {
+      posiblesMoves.push({ row: newRow, col: newCol })
+    }
+  })
+
+  return posiblesMoves
+}
+
+function kingMove (
+    chessBoard: ChessBoardState['chessBoardpositions'], 
+    selectedCoordinates: ChessBoardCell['coordinates'],
+    castle: boolean): ChessBoardCell['coordinates'][] {
   
-// export function calculateMoves (chessBoard, coordsPieceToMove) {
-//   const [row, col] = coordsPieceToMove
-//   const pieceColor = chessBoard[row][col][0][0]
-//   const futurePosiblesMoves = calulateFutureMoves(chessBoard, coordsPieceToMove, false, true)
+  console.log(castle)
+  const posiblesMoves: posiblesMoves = []
+  const { col, row } = selectedCoordinates 
+  const directions = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]]
 
-//   const posiblesMoves = futurePosiblesMoves.filter(([row, col]) => {
-//     return chessBoard[row][col][0][0] !== pieceColor
-//   })
+  directions.forEach(([rowDirection, colDirection]) => {
+    const newRow = row + rowDirection
+    const newCol = col + colDirection
 
-//   return posiblesMoves
-// }
+    if (!isCellUnderAttackByOppositeColor(chessBoard, row, col, newRow, newCol)) {
+      posiblesMoves.push({ row: newRow, col: newCol })      
+    }
+  })
 
-// export function calulateFutureMoves (chessBoard, coordsPieceToMove, CheckingPawnAttacks = true, castle = false) {
-//   const [row, col] = coordsPieceToMove
-//   const pieceCell = chessBoard[row][col]
-//   let posiblesMoves = []
+  if (!chessBoard[row][col].hasMoved && castle) {
+    const castlingMoves = castling(chessBoard, row, col)
+    posiblesMoves.push(...castlingMoves)
+  }
 
-//   if (pieceCell[0][1] === 'R') {
-//     posiblesMoves = rookMove(chessBoard, row, col)
-//   } else if (pieceCell[0][1] === 'B') {
-//     posiblesMoves = bishopMove(chessBoard, row, col)
-//   } else if (pieceCell[0][1] === 'N') {
-//     posiblesMoves = knightMove(chessBoard, row, col)
-//   } else if (pieceCell[0][1] === 'Q') {
-//     posiblesMoves = bishopMove(chessBoard, row, col).concat(rookMove(chessBoard, row, col))
-//   } else if (pieceCell[0][1] === 'K') {
-//     posiblesMoves = kingMove(chessBoard, row, col, castle)
-//   } else if (pieceCell[0][1] === 'P') {
-//     posiblesMoves = pawnMove(pieceCell, chessBoard, row, col, CheckingPawnAttacks)
-//   }
+  return posiblesMoves
+}
 
-//   return posiblesMoves
-// }
+function castling (chessBoard: ChessBoardPositions, row: number, col: number) {
+  const rookFeatures = [[0, -1], [7, 1]]
+  const castlingMoves: ChessBoardCell['coordinates'][] = []
 
-// function isOnBoard (row, col, boardSize = 8) {
-//   return row >= 0 && row < boardSize && col >= 0 && col < boardSize
-// }
+  rookFeatures.forEach(rook => {
+    const rookCol = rook[0]
+    const direction = rook[1]
 
-// function pawnMove (pieceCell, chessBoard, row, col, CheckingPawnAttacks) {
-//   const posiblesMoves = []
-//   const firstMove = pieceCell[3]
-//   const pieceColor = pieceCell[0][0]
-//   const direction = pieceColor === 'W' ? -1 : 1
+    if (chessBoard[row][rookCol].hasMoved === false) {
+      let newCol = col + direction
 
-//   if (!CheckingPawnAttacks && isOnBoard(row + direction, col) && chessBoard[row + direction][col][0] === '') {
-//     posiblesMoves.push([row + direction, col])
-//     if (!firstMove && chessBoard[row + 2 * direction][col][0] === '') {
-//       posiblesMoves.push([row + 2 * direction, col])
-//     }
-//   }
+      while (chessBoard[row][newCol].piece === '' && !isCellUnderAttackByOppositeColor(chessBoard, row, col, row, newCol)) {
+        newCol += direction
+      }
 
-//   const possibleColumns = [col + 1, col - 1]
-//   possibleColumns.forEach(column => {
-//     const targetRow = row + direction
-//     if (isOnBoard(targetRow, column) && (CheckingPawnAttacks || chessBoard[targetRow][column][0] !== '')) {
-//       posiblesMoves.push([targetRow, column])
-//     }
-//   })
+      if (newCol === rookCol) {
+        castlingMoves.push({row: row, col: col + 2 * direction})
+      }
+    }
+  })
+  return castlingMoves
+}
 
-//   return posiblesMoves
-// }
+function isCellUnderAttackByOppositeColor (chessBoard: ChessBoardState['chessBoardpositions'], row: number, col: number, cellRow: number, cellCol: number) {
+  const pieceColor = chessBoard[row][col].piece[0]
 
-// function rookMove (chessBoard, row, col) {
-//   const posiblesMoves = []
+  if (!isOnBoard(cellRow, cellCol)) {
+    return true
+  }
 
-//   const directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]
-//   directions.forEach(([rowDirection, colDirection]) => {
-//     let newRow = row + rowDirection
-//     let newCol = col + colDirection
-
-//     while (isOnBoard(newRow, newCol)) {
-//       posiblesMoves.push([newRow, newCol])
-//       if (chessBoard[newRow][newCol][0] !== '') break
-//       newRow += rowDirection
-//       newCol += colDirection
-//     }
-//   })
-
-//   return posiblesMoves
-// }
-
-// function bishopMove (chessBoard, row, col) {
-//   const posiblesMoves = []
-
-//   const directions = [[1, 1], [-1, 1], [1, -1], [-1, -1]]
-//   directions.forEach(([rowDirection, colDirection]) => {
-//     let newRow = row + rowDirection
-//     let newCol = col + colDirection
-
-//     while (isOnBoard(newRow, newCol)) {
-//       posiblesMoves.push([newRow, newCol])
-//       if (chessBoard[newRow][newCol][0] !== '') break
-//       newRow += rowDirection
-//       newCol += colDirection
-//     }
-//   })
-
-//   return posiblesMoves
-// }
-
-// function knightMove (chessBoard, row, col) {
-//   const posiblesMoves = []
-
-//   const directions = [[1, 2], [-1, 2], [1, -2], [-1, -2], [2, 1], [-2, 1], [2, -1], [-2, -1]]
-//   directions.forEach(([rowDirection, colDirection]) => {
-//     const newRow = row + rowDirection
-//     const newCol = col + colDirection
-
-//     if (isOnBoard(newRow, newCol)) {
-//       posiblesMoves.push([newRow, newCol])
-//     }
-//   })
-
-//   return posiblesMoves
-// }
-
-// function kingMove (chessBoard, row, col, castle) {
-//   const posiblesMoves = []
-//   const directions = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]]
-
-//   directions.forEach(([rowDirection, colDirection]) => {
-//     const newRow = row + rowDirection
-//     const newCol = col + colDirection
-
-//     if (whatColorIsAttackingThatCell(chessBoard, row, col, newRow, newCol)) {
-//       posiblesMoves.push([newRow, newCol])
-//     }
-//   })
-
-//   if (!chessBoard[row][col][3] && castle) {
-//     const castlingMoves = castling(chessBoard, row, col)
-//     posiblesMoves.push(...castlingMoves)
-//   }
-
-//   return posiblesMoves
-// }
-
-// function castling (chessBoard, row, col) {
-//   const rookFeatures = [[0, -1], [7, 1]]
-//   const castlingMoves = []
-
-//   rookFeatures.forEach(rook => {
-//     const rookCol = rook[0]
-//     const direction = rook[1]
-
-//     if (chessBoard[row][rookCol][3] === false) {
-//       let newCol = col + direction
-
-//       while (chessBoard[row][newCol][0] === '' && whatColorIsAttackingThatCell(chessBoard, row, col, row, newCol)) {
-//         newCol += direction
-//       }
-
-//       if (newCol === rookCol) {
-//         castlingMoves.push([row, col + 2 * direction])
-//       }
-//     }
-//   })
-//   return castlingMoves
-// }
-
-// function whatColorIsAttackingThatCell (chessBoard, row, col, cellRow, cellCol) {
-//   const pieceColor = chessBoard[row][col][0][0]
-
-//   if (!isOnBoard(cellRow, cellCol)) {
-//     return false
-//   }
-
-//   for (const piece of chessBoard[cellRow][cellCol][2]) {
-//     if (piece[0] !== pieceColor) {
-//       return false
-//     }
-//   }
-//   return true
-// }
+  for (const piece of chessBoard[cellRow][cellCol].isUnderAttackBy) {
+    if (piece[0] !== pieceColor) {
+      return true
+    }
+  }
+  return false
+}

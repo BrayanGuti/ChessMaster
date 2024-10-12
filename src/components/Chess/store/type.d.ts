@@ -1,10 +1,7 @@
 interface ChessBoardCell {
-    piece: 'BRa8' | 'BNb8' | 'BBc8' | 'BQd8' | 'BKe8' | 'BBf8' | 'BNg8' | 'BRh8' |
-           'BPa7' | 'BPb7' | 'BPc7' | 'BPd7' | 'BPe7' | 'BPf7' | 'BPg7' | 'BPh7' |
-           'WPa2' | 'WPb2' | 'WPc2' | 'WPd2' | 'WPe2' | 'WPf2' | 'WPg2' | 'WPh2' |
-           'WRa1' | 'WNb1' | 'WBc1' | 'WQd1' | 'WKe1' | 'WBf1' | 'WNg1' | 'WRh1' | ''
+    piece: string
     YouCanMoveHere: boolean
-    isUnderAttack: string[]
+    isUnderAttackBy: string[]
     hasMoved: boolean
     cellName: 'a8' | 'b8' | 'c8' | 'd8' | 'e8' | 'f8' | 'g8' | 'h8' |
               'a7' | 'b7' | 'c7' | 'd7' | 'e7' | 'f7' | 'g7' | 'h7' |
@@ -15,8 +12,26 @@ interface ChessBoardCell {
               'a2' | 'b2' | 'c2' | 'd2' | 'e2' | 'f2' | 'g2' | 'h2' |
               'a1' | 'b1' | 'c1' | 'd1' | 'e1' | 'f1' | 'g1' | 'h1'
   
-       coordinates: { col: number, row: number }       
+    coordinates: { col: number, row: number }       
 }
   
-  type ChessBoardPositions = Array<Array<ChessBoardCell>>
-  
+interface ChessBoardState {
+    chessBoardpositions: ChessBoardPositions;
+    cellOfPieceSelected: ChessBoardCell | null;
+    
+    selectPieceToMove: (cellInformation: ChessBoardCell) => void;
+    
+    clickCell: (cellInformation: ChessBoardCell) => void;
+    
+    movePiece: (selectedCoordinates: { col: number; row: number }) => void;
+    
+    showAvailableMoves: (coordsOfAvailableMoves: { col: number; row: number }[]) => void;
+    
+    removeAvailableMoves: () => void;
+    
+    updateCellsUnderAttack: () => void;
+
+    // historialMoves: string[] --> implementar a futuro
+}
+
+type ChessBoardPositions = Array<Array<ChessBoardCell>>
