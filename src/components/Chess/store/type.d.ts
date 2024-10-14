@@ -21,6 +21,7 @@ interface ChessBoardState {
     coronation: {
         status: boolean;
         coordinates: { col: number; row: number };
+        cellName: string;
     }
     turn: 'W' | 'B';
     
@@ -37,6 +38,8 @@ interface ChessBoardState {
     updateCellsUnderAttack: () => void;
 
     isCoronation: (destinyCoords: { col: number; row: number }) => void;
+
+    makeCoronation: (piece: string) => void;
 
     // isCheckMate: boolean 
 

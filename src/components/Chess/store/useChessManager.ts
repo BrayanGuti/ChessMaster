@@ -14,11 +14,14 @@ export const useChessManager = create<ChessBoardState>(((
         cellOfPieceSelected: null,
         coronation: {
             status: false,
-            coordinates: { col: 0, row: 0 }
+            coordinates: { col: 0, row: 0 },
+            piceName: ''
         },
     
         clickCell: (cellInformation) => {
+            const { coronation } = get()
             const { cellOfPieceSelected } = get()
+            if(coronation.status) return
 
             if(cellInformation.piece === '' && cellOfPieceSelected === null) return 
 
@@ -45,6 +48,25 @@ export const useChessManager = create<ChessBoardState>(((
             set({ cellOfPieceSelected: cellInformation})
             const coordsOfAvailableMoves = calculateAvailableMoves(cellInformation, get().chessBoardpositions)
             get().showAvailableMoves(coordsOfAvailableMoves)
+        },
+
+        makeCoronation: (piece: string) => {
+            const { coronation } = get()
+            const { chessBoardpositions } = get()
+            const newChessBoardPositions = chessBoardpositions.map(row => {
+                return row.map(cell => {
+                    if(cell.coordinates.col === coronation.coordinates.col && cell.coordinates.row === coronation.coordinates.row){
+                        return {
+                            ...cell,
+                            piece
+                        }
+                    }
+                    return cell
+                })
+            })
+            set({ chessBoardpositions: newChessBoardPositions, coronation: { status: false, coordinates: { col: 0, row: 0 } } })
+            get().removeAvailableMoves()
+            get().updateCellsUnderAttack()
         },
 
         movePiece: (destinyCoords) => {
@@ -101,16 +123,22 @@ export const useChessManager = create<ChessBoardState>(((
         },
 
         isCoronation: (destinyCoords) => {
-            const pieceSelected = get().cellOfPieceSelected?.piece[1]
-            const coronationRow = get().turn === 'W' ? 0 : 7
-
-          if (pieceSelected === 'P' && destinyCoords.row === coronationRow) {
-            set({ coronation: {
-                status: true,
-                coordinates: destinyCoords
-            } })
-          }
+            const { cellOfPieceSelected, turn } = get();
+            const pieceSelected = cellOfPieceSelected?.piece[1];
+            const coronationRow = (turn === 'W') ? 0 : 7;
+        
+            if (pieceSelected === 'P' && destinyCoords.row === coronationRow) {
+                const cellName = `${cellOfPieceSelected?.piece[2].repeat(2)}`;
+                set({
+                    coronation: {
+                        status: true,
+                        coordinates: destinyCoords,
+                        cellName
+                    }
+                });
+            }
         },
+        
 
         removeAvailableMoves: () => {
             const { chessBoardpositions } = get()
