@@ -1,7 +1,6 @@
 .chess-cell{
   display: flex;
   align-items: center;
-  border: 1px solid black;
   justify-content: center;
 }
 

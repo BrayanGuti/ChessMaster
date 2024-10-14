@@ -18,6 +18,11 @@ interface ChessBoardCell {
 interface ChessBoardState {
     chessBoardpositions: ChessBoardPositions;
     cellOfPieceSelected: ChessBoardCell | null;
+    coronation: {
+        status: boolean;
+        coordinates: { col: number; row: number };
+    }
+    turn: 'W' | 'B';
     
     selectPieceToMove: (cellInformation: ChessBoardCell) => void;
     
@@ -30,6 +35,10 @@ interface ChessBoardState {
     removeAvailableMoves: () => void;
     
     updateCellsUnderAttack: () => void;
+
+    isCoronation: (destinyCoords: { col: number; row: number }) => void;
+
+    // isCheckMate: boolean 
 
     // historialMoves: string[] --> implementar a futuro
 }

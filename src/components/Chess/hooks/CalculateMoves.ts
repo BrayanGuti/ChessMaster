@@ -8,7 +8,6 @@ export function calculateAvailableMoves(
   const pieceColor = chessBoard[row][col].piece[0];
 
   const futurePossibleMoves = calculateFuturesMoves(selectedCell, chessBoard, false, true);
-  console.log(futurePossibleMoves)
   const possibleMoves = futurePossibleMoves.filter(({ row: r, col: c }) => {
     return chessBoard[r][c].piece[0] !== pieceColor;
   })
@@ -136,7 +135,6 @@ function kingMove (
     selectedCoordinates: ChessBoardCell['coordinates'],
     castle: boolean): ChessBoardCell['coordinates'][] {
   
-  console.log(castle)
   const posiblesMoves: posiblesMoves = []
   const { col, row } = selectedCoordinates 
   const directions = [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]]

@@ -10,24 +10,29 @@ import { isCastling } from '../hooks/Castling'
 export const useChessManager = create<ChessBoardState>(((
     (set, get) => ({
         chessBoardpositions: startGame(),
+        turn: 'B',
         cellOfPieceSelected: null,
+        coronation: {
+            status: false,
+            coordinates: { col: 0, row: 0 }
+        },
     
         clickCell: (cellInformation) => {
             const { cellOfPieceSelected } = get()
 
             if(cellInformation.piece === '' && cellOfPieceSelected === null) return 
 
-            if(cellOfPieceSelected === null){
+            if(cellOfPieceSelected === null && cellInformation.piece[0] === get().turn){
                 get().selectPieceToMove(cellInformation)
                 return
             }
-            if (cellInformation.piece === cellOfPieceSelected.piece) {
+            if (cellInformation.piece === cellOfPieceSelected?.piece) {
                 get().removeAvailableMoves()
                 set({ cellOfPieceSelected: null })
                 return
             }
 
-            if(cellInformation.piece[0] === cellOfPieceSelected.piece[0]){
+            if(cellInformation.piece[0] === cellOfPieceSelected?.piece[0]){
                 get().removeAvailableMoves()
                 get().selectPieceToMove(cellInformation)
                 return
@@ -46,6 +51,7 @@ export const useChessManager = create<ChessBoardState>(((
             const cellOfPieceSelected = get().cellOfPieceSelected
             if (!cellOfPieceSelected) return
             
+            get().isCoronation(destinyCoords)
             const boardWithCastling = isCastling(cellOfPieceSelected.coordinates, destinyCoords, get().chessBoardpositions)
             const chessBoardpositions = boardWithCastling || get().chessBoardpositions
 
@@ -94,6 +100,18 @@ export const useChessManager = create<ChessBoardState>(((
             set({ chessBoardpositions: newChessBoardPositions })
         },
 
+        isCoronation: (destinyCoords) => {
+            const pieceSelected = get().cellOfPieceSelected?.piece[1]
+            const coronationRow = get().turn === 'W' ? 0 : 7
+
+          if (pieceSelected === 'P' && destinyCoords.row === coronationRow) {
+            set({ coronation: {
+                status: true,
+                coordinates: destinyCoords
+            } })
+          }
+        },
+
         removeAvailableMoves: () => {
             const { chessBoardpositions } = get()
 
@@ -111,7 +129,6 @@ export const useChessManager = create<ChessBoardState>(((
         updateCellsUnderAttack: () => {
           const newBoard = markCellsUnderAttack(get().chessBoardpositions)
           set({ chessBoardpositions: newBoard })
-          console.log(newBoard)
         }
     })
 )))
