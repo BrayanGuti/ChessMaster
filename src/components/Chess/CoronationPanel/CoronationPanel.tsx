@@ -2,22 +2,21 @@ import './CoronationPanel.css'
 import { useChessManager } from '../store/useChessManager'
 
 export function CoronationPanel({ cords }: { cords: { col: number, row: number } }) {
-    const turn = useChessManager((state) => state.turn)
     const makeCoronation = useChessManager((state) => state.makeCoronation)
-
+    const color = cords.row === 0 ? 'W' : 'B'
+    
     const handleCoronationSelection = ({ src }: { src: string, alt: string }) => {
         const piece = src.slice(-6, -4)
-        console.log(piece)
         makeCoronation(piece)
     }
     
     
 
     const pieces = [
-        { src: `/Pieces/${turn}Q.svg`, alt: 'White Queen' },
-        { src: `/Pieces/${turn}R.svg`, alt: 'White Rook' },
-        { src: `/Pieces/${turn}B.svg`, alt: 'White Bishop' },
-        { src: `/Pieces/${turn}N.svg`, alt: 'White Knight' }
+        { src: `/Pieces/${color}Q.svg`, alt: 'White Queen' },
+        { src: `/Pieces/${color}R.svg`, alt: 'White Rook' },
+        { src: `/Pieces/${color}B.svg`, alt: 'White Bishop' },
+        { src: `/Pieces/${color}N.svg`, alt: 'White Knight' }
     ]
 
     const top = cords.row === 0 ? '0%' : '50%'

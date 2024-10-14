@@ -10,12 +10,13 @@ import { isCastling } from '../hooks/Castling'
 export const useChessManager = create<ChessBoardState>(((
     (set, get) => ({
         chessBoardpositions: startGame(),
-        turn: 'B',
+        turn: 'W',
+        isCheckMate: false,
         cellOfPieceSelected: null,
         coronation: {
             status: false,
             coordinates: { col: 0, row: 0 },
-            piceName: ''
+            cellName: ''
         },
     
         clickCell: (cellInformation) => {
@@ -58,48 +59,56 @@ export const useChessManager = create<ChessBoardState>(((
                     if(cell.coordinates.col === coronation.coordinates.col && cell.coordinates.row === coronation.coordinates.row){
                         return {
                             ...cell,
-                            piece
+                            piece: piece + coronation.cellName
                         }
                     }
                     return cell
                 })
             })
-            set({ chessBoardpositions: newChessBoardPositions, coronation: { status: false, coordinates: { col: 0, row: 0 } } })
+            set({ chessBoardpositions: newChessBoardPositions, coronation: { status: false, coordinates: { col: 0, row: 0 }, cellName:''} })
             get().removeAvailableMoves()
             get().updateCellsUnderAttack()
         },
 
         movePiece: (destinyCoords) => {
-            const cellOfPieceSelected = get().cellOfPieceSelected
+            const { cellOfPieceSelected, chessBoardpositions } = get()
+        
             if (!cellOfPieceSelected) return
-            
-            get().isCoronation(destinyCoords)
-            const boardWithCastling = isCastling(cellOfPieceSelected.coordinates, destinyCoords, get().chessBoardpositions)
-            const chessBoardpositions = boardWithCastling || get().chessBoardpositions
-
-            if(cellOfPieceSelected && chessBoardpositions[destinyCoords.row][destinyCoords.col].YouCanMoveHere){
-                const newChessBoardPositions = chessBoardpositions.map(row => {
-                    return row.map(cell => {
-                        if(cell.coordinates.col === destinyCoords.col && cell.coordinates.row === destinyCoords.row){
-                            return {
-                                ...cell,
-                                piece: cellOfPieceSelected.piece,
-                            }
+        
+            const targetCell = chessBoardpositions[destinyCoords.row][destinyCoords.col]
+            if (targetCell?.YouCanMoveHere) {
+                const boardWithCastling = isCastling(
+                    cellOfPieceSelected.coordinates,
+                    destinyCoords,
+                    chessBoardpositions,
+                    cellOfPieceSelected.piece[0]
+                )
+        
+                const updatedBoard = boardWithCastling || chessBoardpositions
+                get().isCoronation(destinyCoords)
+        
+                const newChessBoardPositions = updatedBoard.map(row => 
+                    row.map(cell => {
+                        if (cell.coordinates.row === destinyCoords.row && cell.coordinates.col === destinyCoords.col) {
+                            return { ...cell, piece: cellOfPieceSelected.piece }
                         }
-                        if(cell.coordinates.col === cellOfPieceSelected.coordinates.col && cell.coordinates.row === cellOfPieceSelected.coordinates.row){
-                            return {
-                                ...cell,
-                                piece: '',
-                                hasMoved: true
-                            }
+                        if (cell.coordinates.row === cellOfPieceSelected.coordinates.row && cell.coordinates.col === cellOfPieceSelected.coordinates.col) {
+                            return { ...cell, piece: '', hasMoved: true }
                         }
                         return cell
                     })
-                })
-                set({ chessBoardpositions: newChessBoardPositions, cellOfPieceSelected: null })           
+                )
+        
+                set({ chessBoardpositions: newChessBoardPositions, cellOfPieceSelected: null })
+                get().removeAvailableMoves()
+                get().updateCellsUnderAttack()
+                get().changeTurn()
             }
-            get().removeAvailableMoves()
-            get().updateCellsUnderAttack()
+        },        
+
+        changeTurn: () => {
+            const { turn } = get()
+            set({ turn: turn === 'W' ? 'B' : 'W' })
         },
 
         showAvailableMoves: (coordsOfAvailableMoves) => {
@@ -123,22 +132,21 @@ export const useChessManager = create<ChessBoardState>(((
         },
 
         isCoronation: (destinyCoords) => {
-            const { cellOfPieceSelected, turn } = get();
-            const pieceSelected = cellOfPieceSelected?.piece[1];
-            const coronationRow = (turn === 'W') ? 0 : 7;
+            const { cellOfPieceSelected, turn } = get()
+            const pieceSelected = cellOfPieceSelected?.piece[1]
+            const coronationRow = (turn === 'W') ? 0 : 7
         
             if (pieceSelected === 'P' && destinyCoords.row === coronationRow) {
-                const cellName = `${cellOfPieceSelected?.piece[2].repeat(2)}`;
+                const cellName = cellOfPieceSelected ? `${cellOfPieceSelected.piece[2] + cellOfPieceSelected.piece[3]}` : ''
                 set({
                     coronation: {
                         status: true,
                         coordinates: destinyCoords,
                         cellName
                     }
-                });
+                })
             }
         },
-        
 
         removeAvailableMoves: () => {
             const { chessBoardpositions } = get()

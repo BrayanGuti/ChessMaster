@@ -11,12 +11,11 @@ export function markCellsUnderAttack(newBoard: ChessBoardPositions) {
 
   cellsUnderAttack.forEach(([piece, cells]) => {
     cells.forEach(({ row, col }) => {
-      if (newBoard[row][col].piece[1] === 'K' && newBoard[row][col].piece[0] !== piece[0]) {
-        console.log('CHECK')
-      }
       newBoard[row][col].isUnderAttackBy.push(piece) 
     })
   })
+
+  isCheck(newBoard)
 
   return newBoard
 }
@@ -37,4 +36,44 @@ function getAttackedCells(newBoard: ChessBoardPositions) {
   })
 
   return cellsUnderAttack
+}
+
+function isCheck(newBoard: ChessBoardPositions): boolean {
+  for (const row of newBoard) {
+    for (const cell of row) {
+      if (cell.piece[1] !== 'K') { continue}
+
+      const attackingPieces = cell.isUnderAttackBy
+        .filter((attacker) => attacker[0] !== cell.piece[0])
+        .map((attacker) => attacker)
+      
+      if (attackingPieces.length > 0) {
+        console.log('check')
+
+        const moves = calculateFuturesMoves(cell, newBoard)
+        
+        if(attackingPieces.length === 1) {
+          thatPieceCanBeKilled(newBoard, attackingPieces[0])
+        }
+
+        if (attackingPieces.length > 1 && moves.length === 0) {
+          return true
+        }
+      }   
+    }
+  }
+  return false
+}
+
+function thatPieceCanBeKilled(newBoard: ChessBoardPositions, piece: string): Array<string> {
+  for (const row of newBoard) {
+    for (const cell of row) {
+      if (cell.piece === piece) {
+        return cell.isUnderAttackBy
+        .filter((attacker) => attacker[0] !== cell.piece[0])
+        .map((attacker) => attacker)
+      }
+    }
+  }
+  return []
 }

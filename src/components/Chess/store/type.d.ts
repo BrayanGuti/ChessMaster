@@ -18,6 +18,7 @@ interface ChessBoardCell {
 interface ChessBoardState {
     chessBoardpositions: ChessBoardPositions;
     cellOfPieceSelected: ChessBoardCell | null;
+    isCheckMate: boolean;
     coronation: {
         status: boolean;
         coordinates: { col: number; row: number };
@@ -40,6 +41,8 @@ interface ChessBoardState {
     isCoronation: (destinyCoords: { col: number; row: number }) => void;
 
     makeCoronation: (piece: string) => void;
+
+    changeTurn: () => void;
 
     // isCheckMate: boolean 
 
