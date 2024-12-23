@@ -1,7 +1,7 @@
 interface ChessBoardCell {
     piece: string
     YouCanMoveHere: boolean
-    isUnderAttackBy: string[]
+    isUnderAttackBy: ChessBoardCell[]
     hasMoved: boolean
     cellName: 'a8' | 'b8' | 'c8' | 'd8' | 'e8' | 'f8' | 'g8' | 'h8' |
               'a7' | 'b7' | 'c7' | 'd7' | 'e7' | 'f7' | 'g7' | 'h7' |
@@ -19,6 +19,8 @@ interface ChessBoardState {
     chessBoardpositions: ChessBoardPositions;
     cellOfPieceSelected: ChessBoardCell | null;
     isCheckMate: boolean;
+    isCheck: boolean;
+    pieceThatCanAvoidCheckmate: Array<{attacker: ChessBoardCell, cellToAttack: ChessBoardCell}>;
     coronation: {
         status: boolean;
         coordinates: { col: number; row: number };
@@ -44,9 +46,11 @@ interface ChessBoardState {
 
     changeTurn: () => void;
 
-    // isCheckMate: boolean 
+    handleCellClickWhenChceck: (cell: ChessBoardCell, cellOfPieceSelected: ChessBoardCell | null) => void;
 
-    // historialMoves: string[] --> implementar a futuro
+    selectPieceToDefendCheck: (piece: {attacker: ChessBoardCell, cellToAttack: ChessBoardCell}) => void;
+
+    isProtectingCheck: (coords: {col: number; row: number;}[], cell: ChessBoardCell) => {col: number; row: number;}[];
 }
 
 type ChessBoardPositions = Array<Array<ChessBoardCell>>

@@ -13,15 +13,16 @@ export function startGame (): ChessBoardPositions {
   // ]
 
   const Position = [
-    ['', '', '', 'BKa7', '', '', '', ''],
-    ['', '', '', '', 'WR', '', '', ''],
-    ['', '', '', '', '', 'WB', '', ''],
+    ['', '', '', 'WK2', '', '', '', ''],
+    ['', '', '', 'WR', '', '', '', ''],
+    ['BR', '', '', '', '', '', '', ''],
     ['', '', '', '', '', '', '', ''],
     ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', 'BB', ''],
     ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', '', '']
-  ]
+    ['', '', '', 'BK2', '', '', '', '']
+  ];
+  
 
   
   const initialPosition = Position.map((row, rowIndex) => {
@@ -34,14 +35,16 @@ export function startGame (): ChessBoardPositions {
     * -Second Parameter -> YouCanAttackHere/YouCanMoveHere: When you select a piece the other cells 
     *  indicate that the piece can attack here or move here by this parameter 
     *  can attack under attack or available to move.
-    * -Third Parameter -> isUnderAttackBy: Indicate which pieces are attacking the cell.
+    * -Third Parameter -> isUnderAttackBy: Indicate which cells(this cell have the same attributes of any cell) 
+    *  have a piece thas is attacking the cell.
     * -Fourth Parameter -> Represent if the piece that is in there has make its first move or no.
     * -Fifth Parameter -> cellName: The name of the cell (e.g., a8, b8, etc.).
     * -Sixth Parameter -> coordinates: The coordinates of the cell (e.g., {x: 0, y: 0}).
     **/
     if (piece === '') return {
                               piece: piece as ChessBoardCell['piece'],
-                              YouCanMoveHere: false, isUnderAttackBy: [],  
+                              YouCanMoveHere: false, 
+                              isUnderAttackBy: [],
                               hasMoved: true, 
                               cellName: cellName as ChessBoardCell['cellName'],
                               coordinates: coordinates 
@@ -59,5 +62,6 @@ export function startGame (): ChessBoardPositions {
     return boardRow
   })
 
-  return  markCellsUnderAttack(initialPosition)
+  const { newBoard } = markCellsUnderAttack(initialPosition)
+  return newBoard
 }

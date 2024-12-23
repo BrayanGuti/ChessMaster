@@ -7,7 +7,7 @@ export function calculateAvailableMoves(
   const { col, row } = selectedCell.coordinates;
   const pieceColor = chessBoard[row][col].piece[0];
 
-  const futurePossibleMoves = calculateFuturesMoves(selectedCell, chessBoard, false, true);
+  const futurePossibleMoves = calculateFuturesMoves(selectedCell, chessBoard, true, false);
   const possibleMoves = futurePossibleMoves.filter(({ row: r, col: c }) => {
     return chessBoard[r][c].piece[0] !== pieceColor;
   })
@@ -18,8 +18,8 @@ export function calculateAvailableMoves(
 export function calculateFuturesMoves(
     selectedCell: ChessBoardCell, 
     chessBoard: ChessBoardState['chessBoardpositions'],
-    CheckingPawnAttacks = true,
-    castle = false
+    castle = false,
+    CheckingAttracks = true
   ): posiblesMoves {
     let posiblesMoves: posiblesMoves = []
 
@@ -27,57 +27,33 @@ export function calculateFuturesMoves(
     const pieceType = selectedCell.piece[1]
 
     if (pieceType === 'R') {
-      posiblesMoves = rookMove(chessBoard, selectedCoordinates)
+      posiblesMoves = rookMove(chessBoard, selectedCoordinates, CheckingAttracks)
     } else if (pieceType === 'B') {
-      posiblesMoves = bishopMove(chessBoard, selectedCoordinates)
+      posiblesMoves = bishopMove(chessBoard, selectedCoordinates, CheckingAttracks)
     } else if (pieceType === 'N') {
       posiblesMoves = knightMove(selectedCoordinates)
     } else if (pieceType === 'Q') {
-      posiblesMoves = bishopMove(chessBoard, selectedCoordinates).concat(rookMove(chessBoard, selectedCoordinates))
+      posiblesMoves = bishopMove(chessBoard, selectedCoordinates, CheckingAttracks).concat(rookMove(chessBoard, selectedCoordinates, CheckingAttracks))
     } else if (pieceType === 'K') {
       posiblesMoves = kingMove(chessBoard, selectedCoordinates, castle)
     } 
     else if (pieceType === 'P') {
-      posiblesMoves = pawnMove(selectedCell, chessBoard, selectedCoordinates, CheckingPawnAttacks)
+      posiblesMoves = pawnMove(selectedCell, chessBoard, selectedCoordinates, CheckingAttracks)
     }
   return posiblesMoves
 }
 
-function isOnBoard (row: number, col: number, boardSize = 8) {
-  return row >= 0 && row < boardSize && col >= 0 && col < boardSize
-}
-
-function rookMove(chessBoard: ChessBoardState['chessBoardpositions'], selectedCoordinates: ChessBoardCell['coordinates']): ChessBoardCell['coordinates'][] {
-  const { col, row } = selectedCoordinates 
-  const posiblesMoves: posiblesMoves = []
-
-  const directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]
-  directions.forEach(([rowDirection, colDirection]) => {
-    let newRow = row + rowDirection
-    let newCol = col + colDirection
-
-    while (isOnBoard(newRow, newCol)) {
-      posiblesMoves.push({ row: newRow, col: newCol })
-      if (chessBoard[newRow][newCol].piece !== '') break
-      newRow += rowDirection
-      newCol += colDirection
-    }
-  })
-
-  return posiblesMoves
-}
-
-function pawnMove (pieceCell: ChessBoardCell, chessBoard: ChessBoardState['chessBoardpositions'], selectedCoordinates: ChessBoardCell['coordinates'],CheckingPawnAttacks: boolean,): ChessBoardCell['coordinates'][] {
+function pawnMove (pieceCell: ChessBoardCell, chessBoard: ChessBoardState['chessBoardpositions'], selectedCoordinates: ChessBoardCell['coordinates'], CheckingAttracks: boolean,): ChessBoardCell['coordinates'][] {
   const { col, row } = selectedCoordinates 
   const posiblesMoves: posiblesMoves = []
   const firstMove = pieceCell.hasMoved
   const pieceColor = pieceCell.piece[0]
   const direction = pieceColor === 'W' ? -1 : 1
 
-  if (!CheckingPawnAttacks && isOnBoard(row + direction, col) && chessBoard[row + direction][col].piece === '') {
+  if (!CheckingAttracks && isOnBoard(row + direction, col) && chessBoard[row + direction][col].piece === '') {
     posiblesMoves.push({ row: row + direction, col: col })
 
-    if (!firstMove && chessBoard[row + 2 * direction][col].piece === '') {
+    if (!firstMove && ((chessBoard[row][col].piece[0] === 'W' && row === 6) || (chessBoard[row][col].piece[0] === 'B' && row === 1))  && chessBoard[row + 2 * direction][col].piece === '') {
       posiblesMoves.push({ row: row + 2 * direction, col: col })
     }
   }
@@ -85,7 +61,7 @@ function pawnMove (pieceCell: ChessBoardCell, chessBoard: ChessBoardState['chess
   const possibleColumns = [col + 1, col - 1]
   possibleColumns.forEach(column => {
     const targetRow = row + direction
-    if (isOnBoard(targetRow, column) && (CheckingPawnAttacks || chessBoard[targetRow][column].piece !== '')) {
+    if (isOnBoard(targetRow, column) && (CheckingAttracks || chessBoard[targetRow][column].piece !== '')) {
       posiblesMoves.push({ row: targetRow, col: column})
     }
   })
@@ -93,7 +69,7 @@ function pawnMove (pieceCell: ChessBoardCell, chessBoard: ChessBoardState['chess
   return posiblesMoves
 }
 
-function bishopMove (chessBoard: ChessBoardState['chessBoardpositions'], selectedCoordinates: ChessBoardCell['coordinates']): ChessBoardCell['coordinates'][] {
+function bishopMove (chessBoard: ChessBoardState['chessBoardpositions'], selectedCoordinates: ChessBoardCell['coordinates'], CheckingAttracks: boolean): ChessBoardCell['coordinates'][] {
   const posiblesMoves: posiblesMoves = []
   const { col, row } = selectedCoordinates 
 
@@ -104,6 +80,12 @@ function bishopMove (chessBoard: ChessBoardState['chessBoardpositions'], selecte
 
     while (isOnBoard(newRow, newCol)) {
       posiblesMoves.push({ row: newRow, col: newCol })
+      if(CheckingAttracks && chessBoard[newRow][newCol].piece[1] === 'K' && chessBoard[newRow][newCol].piece[0] !== chessBoard[row][col].piece[0]){
+        if(isOnBoard(newRow + rowDirection, newCol + colDirection)){
+          posiblesMoves.push({ row: newRow + rowDirection, col: newCol + colDirection })
+        }
+      }
+
       if (chessBoard[newRow][newCol].piece !== '') break
       newRow += rowDirection
       newCol += colDirection
@@ -157,25 +139,29 @@ function kingMove (
 }
 
 function castling (chessBoard: ChessBoardPositions, row: number, col: number) {
-  const rookFeatures = [[0, -1], [7, 1]]
   const castlingMoves: ChessBoardCell['coordinates'][] = []
-
-  rookFeatures.forEach(rook => {
-    const rookCol = rook[0]
-    const direction = rook[1]
-
-    if (chessBoard[row][rookCol].hasMoved === false) {
-      let newCol = col + direction
-
-      while (chessBoard[row][newCol].piece === '' && !isCellUnderAttackByOppositeColor(chessBoard, row, col, row, newCol)) {
-        newCol += direction
+  if(col === 4 && (row === 0 || row === 7)){
+    console.log(row, col)
+    const rookFeatures = [[0, -1], [7, 1]]
+    
+    rookFeatures.forEach(rook => {
+      const rookCol = rook[0]
+      const direction = rook[1]
+    
+      if (chessBoard[row][rookCol].hasMoved === false) {
+        let newCol = col + direction
+      
+        while (chessBoard[row][newCol].piece === '' && !isCellUnderAttackByOppositeColor(chessBoard, row, col, row, newCol)) {
+          newCol += direction
+        }
+      
+        if (newCol === rookCol) {
+          castlingMoves.push({row: row, col: col + 2 * direction})
+        }
       }
-
-      if (newCol === rookCol) {
-        castlingMoves.push({row: row, col: col + 2 * direction})
-      }
-    }
-  })
+    })
+  } 
+  
   return castlingMoves
 }
 
@@ -186,10 +172,39 @@ function isCellUnderAttackByOppositeColor (chessBoard: ChessBoardState['chessBoa
     return true
   }
 
-  for (const piece of chessBoard[cellRow][cellCol].isUnderAttackBy) {
-    if (piece[0] !== pieceColor) {
+  for (const chessCell of chessBoard[cellRow][cellCol].isUnderAttackBy) {
+    if (chessCell.piece[0] !== pieceColor) {
       return true
     }
   }
   return false
+}
+
+function isOnBoard (row: number, col: number, boardSize = 8) {
+  return row >= 0 && row < boardSize && col >= 0 && col < boardSize
+}
+
+function rookMove(chessBoard: ChessBoardState['chessBoardpositions'], selectedCoordinates: ChessBoardCell['coordinates'], CheckingAttracks:boolean): ChessBoardCell['coordinates'][] {
+  const { col, row } = selectedCoordinates 
+  const posiblesMoves: posiblesMoves = []
+
+  const directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]
+  directions.forEach(([rowDirection, colDirection]) => {
+    let newRow = row + rowDirection
+    let newCol = col + colDirection
+
+    while (isOnBoard(newRow, newCol)) {
+      posiblesMoves.push({ row: newRow, col: newCol })
+      if(CheckingAttracks && chessBoard[newRow][newCol].piece[1] === 'K' && chessBoard[newRow][newCol].piece[0] !== chessBoard[row][col].piece[0]){
+        if(isOnBoard(newRow + rowDirection, newCol + colDirection)){
+          posiblesMoves.push({ row: newRow + rowDirection, col: newCol + colDirection })
+        }
+      }
+      if (chessBoard[newRow][newCol].piece !== '') break
+      newRow += rowDirection
+      newCol += colDirection
+    }
+  })
+
+  return posiblesMoves
 }

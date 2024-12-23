@@ -12,7 +12,9 @@ export const useChessManager = create<ChessBoardState>(((
         chessBoardpositions: startGame(),
         turn: 'W',
         isCheckMate: false,
+        isCheck: false,
         cellOfPieceSelected: null,
+        pieceThatCanAvoidCheckmate: [],
         coronation: {
             status: false,
             coordinates: { col: 0, row: 0 },
@@ -20,9 +22,33 @@ export const useChessManager = create<ChessBoardState>(((
         },
     
         clickCell: (cellInformation) => {
-            const { coronation } = get()
-            const { cellOfPieceSelected } = get()
+            const { isCheckMate, isCheck, cellOfPieceSelected, coronation} = get()
+
             if(coronation.status) return
+            if(isCheckMate) return
+            if(isCheck)
+
+			if(get().isCheck){
+			    if(cellInformation.piece[1] === 'K'){
+			    	get().selectPieceToMove(cellInformation)
+			    	return
+			    } 
+			    const pieces = get().pieceThatCanAvoidCheckmate;
+    		    for (let i = 0; i < pieces.length; i++) {
+    		      const piece = pieces[i];
+								
+    		      if (piece.attacker.cellName === cellInformation.cellName) {
+    		        get().selectPieceToDefendCheck(piece)
+			    	return
+    		      }
+    		    }
+                if(cellOfPieceSelected !== null){
+                    get().movePiece(cellInformation.coordinates)
+                } 
+			    return
+			}
+
+
 
             if(cellInformation.piece === '' && cellOfPieceSelected === null) return 
 
@@ -48,7 +74,57 @@ export const useChessManager = create<ChessBoardState>(((
         selectPieceToMove: (cellInformation) => {
             set({ cellOfPieceSelected: cellInformation})
             const coordsOfAvailableMoves = calculateAvailableMoves(cellInformation, get().chessBoardpositions)
-            get().showAvailableMoves(coordsOfAvailableMoves)
+            get().showAvailableMoves(get().isProtectingCheck(coordsOfAvailableMoves, cellInformation))
+        },
+
+        handleCellClickWhenChceck: (cellClicked, cellOfPieceSelected) => {
+            if(cellClicked.piece[1] === 'K'){
+                get().selectPieceToMove(cellClicked)
+                return
+            } 
+            const pieces = get().pieceThatCanAvoidCheckmate;
+            for (let i = 0; i < pieces.length; i++) {
+              const piece = pieces[i];
+                            
+              if (piece.attacker.cellName === cellClicked.cellName) {
+                get().selectPieceToDefendCheck(piece)
+                return
+              }
+            }
+            if(cellOfPieceSelected !== null){
+                get().movePiece(cellClicked.coordinates)
+            } 
+        },
+
+        isProtectingCheck: (moves, cellInformation) => {
+            if(cellInformation.piece[1] === 'K') return moves
+            const { chessBoardpositions } = get()
+            const filteredMoves: ChessBoardCell["coordinates"][] = []
+            const chessBoardWithoutCellSelected = chessBoardpositions.map(row => 
+                row.map(cell => 
+                    cell.piece === cellInformation.piece 
+                        ? { ...cell, piece: "" } 
+                        : { ...cell }
+                )
+            )
+
+            const { checkState } = markCellsUnderAttack(chessBoardWithoutCellSelected)
+            console.log(checkState)
+            if (checkState.check && checkState.numberOfAttackersIsOne) {            
+                checkState.attackers?.path.forEach(cellPath => {
+                    moves.forEach(move => {
+                        if (cellPath.coordinates.col === move.col && cellPath.coordinates.row === move.row) {
+                            filteredMoves.push(move)
+                        }
+                        if(move.col === checkState.attackers?.attackerCell.coordinates.col && move.row === checkState.attackers?.attackerCell.coordinates.row){
+                            filteredMoves.push(move)
+                        }
+                    })
+                })
+                
+                return filteredMoves.length > 0 ? filteredMoves : []
+            }            
+            return moves
         },
 
         makeCoronation: (piece: string) => {
@@ -163,8 +239,32 @@ export const useChessManager = create<ChessBoardState>(((
         },
 
         updateCellsUnderAttack: () => {
-          const newBoard = markCellsUnderAttack(get().chessBoardpositions)
-          set({ chessBoardpositions: newBoard })
-        }
+          const { newBoard, checkState } = markCellsUnderAttack(get().chessBoardpositions)
+					set({ chessBoardpositions: newBoard })
+
+					if(!checkState.check){
+						set({ isCheck: false })
+						console.log('no check')
+						return
+					}	
+					console.log('check')
+					if(checkState.isCheckmate){
+						set({ isCheckMate: true })
+						console.log('checkmate')
+						return
+          }
+          
+					set({ isCheck: true })
+                    set({pieceThatCanAvoidCheckmate: (checkState.protectors.concat(checkState.blockers.map(blocker => ({
+						attacker: blocker.blocker,
+						cellToAttack: blocker.cellToDefend
+					}))))})          
+        },
+
+		selectPieceToDefendCheck: (piece) => {
+            set({ cellOfPieceSelected: piece.attacker })
+            const coordsOfAvailableMoves = [piece.cellToAttack.coordinates]
+            get().showAvailableMoves(coordsOfAvailableMoves)
+		}
     })
 )))

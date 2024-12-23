@@ -1,0 +1,85 @@
+.chess-error404 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0d9b5;
+  font-family: Arial, sans-serif;
+}
+
+.chessboard404 {
+  width: 240px;
+  height: 240px;
+  border: 2px solid #8b4513;
+  margin-right: 40px;
+}
+
+.row404 {
+  display: flex;
+}
+
+.square404 {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.white404 {
+  background-color: #f0d9b5;
+}
+
+.black404 {
+  background-color: #b58863;
+}
+
+.king404::after,
+.knight404::after,
+.pawn404::after {
+  font-size: 40px;
+  line-height: 60px;
+}
+
+.king404::after {
+  content: '♔';
+}
+
+.knight404::after {
+  content: '♘';
+}
+
+.pawn404::after {
+  content: '♙';
+}
+
+.error-message404 {
+  text-align: center;
+}
+
+.title404 {
+  font-size: 48px;
+  color: #8b4513;
+  margin-bottom: 10px;
+}
+
+p404 {
+  font-size: 18px;
+  color: #5d3a1a;
+  margin-bottom: 20px;
+}
+
+.home-link404 {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #8b4513;
+  color: #f0d9b5;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.home-link404:hover {
+  background-color: #5d3a1a;
+}
