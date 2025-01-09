@@ -1,27 +1,17 @@
 import { markCellsUnderAttack } from "./MarkCellsUnderAttack";
 
 export function startGame (): ChessBoardPositions {
-  // const Position = [
-  //   ['BRa8', 'BNb8', 'BBc8', 'BQd8', 'BKe8', 'BBf8', 'BNg8', 'BRh8'],
-  //   ['BPa7', 'BPb7', 'BPc7', 'BPd7', 'BPe7', 'BPf7', 'BPg7', 'BPh7'],
-  //   ['', '', '', '', '', '', '', ''],
-  //   ['', '', '', '', '', '', '', ''],
-  //   ['', '', '', '', '', '', '', ''],
-  //   ['', '', '', '', '', '', '', ''],
-  //   ['WPa2', 'WPb2', 'WPc2', 'WPd2', 'WPe2', 'WPf2', 'WPg2', 'WPh2'],
-  //   ['WRa1', 'WNb1', 'WBc1', 'WQd1', 'WKe1', 'WBf1', 'WNg1', 'WRh1']
-  // ]
-
   const Position = [
-    ['', '', '', 'WK2', '', '', '', ''],
-    ['', '', '', 'WR', '', '', '', ''],
-    ['BR', '', '', '', '', '', '', ''],
+    ['BRa8', 'BNb8', 'BBc8', 'BQd8', 'BKe8', 'BBf8', 'BNg8', 'BRh8'],
+    ['BPa7', 'BPb7', 'BPc7', 'BPd7', 'BPe7', 'BPf7', 'BPg7', 'BPh7'],
     ['', '', '', '', '', '', '', ''],
     ['', '', '', '', '', '', '', ''],
-    ['', '', '', '', '', '', 'BB', ''],
     ['', '', '', '', '', '', '', ''],
-    ['', '', '', 'BK2', '', '', '', '']
-  ];
+    ['', '', '', '', '', '', '', ''],
+    ['WPa2', 'WPb2', 'WPc2', 'WPd2', 'WPe2', 'WPf2', 'WPg2', 'WPh2'],
+    ['WRa1', 'WNb1', 'WBc1', 'WQd1', 'WKe1', 'WBf1', 'WNg1', 'WRh1']
+  ]
+
   
 
   
@@ -63,5 +53,6 @@ export function startGame (): ChessBoardPositions {
   })
 
   const { newBoard } = markCellsUnderAttack(initialPosition)
+
   return newBoard
 }

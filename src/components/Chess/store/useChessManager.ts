@@ -37,7 +37,7 @@ export const useChessManager = create<ChessBoardState>(((
     		    for (let i = 0; i < pieces.length; i++) {
     		      const piece = pieces[i];
 								
-    		      if (piece.attacker.cellName === cellInformation.cellName) {
+    		      if (piece.protector.cellName === cellInformation.cellName) {
     		        get().selectPieceToDefendCheck(piece)
 			    	return
     		      }
@@ -86,7 +86,7 @@ export const useChessManager = create<ChessBoardState>(((
             for (let i = 0; i < pieces.length; i++) {
               const piece = pieces[i];
                             
-              if (piece.attacker.cellName === cellClicked.cellName) {
+              if (piece.protector.cellName === cellClicked.cellName) {
                 get().selectPieceToDefendCheck(piece)
                 return
               }
@@ -109,7 +109,6 @@ export const useChessManager = create<ChessBoardState>(((
             )
 
             const { checkState } = markCellsUnderAttack(chessBoardWithoutCellSelected)
-            console.log(checkState)
             if (checkState.check && checkState.numberOfAttackersIsOne) {            
                 checkState.attackers?.path.forEach(cellPath => {
                     moves.forEach(move => {
@@ -239,31 +238,34 @@ export const useChessManager = create<ChessBoardState>(((
         },
 
         updateCellsUnderAttack: () => {
-          const { newBoard, checkState } = markCellsUnderAttack(get().chessBoardpositions)
-					set({ chessBoardpositions: newBoard })
+            const { newBoard, checkState } = markCellsUnderAttack(get().chessBoardpositions)
+		    set({ chessBoardpositions: newBoard })
 
-					if(!checkState.check){
-						set({ isCheck: false })
-						console.log('no check')
-						return
-					}	
-					console.log('check')
-					if(checkState.isCheckmate){
-						set({ isCheckMate: true })
-						console.log('checkmate')
-						return
-          }
+		    if(!checkState.check){
+		    	set({ isCheck: false })
+		    	console.log('no check')
+		    	return
+		    }	
+		
+            console.log('check')
+		    if(checkState.isCheckmate){
+		    	set({ isCheckMate: true })
+		    	console.log('checkmate')
+		    	return
+            }
           
-					set({ isCheck: true })
-                    set({pieceThatCanAvoidCheckmate: (checkState.protectors.concat(checkState.blockers.map(blocker => ({
-						attacker: blocker.blocker,
-						cellToAttack: blocker.cellToDefend
-					}))))})          
+			set({ isCheck: true })
+            set({pieceThatCanAvoidCheckmate: checkState.allDefenders})          
+            console.log(checkState.allDefenders)
+            console.log(get().pieceThatCanAvoidCheckmate)
         },
 
 		selectPieceToDefendCheck: (piece) => {
-            set({ cellOfPieceSelected: piece.attacker })
-            const coordsOfAvailableMoves = [piece.cellToAttack.coordinates]
+            set({ cellOfPieceSelected: piece.protector })
+            const coordsOfAvailableMoves: ChessBoardCell['coordinates'][] = []
+            piece.cellToProtect.forEach(cell => {
+                coordsOfAvailableMoves.push(cell.coordinates)
+            })
             get().showAvailableMoves(coordsOfAvailableMoves)
 		}
     })

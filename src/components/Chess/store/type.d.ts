@@ -14,13 +14,26 @@ interface ChessBoardCell {
   
     coordinates: { col: number, row: number }       
 }
+
+type CheckStatus = {
+  protectors: Array<{attacker: ChessBoardCell, cellToAttack: ChessBoardCell[]}>, 
+  blockers: Array<{blocker: ChessBoardCell, cellToDefend: ChessBoardCell[]}>, 
+  allDefenders: Array<{protector: ChessBoardCell, cellToProtect: ChessBoardCell[]}>,
+  moves: Array<{ row: number, col: number }>, 
+  isCheckmate: boolean, 
+  check: boolean, 
+  attackers: {path: ChessBoardCell[], attackerCell: ChessBoardCell} | null, 
+  numberOfAttackersIsOne: boolean,
+  colorOfCheck: string | null
+}
+  
   
 interface ChessBoardState {
     chessBoardpositions: ChessBoardPositions;
     cellOfPieceSelected: ChessBoardCell | null;
     isCheckMate: boolean;
     isCheck: boolean;
-    pieceThatCanAvoidCheckmate: Array<{attacker: ChessBoardCell, cellToAttack: ChessBoardCell}>;
+    pieceThatCanAvoidCheckmate: CheckStatus['allDefenders'];
     coronation: {
         status: boolean;
         coordinates: { col: number; row: number };
@@ -48,7 +61,7 @@ interface ChessBoardState {
 
     handleCellClickWhenChceck: (cell: ChessBoardCell, cellOfPieceSelected: ChessBoardCell | null) => void;
 
-    selectPieceToDefendCheck: (piece: {attacker: ChessBoardCell, cellToAttack: ChessBoardCell}) => void;
+    selectPieceToDefendCheck: (defenders: {protector: ChessBoardCell, cellToProtect: ChessBoardCell[]}) => void;
 
     isProtectingCheck: (coords: {col: number; row: number;}[], cell: ChessBoardCell) => {col: number; row: number;}[];
 }
