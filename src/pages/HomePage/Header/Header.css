@@ -1,0 +1,93 @@
+.HomePage-Header-header {
+  background-color: #161b22;
+  border-bottom: 1px solid #30363d;
+}
+
+.HomePage-Header-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.HomePage-Header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.HomePage-Header-logo {
+  font-size: 1.55rem;
+  font-weight: 600;
+  background: linear-gradient(to right, #10b981, #3b82f6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.02em;
+}
+
+.HomePage-Header-nav {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .HomePage-Header-nav {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+
+  header .HomePage-Header-menu-button {
+    display: none;
+  }
+}
+
+.HomePage-Header-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #9ca3af;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.HomePage-Header-link:hover {
+  color: #ffffff;
+}
+
+.HomePage-Header-link-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.HomePage-Header-link-label {
+  font-size: 1rem;
+}
+
+.HomePage-Header-menu-button {
+  display: block;
+  color: #9ca3af;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.HomePage-Header-menu-button:hover {
+  color: #ffffff;
+}
+
+.HomePage-Header-menu-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.HomePage-Header-mobile-menu {
+  background-color: #1c2128;
+  padding: 16px;
+}
+
+.HomePage-Header-mobile-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

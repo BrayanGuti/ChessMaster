@@ -141,7 +141,6 @@ function kingMove (
 function castling (chessBoard: ChessBoardPositions, row: number, col: number) {
   const castlingMoves: ChessBoardCell['coordinates'][] = []
   if(col === 4 && (row === 0 || row === 7)){
-    console.log(row, col)
     const rookFeatures = [[0, -1], [7, 1]]
     
     rookFeatures.forEach(rook => {

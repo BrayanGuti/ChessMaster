@@ -4,6 +4,8 @@ import { useChessManager } from "../store/useChessManager"
 export function UseChessCellCharacteristics(cellInformation: ChessBoardCell) {
   const pieceSelected = useChessManager(state => state.cellOfPieceSelected)
   const clickCell = useChessManager(state => state.clickCell)
+  const turn = useChessManager(state => state.turn)
+  const colorInCheck = useChessManager(state => state.checkState?.colorOfCheck)
 
   const {
     color,
@@ -35,8 +37,8 @@ export function UseChessCellCharacteristics(cellInformation: ChessBoardCell) {
       clickCell(cellInformation)
     }
 
-    return { color, corner, handleCellClick, youCanMoveHere, thisIsTheSelectedPiece }
-  }, [cellInformation, pieceSelected, clickCell])
+    return { color, corner, handleCellClick, youCanMoveHere, thisIsTheSelectedPiece, turn, colorInCheck}
+  }, [cellInformation, pieceSelected, clickCell, turn, colorInCheck])
 
-  return { color, corner, handleCellClick, youCanMoveHere, thisIsTheSelectedPiece }
+  return { color, corner, handleCellClick, youCanMoveHere, thisIsTheSelectedPiece, turn, colorInCheck }
 }

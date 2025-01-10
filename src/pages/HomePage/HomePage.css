@@ -1,0 +1,8 @@
+.HomePage-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #0d1117;
+  color: #f1f5f9;
+  font-family: 'Sans-Serif', Arial, sans-serif;
+}

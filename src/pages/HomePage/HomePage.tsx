@@ -1,16 +1,17 @@
 import './HomePage.css'
-import { Header } from '../../components/Header/Header'
-import { Footer } from '../../components/Footer/Footer'
-import { Main } from '../../components/Main/Main'
+import { Header } from './Header/Header'
+import { Footer } from './Footer/Footer'
+import { Main } from './Main/Main'
+
 
 export function HomePage() {
-
   return (
-    <>
-      <Header/>
-      <Main/>
-      <Footer/>
-    </>
+    <div className="HomePage-container">
+      <Header />
+      <Main />
+      <Footer />
+    </div>
   )
 }
+
 

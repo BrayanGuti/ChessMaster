@@ -31,15 +31,17 @@ type CheckStatus = {
 interface ChessBoardState {
     chessBoardpositions: ChessBoardPositions;
     cellOfPieceSelected: ChessBoardCell | null;
-    isCheckMate: boolean;
-    isCheck: boolean;
-    pieceThatCanAvoidCheckmate: CheckStatus['allDefenders'];
+    checkState: CheckStatus;
     coronation: {
         status: boolean;
         coordinates: { col: number; row: number };
         cellName: string;
     }
     turn: 'W' | 'B';
+
+    soundToPlay: string | null;
+    
+    setSoundToPlay: (sound: string | null) => void;
     
     selectPieceToMove: (cellInformation: ChessBoardCell) => void;
     

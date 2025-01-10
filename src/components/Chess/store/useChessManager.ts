@@ -11,44 +11,36 @@ export const useChessManager = create<ChessBoardState>(((
     (set, get) => ({
         chessBoardpositions: startGame(),
         turn: 'W',
-        isCheckMate: false,
-        isCheck: false,
+        checkState: {
+          protectors: [], 
+          blockers: [], 
+          allDefenders: [],
+          moves: [], 
+          isCheckmate: false, 
+          check: false, 
+          attackers: null, 
+          numberOfAttackersIsOne: false,
+          colorOfCheck: null
+        },
         cellOfPieceSelected: null,
-        pieceThatCanAvoidCheckmate: [],
         coronation: {
             status: false,
             coordinates: { col: 0, row: 0 },
             cellName: ''
         },
+        soundToPlay: null, 
+        setSoundToPlay: (sound) => set({ soundToPlay: sound }),
     
         clickCell: (cellInformation) => {
-            const { isCheckMate, isCheck, cellOfPieceSelected, coronation} = get()
+            const { cellOfPieceSelected, coronation, checkState} = get()
 
             if(coronation.status) return
-            if(isCheckMate) return
-            if(isCheck)
+            if(checkState.isCheckmate) return
 
-			if(get().isCheck){
-			    if(cellInformation.piece[1] === 'K'){
-			    	get().selectPieceToMove(cellInformation)
-			    	return
-			    } 
-			    const pieces = get().pieceThatCanAvoidCheckmate;
-    		    for (let i = 0; i < pieces.length; i++) {
-    		      const piece = pieces[i];
-								
-    		      if (piece.protector.cellName === cellInformation.cellName) {
-    		        get().selectPieceToDefendCheck(piece)
-			    	return
-    		      }
-    		    }
-                if(cellOfPieceSelected !== null){
-                    get().movePiece(cellInformation.coordinates)
-                } 
-			    return
+			if(checkState.check){
+                get().handleCellClickWhenChceck(cellInformation, cellOfPieceSelected)
+                return
 			}
-
-
 
             if(cellInformation.piece === '' && cellOfPieceSelected === null) return 
 
@@ -82,7 +74,7 @@ export const useChessManager = create<ChessBoardState>(((
                 get().selectPieceToMove(cellClicked)
                 return
             } 
-            const pieces = get().pieceThatCanAvoidCheckmate;
+            const pieces = get().checkState.allDefenders;
             for (let i = 0; i < pieces.length; i++) {
               const piece = pieces[i];
                             
@@ -240,24 +232,23 @@ export const useChessManager = create<ChessBoardState>(((
         updateCellsUnderAttack: () => {
             const { newBoard, checkState } = markCellsUnderAttack(get().chessBoardpositions)
 		    set({ chessBoardpositions: newBoard })
-
-		    if(!checkState.check){
-		    	set({ isCheck: false })
-		    	console.log('no check')
-		    	return
-		    }	
-		
-            console.log('check')
+            set({ checkState })
+            
+		    
 		    if(checkState.isCheckmate){
-		    	set({ isCheckMate: true })
 		    	console.log('checkmate')
-		    	return
+                get().setSoundToPlay('game-over')
+                return
             }
-          
-			set({ isCheck: true })
-            set({pieceThatCanAvoidCheckmate: checkState.allDefenders})          
-            console.log(checkState.allDefenders)
-            console.log(get().pieceThatCanAvoidCheckmate)
+            
+            if(!checkState.check){
+                get().setSoundToPlay(randomSound('move-1', 'move-2'))
+                console.log('no check')
+		    	return
+		    }
+            
+            get().setSoundToPlay('check')
+            console.log('check')
         },
 
 		selectPieceToDefendCheck: (piece) => {
@@ -270,3 +261,7 @@ export const useChessManager = create<ChessBoardState>(((
 		}
     })
 )))
+
+function randomSound(sound1: string, sound2: string) {
+    return Math.random() < 0.5 ? sound1 : sound2
+}

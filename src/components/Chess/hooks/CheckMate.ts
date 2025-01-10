@@ -24,8 +24,6 @@ export function isCheckmate(Board: ChessBoardPositions, deepLooking = false): Ch
   checkState.colorOfCheck = kingInCheck.piece[0]
 
   if(deepLooking){
-    console.log(kingInCheck.isUnderAttackBy)
-    console.log('este es el rey en jaque:', kingInCheck.piece)
     return checkState
   }
 
@@ -103,8 +101,6 @@ function thatPieceCanBeKilledBy(chessCell: ChessBoardCell): Array<{attacker: Che
 }
 
 function getProtectors(cellToAttack: ChessBoardCell, board: ChessBoardPositions): CheckStatus['protectors'] {
-  console.log('estos son los potenciales protectores:', thatPieceCanBeKilledBy(cellToAttack))
-  console.log('tablero', board)
 
   const potentialProtectors = thatPieceCanBeKilledBy(cellToAttack)
     .filter(({ attacker }) => isCurrentlyProtector(board, attacker, cellToAttack))

@@ -1,0 +1,134 @@
+.HomePage-Main-main {
+    flex-grow: 1;
+  }
+  
+  .HomePage-Main-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 16px;
+  }
+  
+  .HomePage-Main-content {
+    display: grid;
+    gap: 32px;
+    grid-template-columns: 1fr;
+  }
+  
+  @media (min-width: 768px) {
+    .HomePage-Main-content {
+      grid-template-columns: 1fr 400px;
+    }
+  }
+  
+  .HomePage-Main-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+  
+  .HomePage-Main-info {
+    order: 2;
+  }
+  
+  @media (min-width: 768px) {
+    .HomePage-Main-info {
+      order: 1;
+    }
+  }
+  
+  .HomePage-Main-card {
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 16px;
+  }
+  
+  .HomePage-Main-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+  
+  .HomePage-Main-description {
+    color: #9ca3af;
+    margin-bottom: 24px;
+  }
+  
+  .HomePage-Main-stats-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1fr;
+  }
+  
+  @media (min-width: 640px) {
+    .HomePage-Main-stats-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  .HomePage-Main-stat {
+    text-align: center;
+    background-color: #0d1117;
+    border-radius: 8px;
+    padding: 16px;
+  }
+  
+  .HomePage-Main-stat-icon {
+    color: #10b981;
+    width: 24px;
+    height: 24px;
+    margin: 0 auto 8px;
+  }
+  
+  .HomePage-Main-stat-label {
+    font-size: 0.875rem;
+    color: #9ca3af;
+  }
+  
+  .HomePage-Main-stat-value {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  
+  .HomePage-Main-board {
+    order: 1;
+  }
+  
+  @media (min-width: 768px) {
+    .HomePage-Main-board {
+      order: 2;
+    }
+  }
+  
+  .HomePage-Main-board-wrapper {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .HomePage-Main-board-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .HomePage-Main-board-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom right, #1c2128, #161b22);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .HomePage-Main-board-overlay {
+    position: absolute;
+    inset: 0;
+    background-image: url('/path-to-grid-pattern.png');
+    opacity: 0.05;
+  }
+  

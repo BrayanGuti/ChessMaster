@@ -20,7 +20,6 @@ export function isCastling (KingCoords: ChessBoardCell["coordinates"], destinyCo
   
     const direction = destinyCoords.col === 2 ? 1 : -1
   
-    console.log('direction', direction)
     const newColumn = destinyCoords.col + direction
   
     chessBoard[row][column].piece = ''

@@ -1,0 +1,63 @@
+.HomePage-Footer-footer {
+    background-color: #161b22;
+    border-top: 1px solid #30363d;
+  }
+  
+  .HomePage-Footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 16px;
+  }
+  
+  .HomePage-Footer-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  @media (min-width: 768px) {
+    .HomePage-Footer-content {
+      flex-direction: row;
+    }
+  }
+  
+  .HomePage-Footer-text {
+    font-size: 0.875rem;
+    color: #9ca3af;
+  }
+  
+  .HomePage-Footer-icons {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  
+  .HomePage-Footer-link {
+    color: #9ca3af;
+    transition: color 0.3s;
+    text-decoration: none;
+  }
+  
+  .HomePage-Footer-link:hover {
+    color: #ffffff;
+  }
+  
+  .HomePage-Footer-icon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .HomePage-Footer-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+  
