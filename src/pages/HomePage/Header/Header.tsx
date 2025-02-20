@@ -17,8 +17,6 @@ export function Header() {
             ChessMaster
           </Link>
           <nav className="HomePage-Header-nav">
-            <NavLink href="/play" icon={Crown} label="Play" />
-            <NavLink href="/learn" icon={BookOpen} label="Learn" />
             <NavLink href="/settings" icon={Settings} label="Settings" />
           </nav>
           <button 

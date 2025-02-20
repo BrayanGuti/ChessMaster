@@ -1,6 +1,5 @@
 import './Main.css';
 import { ChessBoard } from '../../../components/Chess/ChessBoard/ChessBoard';
-import { Trophy, Clock, Users } from 'lucide-react';
 
 export function Main() {
   return (
@@ -10,23 +9,28 @@ export function Main() {
           <div className="HomePage-Main-grid">
             <div className="HomePage-Main-info">
               <div className="HomePage-Main-card">
-                <h1 className="HomePage-Main-title">Welcome to ChessMaster</h1>
+                <h2 className="HomePage-Main-title">Welcome to ChessMaster</h2>
                 <p className="HomePage-Main-description">
-                  Play chess online, improve your strategy, and join our growing community of players.
+                  This game has been built without using libraries that simplify chess logic, ensuring a unique and personalized experience. Developed with React.js and powered by Zustand, it enables efficient global state management for a smooth and intuitive performance. Additionally, it features an optimized interface for an immersive user experience. Every move has been meticulously programmed to deliver dynamic and challenging matches.
                 </p>
-                <div className="HomePage-Main-stats-grid">
-                  {[
-                    { icon: Trophy, label: 'Tournaments', value: 'Daily' },
-                    { icon: Clock, label: 'Game Modes', value: 'Multiple' },
-                    { icon: Users, label: 'Players', value: '10,000+' },
-                  ].map(({ icon: Icon, label, value }) => (
-                    <div key={label} className="HomePage-Main-stat">
-                      <Icon className="HomePage-Main-stat-icon" />
-                      <div className="HomePage-Main-stat-label">{label}</div>
-                      <div className="HomePage-Main-stat-value">{value}</div>
-                    </div>
-                  ))}
-                </div>
+              </div>
+            </div>
+            <div className="HomePage-Main-info">
+              <div className="HomePage-Main-card">
+                <h2 className="HomePage-Main-title">Game Features</h2>
+                <p className="HomePage-Main-description">
+                  This chess project has been designed with precise logic, staying true to the real game by correctly implementing the following advanced rules:  
+                  <br /><br />
+                  ♟️ <strong>Castling</strong>: Protect your king and improve your position's safety.  
+                  <br />
+                  ⚔️ <strong>Check</strong>: Put the enemy king in trouble and force your opponent to react.  
+                  <br />
+                  🏆 <strong>Checkmate</strong>: Secure victory with a decisive move.  
+                  <br />
+                  👑 <strong>Pawn Promotion</strong>: Promote your pawn and give your game a strategic twist.  
+                  <br />
+                  Every detail has been meticulously programmed to provide an authentic and challenging experience!
+                </p>
               </div>
             </div>
           </div>

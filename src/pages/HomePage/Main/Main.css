@@ -16,7 +16,7 @@
   
   @media (min-width: 768px) {
     .HomePage-Main-content {
-      grid-template-columns: 1fr 400px;
+      grid-template-columns: 1fr 0.8fr;
     }
   }
   
@@ -51,19 +51,10 @@
   
   .HomePage-Main-description {
     color: #9ca3af;
-    margin-bottom: 24px;
-  }
-  
-  .HomePage-Main-stats-grid {
-    display: grid;
-    gap: 16px;
-    grid-template-columns: 1fr;
-  }
-  
-  @media (min-width: 640px) {
-    .HomePage-Main-stats-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
+    font-size: rem;
+    line-height: 1.6;
+    margin-left: auto;
+    margin-right: auto;
   }
   
   .HomePage-Main-stat {

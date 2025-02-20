@@ -1,6 +1,6 @@
 import './Footer.css';
 import { Link } from 'react-router-dom'
-import { Github, Twitter, LucideLinkedin } from 'lucide-react';
+import { Github, LucideLinkedin } from 'lucide-react';
 
 export function Footer() {
   return (
@@ -11,9 +11,8 @@ export function Footer() {
             &copy; {new Date().getFullYear()} ChessMaster by BrayanGuti.
             </div>
           <div className="HomePage-Footer-icons">
-            <SocialLink href="https://twitter.com" icon={Twitter} label="Twitter" />
-            <SocialLink href="https://github.com" icon={Github} label="GitHub" />
-            <SocialLink href="https://Linkedin.com" icon={LucideLinkedin} label="Linkedin" />
+            <SocialLink href="https://github.com/BrayanGuti" icon={Github} label="GitHub" />
+            <SocialLink href="https://www.linkedin.com/in/brayan-gutierrez-b16048260/" icon={LucideLinkedin} label="Linkedin" />
           </div>
         </div>
       </div>
