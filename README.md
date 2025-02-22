@@ -17,10 +17,10 @@ ChessMaster es un juego de ajedrez en línea desarrollado con React.js y Zustand
 ## 🔧 Instalación y uso
 ChessMaster está alojado en **GitHub Pages**, por lo que no requiere instalación. Solo accede al siguiente enlace para jugar:
 
-🔗 **[Jugar ChessMaster](#)** (Reemplazar con el enlace real de GitHub Pages cuando esté disponible)
+🔗 **[Jugar ChessMaster](#)** 
 
 ## 👤 Autor
-Desarrollado por **BrayanGuti** [(GitHub)](https://github.com/BrayanGuti)
+Desarrollado por **BrayanGuti** [(GitHub)](https://brayanguti.github.io/ChessMaster/)
 
 ---
 
