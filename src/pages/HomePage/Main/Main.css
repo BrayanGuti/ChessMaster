@@ -9,13 +9,15 @@
   }
   
   .HomePage-Main-content {
-    display: grid;
+    display: flex;
     gap: 32px;
     grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column-reverse;
   }
-  
-  @media (min-width: 768px) {
+  @media (min-width: 900px) {
     .HomePage-Main-content {
+      display: grid;
       grid-template-columns: 1fr 0.8fr;
     }
   }

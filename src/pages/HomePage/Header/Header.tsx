@@ -1,7 +1,7 @@
 import './Header.css';
 import { useState } from 'react';
 import { Link } from 'react-router-dom'
-import { Crown, BookOpen, Settings, Menu, X } from 'lucide-react';
+import { Settings, Menu, X } from 'lucide-react';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -30,8 +30,6 @@ export function Header() {
       {isMenuOpen && (
         <div className="HomePage-Header-mobile-menu">
           <nav className="HomePage-Header-mobile-nav">
-            <NavLink href="/play" icon={Crown} label="Play" />
-            <NavLink href="/learn" icon={BookOpen} label="Learn" />
             <NavLink href="/settings" icon={Settings} label="Settings" />
           </nav>
         </div>
