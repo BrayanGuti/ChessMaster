@@ -20,9 +20,5 @@ ChessMaster está alojado en **GitHub Pages**, por lo que no requiere instalaci�
 🔗 **[Jugar ChessMaster](#)** 
 
 ## 👤 Autor
-Desarrollado por **BrayanGuti** [(GitHub)](https://brayanguti.github.io/ChessMaster/)
-
----
-
-¡Disfruta de una partida de ajedrez con ChessMaster! ♟️🔥
+Desarrollado por **BrayanGuti** [(GitHub)](https://chess-master-phi.vercel.app/)
  
