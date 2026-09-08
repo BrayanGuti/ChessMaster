@@ -1,24 +1,21 @@
-# ChessMaster
+# ♟️ ChessMaster
 
-ChessMaster es un juego de ajedrez en línea desarrollado con React.js y Zustand, que permite partidas 1v1 de forma local con una interfaz gráfica intuitiva y dinámica.
+A local 1v1 chess game built with **React.js** and **Zustand**.
 
-## 🚀 Tecnologías utilizadas
-- **React.js** - Para la construcción de la interfaz de usuario.
-- **Zustand** - Para la gestión del estado global.
+## 🔗 Live demo
+[Play ChessMaster](https://chess-master-cvg0svtvz-brayangutis-projects.vercel.app/)
 
-## 🎮 Modo de juego
-- Solo cuenta con un modo **1v1 local**, ideal para jugar con un amigo en el mismo dispositivo.
-- No incluye inteligencia artificial (IA), por lo que no hay opción de jugar contra la máquina.
+## Tech stack
+React.js · Zustand
 
-## 🖥️ Interfaz gráfica
-- Representación visual completa del tablero de ajedrez y las piezas.
-- Movimientos válidos resaltados para una mejor experiencia de juego.
+## Game Features
+This chess project has been designed with precise logic, staying true to the real game by correctly implementing the following advanced rules:
 
-## 🔧 Instalación y uso
-ChessMaster está alojado en **GitHub Pages**, por lo que no requiere instalación. Solo accede al siguiente enlace para jugar:
+- ♟️ Castling: Protect your king and improve your position's safety.
+- ⚔️ Check: Put the enemy king in trouble and force your opponent to react.
+- 🏆 Checkmate: Secure victory with a decisive move.
+- 👑 Pawn Promotion: Promote your pawn and give your game a strategic twist.
+Every detail has been meticulously programmed to provide an authentic and challenging experience!
 
-🔗 **[Jugar ChessMaster](#)** 
-
-## 👤 Autor
-Desarrollado por **BrayanGuti** [(GitHub)](https://chess-master-phi.vercel.app/)
- 
+## 👤 Author
+[BrayanGuti](https://github.com/BrayanGuti)
