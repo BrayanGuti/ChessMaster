@@ -1,5 +1,8 @@
 # ♟️ ChessMaster
 
+<img width="442" height="443" alt="image" src="https://github.com/user-attachments/assets/28933636-3756-4911-8cfc-27e28ffbe500" />
+
+
 A local 1v1 chess game built with **React.js** and **Zustand**.
 
 ## 🔗 Live demo
