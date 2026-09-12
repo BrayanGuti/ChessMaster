@@ -1,24 +1,40 @@
+<div align="center">
+
 # ♟️ ChessMaster
 
-<img width="442" height="443" alt="image" src="https://github.com/user-attachments/assets/28933636-3756-4911-8cfc-27e28ffbe500" />
+**A local 1v1 chess game built with React.js and Zustand**
 
+<img width="420" alt="ChessMaster board preview" src="https://github.com/user-attachments/assets/28933636-3756-4911-8cfc-27e28ffbe500" />
 
-A local 1v1 chess game built with **React.js** and **Zustand**.
+<br/>
 
-## 🔗 Live demo
-[Play ChessMaster](https://chess-master-cvg0svtvz-brayangutis-projects.vercel.app/)
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
+[![Zustand](https://img.shields.io/badge/Zustand-433E38?style=for-the-badge&logo=react&logoColor=white)](https://github.com/pmndrs/zustand)
+[![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://chess-master-cvg0svtvz-brayangutis-projects.vercel.app/)
 
-## Tech stack
-React.js · Zustand
+**[▶️ Play ChessMaster](https://chess-master-cvg0svtvz-brayangutis-projects.vercel.app/)**
 
-## Game Features
-This chess project has been designed with precise logic, staying true to the real game by correctly implementing the following advanced rules:
+</div>
 
-- ♟️ Castling: Protect your king and improve your position's safety.
-- ⚔️ Check: Put the enemy king in trouble and force your opponent to react.
-- 🏆 Checkmate: Secure victory with a decisive move.
-- 👑 Pawn Promotion: Promote your pawn and give your game a strategic twist.
-Every detail has been meticulously programmed to provide an authentic and challenging experience!
+---
+
+## 🕹️ About
+
+ChessMaster is a local two-player chess game built from scratch with **React.js** for the UI and **Zustand** for fast, minimal state management. The goal was to stay faithful to real chess rules while keeping the codebase clean and the interface simple to use.
+Every rule has been carefully implemented to deliver an authentic, challenging chess experience.
+
+## 🛠️ Tech Stack
+
+- **React.js** — component-based UI
+- **Zustand** — lightweight global state management
+
 
 ## 👤 Author
-[BrayanGuti](https://github.com/BrayanGuti)
+
+Built by **[BrayanGuti](https://github.com/BrayanGuti)**
+
+<div align="center">
+
+⭐ If you like this project, consider giving it a star!
+
+</div>
