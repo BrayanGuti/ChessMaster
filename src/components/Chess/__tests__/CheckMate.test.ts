@@ -1,6 +1,24 @@
 import { describe, it, expect } from 'vitest'
-import { isCheckmate } from '../hooks/CheckMate'
-import { startingPosition } from './fixtures'
+import { isCheckmate, hasAnyLegalMove } from '../hooks/CheckMate'
+import { markCellsUnderAttack } from '../hooks/MarkCellsUnderAttack'
+import { startingPosition, buildBoard } from './fixtures'
+
+/**
+ * Textbook corner stalemate: black king on a8 cannot move to a7/b7/b8
+ * (all covered by the white queen on b6), and it is not currently in check.
+ */
+function positionWithGenuineStalemate() {
+  return buildBoard([
+    ['BK', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['', 'WQ', 'WK', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+  ])
+}
 
 describe('CheckMate — Check and Checkmate detection', () => {
   it('starting position is not checkmate', () => {
@@ -69,5 +87,16 @@ describe('CheckMate — Check and Checkmate detection', () => {
     const board = startingPosition()
     const status = isCheckmate(board, false)
     expect(typeof status.numberOfAttackersIsOne).toBe('boolean')
+  })
+
+  it('hasAnyLegalMove is true for black in the starting position', () => {
+    const board = startingPosition()
+    expect(hasAnyLegalMove(board, 'B')).toBe(true)
+  })
+
+  it('hasAnyLegalMove is false for black in a stalemate position (king not in check)', () => {
+    const { newBoard, checkState } = markCellsUnderAttack(positionWithGenuineStalemate())
+    expect(checkState.check).toBe(false)
+    expect(hasAnyLegalMove(newBoard, 'B')).toBe(false)
   })
 })

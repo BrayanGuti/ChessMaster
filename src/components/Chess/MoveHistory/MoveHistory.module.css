@@ -1,0 +1,44 @@
+.moveHistory {
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.table th {
+  position: sticky;
+  top: 0;
+  background: #1a1a1a;
+  color: #888888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.7rem;
+  text-align: left;
+  padding: 8px 10px;
+}
+
+.turnHeader {
+  width: 32px;
+}
+
+.table td {
+  padding: 6px 10px;
+  color: #ffffff;
+}
+
+.turnNumber {
+  color: #888888;
+}
+
+.table tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.03);
+}

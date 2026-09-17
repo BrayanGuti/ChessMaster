@@ -1,0 +1,29 @@
+.gameSection {
+  background-color: #0f0f0f;
+  padding: 80px 32px;
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 720px;
+  padding: 24px;
+  background-color: #0f0f0f;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.board {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .gameSection {
+    padding: 48px 16px;
+  }
+
+  .container {
+    padding: 16px;
+  }
+}

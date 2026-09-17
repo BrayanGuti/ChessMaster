@@ -23,6 +23,7 @@ export type CheckStatus = {
   allDefenders: Array<{protector: ChessBoardCell, cellToProtect: ChessBoardCell[]}>,
   moves: Array<{ row: number, col: number }>,
   isCheckmate: boolean,
+  isStalemate: boolean,
   check: boolean,
   attackers: {path: ChessBoardCell[], attackerCell: ChessBoardCell} | null,
   numberOfAttackersIsOne: boolean,
@@ -42,7 +43,11 @@ export interface ChessBoardState {
 
     soundToPlay: string | null;
 
+    moveHistory: MoveRecord[];
+
     setSoundToPlay: (sound: string | null) => void;
+
+    addMoveRecord: (record: MoveRecord) => void;
 
     selectPieceToMove: (cellInformation: ChessBoardCell) => void;
 
@@ -61,6 +66,8 @@ export interface ChessBoardState {
     makeCoronation: (piece: string) => void;
 
     changeTurn: () => void;
+
+    resetGame: () => void;
 
     handleCellClickWhenCheck: (cell: ChessBoardCell, cellOfPieceSelected: ChessBoardCell | null) => void;
 
@@ -100,6 +107,7 @@ export interface ChessBoardProps {
   showTurnIndicator?: boolean;
   showMoveHistory?: boolean;
   showCapturedPieces?: boolean;
+  showPlayerBadges?: boolean;
   onGameEnd?: (result: GameEndResult) => void;
   onMove?: (move: MoveRecord) => void;
   className?: string;

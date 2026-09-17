@@ -4,13 +4,14 @@ import { ChessBoardPositions, CheckStatus, ChessBoardCell } from "../store/types
 
 export function isCheckmate(Board: ChessBoardPositions, deepLooking = false): CheckStatus {
   const checkState: CheckStatus = {
-    protectors: [], 
-    blockers: [], 
+    protectors: [],
+    blockers: [],
     allDefenders: [],
-    moves: [], 
-    isCheckmate: false, 
-    check: false, 
-    attackers: null, 
+    moves: [],
+    isCheckmate: false,
+    isStalemate: false,
+    check: false,
+    attackers: null,
     numberOfAttackersIsOne: false,
     colorOfCheck: null
   }
@@ -48,6 +49,44 @@ export function isCheckmate(Board: ChessBoardPositions, deepLooking = false): Ch
   }
 
   return checkState
+}
+
+export function hasAnyLegalMove(board: ChessBoardPositions, color: string): boolean {
+  for (const row of board) {
+    for (const cell of row) {
+      if (cell.piece[0] !== color) continue
+
+      const moves = calculateAvailableMoves(cell, board)
+      for (const move of moves) {
+        if (!wouldLeaveKingInCheck(board, cell, move, color)) {
+          return true
+        }
+      }
+    }
+  }
+  return false
+}
+
+function wouldLeaveKingInCheck(
+  board: ChessBoardPositions,
+  fromCell: ChessBoardCell,
+  toCoords: { row: number, col: number },
+  color: string
+): boolean {
+  const simulatedBoard = board.map(row =>
+    row.map(cell => {
+      if (cell.coordinates.row === toCoords.row && cell.coordinates.col === toCoords.col) {
+        return { ...cell, piece: fromCell.piece }
+      }
+      if (cell.coordinates.row === fromCell.coordinates.row && cell.coordinates.col === fromCell.coordinates.col) {
+        return { ...cell, piece: '', hasMoved: true }
+      }
+      return cell
+    })
+  )
+
+  const { checkState } = markCellsUnderAttack(simulatedBoard, true)
+  return checkState.check && checkState.colorOfCheck === color
 }
 
 function mergeProtectorsAndBlockers(protectors: CheckStatus['protectors'], blockers: CheckStatus['blockers']): CheckStatus['allDefenders'] {

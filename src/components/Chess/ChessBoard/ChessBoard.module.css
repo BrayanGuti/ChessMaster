@@ -18,3 +18,42 @@
   border-radius: 3%;
   position: relative;
 }
+
+.chessBoardWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.chessBoardRow {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.chessBoardRow > .chessBoard {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.sidePanel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 260px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .chessBoardRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sidePanel {
+    width: 100%;
+  }
+}

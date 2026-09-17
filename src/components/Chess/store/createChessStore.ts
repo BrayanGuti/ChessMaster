@@ -2,25 +2,29 @@ import { create, StoreApi } from 'zustand'
 import { startGame } from '../hooks/StartGame'
 import { calculateAvailableMoves } from '../hooks/CalculateMoves'
 import { markCellsUnderAttack } from '../hooks/MarkCellsUnderAttack'
+import { hasAnyLegalMove } from '../hooks/CheckMate'
 import { isCastling } from '../hooks/Castling'
-import { ChessBoardState, ChessBoardCell } from './types'
+import { ChessBoardState, ChessBoardCell, MoveRecord, CheckStatus } from './types'
+
+const INITIAL_CHECK_STATE: CheckStatus = {
+  protectors: [],
+  blockers: [],
+  allDefenders: [],
+  moves: [],
+  isCheckmate: false,
+  isStalemate: false,
+  check: false,
+  attackers: null,
+  numberOfAttackersIsOne: false,
+  colorOfCheck: null
+}
 
 export function createChessStore(): StoreApi<ChessBoardState> {
   return create<ChessBoardState>(((
     (set, get) => ({
       chessBoardpositions: startGame(),
       turn: 'W',
-      checkState: {
-        protectors: [],
-        blockers: [],
-        allDefenders: [],
-        moves: [],
-        isCheckmate: false,
-        check: false,
-        attackers: null,
-        numberOfAttackersIsOne: false,
-        colorOfCheck: null
-      },
+      checkState: { ...INITIAL_CHECK_STATE },
       cellOfPieceSelected: null,
       coronation: {
           status: false,
@@ -28,13 +32,26 @@ export function createChessStore(): StoreApi<ChessBoardState> {
           cellName: ''
       },
       soundToPlay: null,
+      moveHistory: [],
       setSoundToPlay: (sound) => set({ soundToPlay: sound }),
+
+      addMoveRecord: (record) => set(state => ({ moveHistory: [...state.moveHistory, record] })),
+
+      resetGame: () => set({
+          chessBoardpositions: startGame(),
+          turn: 'W',
+          checkState: { ...INITIAL_CHECK_STATE },
+          cellOfPieceSelected: null,
+          coronation: { status: false, coordinates: { col: 0, row: 0 }, cellName: '' },
+          soundToPlay: null,
+          moveHistory: []
+      }),
 
       clickCell: (cellInformation) => {
           const { cellOfPieceSelected, coronation, checkState} = get()
 
           if(coronation.status) return
-          if(checkState.isCheckmate) return
+          if(checkState.isCheckmate || checkState.isStalemate) return
 
           if(checkState.check){
               get().handleCellClickWhenCheck(cellInformation, cellOfPieceSelected)
@@ -137,12 +154,14 @@ export function createChessStore(): StoreApi<ChessBoardState> {
       },
 
       movePiece: (destinyCoords) => {
-          const { cellOfPieceSelected, chessBoardpositions } = get()
+          const { cellOfPieceSelected, chessBoardpositions, moveHistory } = get()
 
           if (!cellOfPieceSelected) return
 
           const targetCell = chessBoardpositions[destinyCoords.row][destinyCoords.col]
           if (targetCell?.YouCanMoveHere) {
+              const capturedPiece = targetCell.piece || null
+
               const boardWithCastling = isCastling(
                   cellOfPieceSelected.coordinates,
                   destinyCoords,
@@ -165,7 +184,18 @@ export function createChessStore(): StoreApi<ChessBoardState> {
                   })
               )
 
+              const { checkState: nextCheckState } = markCellsUnderAttack(newChessBoardPositions)
+              const record: MoveRecord = {
+                  piece: cellOfPieceSelected.piece,
+                  from: cellOfPieceSelected.cellName,
+                  to: targetCell.cellName,
+                  captured: capturedPiece,
+                  notation: buildNotation(cellOfPieceSelected.piece, targetCell.cellName, capturedPiece, nextCheckState),
+                  turnNumber: Math.floor(moveHistory.length / 2) + 1
+              }
+
               set({ chessBoardpositions: newChessBoardPositions, cellOfPieceSelected: null })
+              get().addMoveRecord(record)
               get().removeAvailableMoves()
               get().updateCellsUnderAttack()
               get().changeTurn()
@@ -230,10 +260,16 @@ export function createChessStore(): StoreApi<ChessBoardState> {
 
       updateCellsUnderAttack: () => {
           const { newBoard, checkState } = markCellsUnderAttack(get().chessBoardpositions)
+          const nextTurnColor = get().turn === 'W' ? 'B' : 'W'
+
+          if (!checkState.check && !checkState.isCheckmate && !hasAnyLegalMove(newBoard, nextTurnColor)) {
+              checkState.isStalemate = true
+          }
+
           set({ chessBoardpositions: newBoard })
           set({ checkState })
 
-          if(checkState.isCheckmate){
+          if(checkState.isCheckmate || checkState.isStalemate){
               get().setSoundToPlay('game-over')
               return
           }
@@ -260,4 +296,19 @@ export function createChessStore(): StoreApi<ChessBoardState> {
 
 function randomSound(sound1: string, sound2: string) {
     return Math.random() < 0.5 ? sound1 : sound2
+}
+
+function buildNotation(
+    piece: string,
+    to: string,
+    captured: string | null,
+    checkState: { check: boolean; isCheckmate: boolean }
+): string {
+    const pieceType = piece[1]
+    const originFile = piece[2]
+    const prefix = pieceType !== 'P' ? pieceType : (captured ? originFile : '')
+    const captureSymbol = captured ? 'x' : ''
+    const suffix = checkState.isCheckmate ? '#' : checkState.check ? '+' : ''
+
+    return `${prefix}${captureSymbol}${to}${suffix}`
 }

@@ -142,27 +142,30 @@ function kingMove (
 
 function castling (chessBoard: ChessBoardPositions, row: number, col: number) {
   const castlingMoves: ChessBoardCell['coordinates'][] = []
+  const turn = chessBoard[row][col].piece[0]
+
   if(col === 4 && (row === 0 || row === 7)){
     const rookFeatures = [[0, -1], [7, 1]]
-    
+
     rookFeatures.forEach(rook => {
       const rookCol = rook[0]
       const direction = rook[1]
-    
-      if (chessBoard[row][rookCol].hasMoved === false) {
+      const rookCell = chessBoard[row][rookCol]
+
+      if (rookCell.piece[0] === turn && rookCell.piece[1] === 'R' && rookCell.hasMoved === false) {
         let newCol = col + direction
-      
-        while (chessBoard[row][newCol].piece === '' && !isCellUnderAttackByOppositeColor(chessBoard, row, col, row, newCol)) {
+
+        while (isOnBoard(row, newCol) && chessBoard[row][newCol].piece === '' && !isCellUnderAttackByOppositeColor(chessBoard, row, col, row, newCol)) {
           newCol += direction
         }
-      
+
         if (newCol === rookCol) {
           castlingMoves.push({row: row, col: col + 2 * direction})
         }
       }
     })
-  } 
-  
+  }
+
   return castlingMoves
 }
 

@@ -30,7 +30,7 @@ export function isCastling (KingCoords: ChessBoardCell["coordinates"], destinyCo
           return { ...cell, piece: '', hasMoved: true }
         }
         if (rowIndex === row && colIndex === newColumn) {
-          return { ...cell, piece: `${turn}R` }
+          return { ...cell, piece: `${turn}R${cell.cellName}`, hasMoved: true }
         }
         return cell
       })

@@ -66,4 +66,21 @@ describe('CalculateMoves — Piece movement', () => {
     const moves = calculateAvailableMoves(knight, board)
     expect(Array.isArray(moves)).toBe(true)
   })
+
+  it('does not crash selecting the king when the queenside rook square is empty (captured, then vacated)', () => {
+    const board = startingPosition()
+
+    // The rook was captured on its home square, and later the corridor to it
+    // was also cleared out. The captured square's `hasMoved` flag is stale
+    // (movePiece never resets it), so castling() must not trust it blindly —
+    // walking off the edge of the board previously threw a TypeError that
+    // crashed the app when the king was selected.
+    board[7][0] = { ...board[7][0], piece: '', hasMoved: false }
+    board[7][1] = { ...board[7][1], piece: '' }
+    board[7][2] = { ...board[7][2], piece: '' }
+    board[7][3] = { ...board[7][3], piece: '' }
+
+    const king = getPieceCell(board, 'WKe1')!
+    expect(() => calculateAvailableMoves(king, board)).not.toThrow()
+  })
 })
