@@ -12,6 +12,7 @@
   margin: 0 auto;
   padding: 0 32px;
   width: 100%;
+  height: 70px;
 }
 
 .HomePage-Header-content {
@@ -19,7 +20,7 @@
   justify-content: center;
   align-items: stretch;
   width: 100%;
-  min-height: 70px;
+  height: 100%;
 }
 
 .HomePage-Header-logo {
@@ -54,7 +55,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 56px;
+  padding: 0 72px;
   position: relative;
   height: 100%;
 }
