@@ -31,18 +31,22 @@ export function isCheckmate(Board: ChessBoardPositions, deepLooking = false): Ch
 
   const newBoard = structuredClone(Board)
   const attackingPieces = thatPieceCanBeKilledBy(kingInCheck)
-  const moves = calculateFuturesMoves(kingInCheck, newBoard)
-  
-
+  const moves = calculateFuturesMoves(kingInCheck, newBoard).filter(
+    ({ row, col }) => newBoard[row][col].piece[0] !== kingInCheck.piece[0]
+  )
 
   if (attackingPieces.length === 1) {
-    const [blocker, attacker] = canBlockAttack(newBoard, kingInCheck, attackingPieces[0].attacker)
-    checkState.protectors.push(...getProtectors(attackingPieces[0].attacker, newBoard))
+    const attackerPieceCell = attackingPieces[0].attacker
+    const freshAttackerCell = newBoard[attackerPieceCell.coordinates.row][attackerPieceCell.coordinates.col]
+    const [blocker, attackerInfo] = canBlockAttack(newBoard, kingInCheck, attackerPieceCell)
+    checkState.protectors.push(...getProtectors(freshAttackerCell, newBoard))
     checkState.blockers.push(...blocker)
     checkState.allDefenders.push(...mergeProtectorsAndBlockers(checkState.protectors, checkState.blockers))
     checkState.numberOfAttackersIsOne = true
-    checkState.attackers = attacker
+    checkState.attackers = attackerInfo
   }
+
+  checkState.moves = moves
 
   if (checkState.protectors.length === 0 && checkState.blockers.length === 0 && moves.length === 0) {
     checkState.isCheckmate = true
