@@ -29,12 +29,17 @@ export function Header() {
             <div className="HomePage-Header-nav-divider-container HomePage-Header-nav-divider-internal">
               <span className="HomePage-Header-plus">+</span>
             </div>
-            <div className="HomePage-Header-nav-item">
+            <div className="HomePage-Header-nav-item HomePage-Header-nav-item-video">
               <NavLink href="#video">Watch Video</NavLink>
             </div>
             <div className="HomePage-Header-nav-divider-container HomePage-Header-nav-divider-border">
             </div>
           </nav>
+          <img
+            src="/webicon.png"
+            alt="ChessPro"
+            className="HomePage-Header-mobile-logo"
+          />
           <button
             className="HomePage-Header-menu-button"
             onClick={() => setIsMenuOpen(!isMenuOpen)}

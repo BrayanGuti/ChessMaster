@@ -10,14 +10,14 @@
 .HomePage-Header-container {
   max-width: 100%;
   margin: 0 auto;
-  padding: 0 32px;
+  padding: 0 120px;
   width: 100%;
   height: 70px;
 }
 
 .HomePage-Header-content {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: stretch;
   width: 100%;
   height: 100%;
@@ -37,16 +37,20 @@
   display: none;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1000px) {
   .HomePage-Header-nav-desktop {
     display: flex;
     align-items: stretch;
     gap: 0;
-    width: auto;
+    width: 100%;
     height: 100%;
   }
 
   header .HomePage-Header-menu-button {
+    display: none;
+  }
+
+  header .HomePage-Header-mobile-logo {
     display: none;
   }
 }
@@ -58,15 +62,23 @@
   padding: 0 72px;
   position: relative;
   height: 100%;
+  flex-grow: 1;
+  flex-shrink: 0;
+  flex-basis: auto;
 }
 
 .HomePage-Header-nav-item-first {
   padding-left: 48px;
   padding-right: 56px;
+  flex-grow: 1.2;
+}
+
+.HomePage-Header-nav-item-video {
+  flex-grow: 1.6;
 }
 
 .HomePage-Header-nav-item-first::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: 0;
@@ -76,7 +88,7 @@
 }
 
 .HomePage-Header-nav-item::after {
-  content: '';
+  content: "";
   position: absolute;
   right: 0;
   top: 0;
@@ -95,7 +107,7 @@
 }
 
 .HomePage-Header-nav-divider-internal::before {
-  content: '';
+  content: "";
   position: absolute;
   width: 1px;
   height: 100%;
@@ -104,7 +116,7 @@
 }
 
 .HomePage-Header-nav-divider-border::before {
-  content: '';
+  content: "";
   position: absolute;
   width: 1px;
   height: 100%;
@@ -146,6 +158,13 @@
 
 .HomePage-Header-link:hover {
   color: #ffffff;
+}
+
+.HomePage-Header-mobile-logo {
+  display: block;
+  align-self: center;
+  height: 36px;
+  width: auto;
 }
 
 .HomePage-Header-menu-button {
