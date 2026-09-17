@@ -93,6 +93,14 @@ Pieces are encoded as 4-character strings: `[Color][Type][File][Rank]`
 - **Sound effects** in `public/Sound/` (move, capture, castling, check, game-over variations)
 - Pieces are licensed/sourced separately and styled via CSS positioning
 
+## Git Commit Policy
+
+- Claude must **never** create git commits on its own, under any circumstance. Only the user (Brayan) creates commits.
+- After finishing a feature or a meaningful chunk of work, if Claude judges it prudent, it should proactively tell the user that this looks like a good moment to commit.
+- When suggesting a commit, Claude must propose a commit message the user can use.
+  - For small/trivial changes, the suggested commit message alone is enough — no extra description is needed.
+  - For larger or more complex changes, Claude should also include a brief description of what changed and why, alongside the commit message.
+
 ## Development Notes
 
 - **ESLint rules** focus on React hooks (dependency arrays) and React Refresh for hot module reloading
