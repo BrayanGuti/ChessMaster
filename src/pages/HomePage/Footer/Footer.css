@@ -1,13 +1,14 @@
 .HomePage-Footer-footer {
-  background-color: rgba(0, 0, 0, 0.95);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
+  background-color: rgba(0, 0, 0, 0.98);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
 }
 
 .HomePage-Footer-container {
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
-  padding: 24px 32px;
+  padding: 28px 32px;
+  width: 100%;
 }
 
 .HomePage-Footer-content {
@@ -25,9 +26,10 @@
 }
 
 .HomePage-Footer-text {
-  font-size: 0.8rem;
-  color: #888888;
-  letter-spacing: 0.03em;
+  font-size: 0.75rem;
+  color: #777777;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .HomePage-Footer-icons {

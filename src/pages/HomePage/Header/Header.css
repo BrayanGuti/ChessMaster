@@ -1,15 +1,16 @@
 .HomePage-Header-header {
-  background-color: rgba(0, 0, 0, 0.85);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
+  background-color: rgba(0, 0, 0, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
   position: relative;
   z-index: 10;
 }
 
 .HomePage-Header-container {
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
-  padding: 20px 32px;
+  padding: 24px 32px;
+  width: 100%;
 }
 
 .HomePage-Header-content {
@@ -19,12 +20,13 @@
 }
 
 .HomePage-Header-logo {
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: #ffffff;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   text-decoration: none;
   font-style: italic;
+  text-transform: uppercase;
 }
 
 .HomePage-Header-nav {
@@ -35,7 +37,7 @@
   .HomePage-Header-nav {
     display: flex;
     align-items: center;
-    gap: 48px;
+    gap: 64px;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
@@ -47,12 +49,13 @@
 }
 
 .HomePage-Header-link {
-  color: #d1d5db;
+  color: #b0b0b0;
   text-decoration: none;
-  font-size: 0.95rem;
-  letter-spacing: 0.05em;
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
   transition: color 0.3s ease;
   position: relative;
+  text-transform: uppercase;
 }
 
 .HomePage-Header-link:hover {
