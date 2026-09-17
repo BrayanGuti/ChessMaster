@@ -1,8 +1,8 @@
 import './CoronationPanel.css'
-import { useChessManager } from '../store/useChessManager'
+import { useChessStore } from '../store/useChessStore'
 
 export function CoronationPanel({ cords }: { cords: { col: number, row: number } }) {
-    const makeCoronation = useChessManager((state) => state.makeCoronation)
+    const makeCoronation = useChessStore((state) => state.makeCoronation)
     const color = cords.row === 0 ? 'W' : 'B'
     
     const handleCoronationSelection = ({ src }: { src: string, alt: string }) => {

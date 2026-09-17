@@ -1,6 +1,7 @@
 import './ChessCell.css'
 import { ChessPiece } from '../ChessPiece/ChessPiece'
 import { useChessCellCharacteristics } from '../hooks/ChessCellCharacteristics'
+import { ChessBoardCell } from '../store/types'
 
 export function ChessCell({ cellInformation }: { cellInformation: ChessBoardCell }) {
   const { color, corner, handleCellClick, youCanMoveHere, thisIsTheSelectedPiece, turn, colorInCheck } = useChessCellCharacteristics(cellInformation)

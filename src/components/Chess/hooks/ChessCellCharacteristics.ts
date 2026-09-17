@@ -1,11 +1,12 @@
 import { useMemo } from "react"
-import { useChessManager } from "../store/useChessManager"
+import { useChessStore } from "../store/useChessStore"
+import { ChessBoardCell } from "../store/types"
 
 export function useChessCellCharacteristics(cellInformation: ChessBoardCell) {
-  const pieceSelected = useChessManager(state => state.cellOfPieceSelected)
-  const clickCell = useChessManager(state => state.clickCell)
-  const turn = useChessManager(state => state.turn)
-  const colorInCheck = useChessManager(state => state.checkState?.colorOfCheck)
+  const pieceSelected = useChessStore(state => state.cellOfPieceSelected)
+  const clickCell = useChessStore(state => state.clickCell)
+  const turn = useChessStore(state => state.turn)
+  const colorInCheck = useChessStore(state => state.checkState?.colorOfCheck)
 
   const {
     color,

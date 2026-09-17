@@ -1,7 +1,7 @@
 import './Header.css';
 import { useState } from 'react';
 import { Link } from 'react-router-dom'
-import { Settings, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -10,16 +10,18 @@ export function Header() {
     <header className="HomePage-Header-header">
       <div className="HomePage-Header-container">
         <div className="HomePage-Header-content">
-          <Link 
-            to="/" 
+          <Link
+            to="/"
             className="HomePage-Header-logo"
           >
-            ChessMaster
+            ChessPro
           </Link>
           <nav className="HomePage-Header-nav">
-            <NavLink href="/settings" icon={Settings} label="Settings" />
+            <NavLink href="/">Home</NavLink>
+            <NavLink href="#tournaments">Tournaments</NavLink>
+            <NavLink href="#video">Watch Video</NavLink>
           </nav>
-          <button 
+          <button
             className="HomePage-Header-menu-button"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
@@ -30,7 +32,9 @@ export function Header() {
       {isMenuOpen && (
         <div className="HomePage-Header-mobile-menu">
           <nav className="HomePage-Header-mobile-nav">
-            <NavLink href="/settings" icon={Settings} label="Settings" />
+            <NavLink href="/">Home</NavLink>
+            <NavLink href="#tournaments">Tournaments</NavLink>
+            <NavLink href="#video">Watch Video</NavLink>
           </nav>
         </div>
       )}
@@ -40,18 +44,16 @@ export function Header() {
 
 interface NavLinkProps {
   href: string;
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
+  children: string;
 }
 
-function NavLink({ href, icon: Icon, label }: NavLinkProps) {
+function NavLink({ href, children }: NavLinkProps) {
   return (
-    <Link 
-      to={href} 
+    <Link
+      to={href}
       className="HomePage-Header-link"
     >
-      <Icon className="HomePage-Header-link-icon" />
-      <span className="HomePage-Header-link-label">{label}</span>
+      {children}
     </Link>
   );
 }

@@ -1,12 +1,13 @@
 import './ChessBoard.css';
-import { useChessManager } from '../store/useChessManager';
+import { useChessStore } from '../store/useChessStore';
+import { ChessGameProvider } from '../store/ChessGameProvider';
 import { ChessCell } from '../ChessCell/ChessCell';
 import { CoronationPanel } from '../CoronationPanel/CoronationPanel';
 import { useRef, useEffect } from "react"
 
-export function ChessBoard() {
-  const positions = useChessManager((state) => state.chessBoardpositions);
-  const coronation = useChessManager((state) => state.coronation);
+function ChessBoardContent() {
+  const positions = useChessStore((state) => state.chessBoardpositions);
+  const coronation = useChessStore((state) => state.coronation);
 
   return (
     <>
@@ -26,18 +27,22 @@ export function ChessBoard() {
   );
 }
 
-
+export function ChessBoard() {
+  return (
+    <ChessGameProvider>
+      <ChessBoardContent />
+    </ChessGameProvider>
+  );
+}
 
 function PlaySound() {
   const audioRef = useRef<HTMLAudioElement>(null);
-  const soundToPlay = useChessManager((state) => state.soundToPlay);
-  const setSoundToPlay = useChessManager((state) => state.setSoundToPlay);
+  const soundToPlay = useChessStore((state) => state.soundToPlay);
+  const setSoundToPlay = useChessStore((state) => state.setSoundToPlay);
 
   useEffect(() => {
     if (soundToPlay && audioRef.current) {
-      
       audioRef.current.src = `/Sound/${soundToPlay}.mp3`;
-      console.log("Reproduciendo sonido:", soundToPlay);
       audioRef.current.play()
       setTimeout(() => {
         setSoundToPlay(null);

@@ -1,3 +1,5 @@
+import { ChessBoardCell, ChessBoardPositions } from "../store/types"
+
 export function isCastling (KingCoords: ChessBoardCell["coordinates"], destinyCoords: ChessBoardCell["coordinates"], chessBoard: ChessBoardPositions, turn: ChessBoardCell["piece"][0]) {
     let chessBoardCopy = null
 

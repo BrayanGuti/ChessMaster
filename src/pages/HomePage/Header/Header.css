@@ -1,12 +1,15 @@
 .HomePage-Header-header {
-  background-color: #161b22;
-  border-bottom: 1px solid #30363d;
+  background-color: rgba(0, 0, 0, 0.85);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 10;
 }
 
 .HomePage-Header-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 16px;
+  padding: 20px 32px;
 }
 
 .HomePage-Header-content {
@@ -16,13 +19,12 @@
 }
 
 .HomePage-Header-logo {
-  font-size: 1.55rem;
-  font-weight: 600;
-  background: linear-gradient(to right, #10b981, #3b82f6);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  letter-spacing: -0.02em;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  font-style: italic;
 }
 
 .HomePage-Header-nav {
@@ -33,7 +35,10 @@
   .HomePage-Header-nav {
     display: flex;
     align-items: center;
-    gap: 32px;
+    gap: 48px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   header .HomePage-Header-menu-button {
@@ -42,30 +47,33 @@
 }
 
 .HomePage-Header-link {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #9ca3af;
+  color: #d1d5db;
   text-decoration: none;
-  transition: color 0.3s;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  transition: color 0.3s ease;
+  position: relative;
 }
 
 .HomePage-Header-link:hover {
   color: #ffffff;
 }
 
-.HomePage-Header-link-icon {
-  width: 16px;
-  height: 16px;
+.HomePage-Header-link::before {
+  content: '+';
+  display: inline-block;
+  margin-right: 12px;
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
 }
 
-.HomePage-Header-link-label {
-  font-size: 1rem;
+.HomePage-Header-link:hover::before {
+  opacity: 1;
 }
 
 .HomePage-Header-menu-button {
   display: block;
-  color: #9ca3af;
+  color: #d1d5db;
   background: none;
   border: none;
   cursor: pointer;
@@ -82,12 +90,13 @@
 }
 
 .HomePage-Header-mobile-menu {
-  background-color: #1c2128;
-  padding: 16px;
+  background-color: rgba(0, 0, 0, 0.95);
+  padding: 20px 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .HomePage-Header-mobile-nav {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }

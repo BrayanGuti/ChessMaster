@@ -1,4 +1,5 @@
 import { markCellsUnderAttack } from "./MarkCellsUnderAttack";
+import { ChessBoardPositions, ChessBoardCell } from "../store/types";
 
 export function startGame (): ChessBoardPositions {
   const Position = [

@@ -1,6 +1,6 @@
 import { calculateFuturesMoves } from './CalculateMoves'
 import { isCheckmate } from './CheckMate'
-
+import { ChessBoardCell, ChessBoardPositions, CheckStatus } from "../store/types"
 
 type PiecesAndMovesList = Array<[ChessBoardCell, Array<{ row: number, col: number }>]>
 

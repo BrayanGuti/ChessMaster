@@ -1,5 +1,6 @@
 import { calculateAvailableMoves, calculateFuturesMoves } from "./CalculateMoves"
 import { markCellsUnderAttack } from "./MarkCellsUnderAttack"
+import { ChessBoardPositions, CheckStatus, ChessBoardCell } from "../store/types"
 
 export function isCheckmate(Board: ChessBoardPositions, deepLooking = false): CheckStatus {
   const checkState: CheckStatus = {

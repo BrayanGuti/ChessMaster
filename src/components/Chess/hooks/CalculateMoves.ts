@@ -1,3 +1,5 @@
+import { ChessBoardCell, ChessBoardState } from "../store/types";
+
 type posiblesMoves = ChessBoardCell['coordinates'][]
 
 export function calculateAvailableMoves(
