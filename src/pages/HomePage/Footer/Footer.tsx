@@ -1,5 +1,4 @@
 import './Footer.css';
-import { Link } from 'react-router-dom'
 import { Github, Linkedin } from 'lucide-react';
 
 export function Footer() {

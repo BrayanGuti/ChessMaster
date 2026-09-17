@@ -1,0 +1,23 @@
+.coronationPanel {
+    display: flex;
+    width: 12.5%;
+    height: 50%;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    z-index: 100;
+    background-color: red;
+}
+
+.coronationPanelDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.coronationPanelImg {
+    width: 90%;
+    height: 90%;
+}

@@ -10,16 +10,30 @@ export function Header() {
     <header className="HomePage-Header-header">
       <div className="HomePage-Header-container">
         <div className="HomePage-Header-content">
-          <Link
-            to="/"
-            className="HomePage-Header-logo"
-          >
-            ChessPro
-          </Link>
-          <nav className="HomePage-Header-nav">
-            <NavLink href="/">Home</NavLink>
-            <NavLink href="#tournaments">Tournaments</NavLink>
-            <NavLink href="#video">Watch Video</NavLink>
+          <nav className="HomePage-Header-nav-desktop">
+            <div className="HomePage-Header-nav-item HomePage-Header-nav-item-first">
+              <Link to="/" className="HomePage-Header-logo-link">ChessPro</Link>
+            </div>
+            <div className="HomePage-Header-nav-divider-container HomePage-Header-nav-divider-internal">
+              <span className="HomePage-Header-plus">+</span>
+            </div>
+            <div className="HomePage-Header-nav-item">
+              <NavLink href="/">Home</NavLink>
+            </div>
+            <div className="HomePage-Header-nav-divider-container HomePage-Header-nav-divider-internal">
+              <span className="HomePage-Header-plus">+</span>
+            </div>
+            <div className="HomePage-Header-nav-item">
+              <NavLink href="#tournaments">Tournaments</NavLink>
+            </div>
+            <div className="HomePage-Header-nav-divider-container HomePage-Header-nav-divider-internal">
+              <span className="HomePage-Header-plus">+</span>
+            </div>
+            <div className="HomePage-Header-nav-item">
+              <NavLink href="#video">Watch Video</NavLink>
+            </div>
+            <div className="HomePage-Header-nav-divider-container HomePage-Header-nav-divider-border">
+            </div>
           </nav>
           <button
             className="HomePage-Header-menu-button"

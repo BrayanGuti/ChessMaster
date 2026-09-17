@@ -1,13 +1,19 @@
-import './ChessPiece.css'
+import styles from './ChessPiece.module.css';
+import { PIECE_ASSETS } from '../assets/pieces';
 
 export function ChessPiece({ piece }: { piece: ChessBoardCell['piece'] }) {
-    if(piece === '') {
-        return null
+    if (piece === '') {
+        return null;
     }
 
-    const pieceName = piece.substring(0, 2)
+    const pieceName = piece.substring(0, 2);
+    const pieceUrl = PIECE_ASSETS[pieceName as keyof typeof PIECE_ASSETS];
 
-    return(
-        <img src={`/Pieces/${pieceName}.svg`} alt={pieceName} className='chess-piece'/>
-    )
+    return (
+        <img
+            src={pieceUrl}
+            alt={pieceName}
+            className={styles.chessPiece}
+        />
+    );
 }

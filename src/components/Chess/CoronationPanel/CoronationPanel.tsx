@@ -1,34 +1,40 @@
-import './CoronationPanel.css'
-import { useChessStore } from '../store/useChessStore'
+import styles from './CoronationPanel.module.css';
+import { useChessStore } from '../store/useChessStore';
+import { PIECE_ASSETS } from '../assets/pieces';
 
-export function CoronationPanel({ cords }: { cords: { col: number, row: number } }) {
-    const makeCoronation = useChessStore((state) => state.makeCoronation)
-    const color = cords.row === 0 ? 'W' : 'B'
-    
-    const handleCoronationSelection = ({ src }: { src: string, alt: string }) => {
-        const piece = src.slice(-6, -4)
-        makeCoronation(piece)
-    }
-    
-    
+export function CoronationPanel({ cords }: { cords: { col: number; row: number } }) {
+    const makeCoronation = useChessStore((state) => state.makeCoronation);
+    const color = cords.row === 0 ? 'W' : 'B';
+
+    const handleCoronationSelection = (piece: string) => {
+        makeCoronation(piece);
+    };
 
     const pieces = [
-        { src: `/Pieces/${color}Q.svg`, alt: 'White Queen' },
-        { src: `/Pieces/${color}R.svg`, alt: 'White Rook' },
-        { src: `/Pieces/${color}B.svg`, alt: 'White Bishop' },
-        { src: `/Pieces/${color}N.svg`, alt: 'White Knight' }
-    ]
+        { key: `${color}Q`, label: 'Queen' },
+        { key: `${color}R`, label: 'Rook' },
+        { key: `${color}B`, label: 'Bishop' },
+        { key: `${color}N`, label: 'Knight' },
+    ];
 
-    const top = cords.row === 0 ? '0%' : '50%'
-    const left = `${cords.col * 12.5}%`
+    const top = cords.row === 0 ? '0%' : '50%';
+    const left = `${cords.col * 12.5}%`;
 
     return (
-        <div className="coronation-panel" style={{ top, left }}>
-            {pieces.map((piece, index) => (
-                <div onClick={() => handleCoronationSelection(piece)} key={index}>
-                    <img src={piece.src} alt={piece.alt} />
+        <div className={styles.coronationPanel} style={{ top, left }}>
+            {pieces.map((piece) => (
+                <div
+                    className={styles.coronationPanelDiv}
+                    onClick={() => handleCoronationSelection(piece.key)}
+                    key={piece.key}
+                >
+                    <img
+                        className={styles.coronationPanelImg}
+                        src={PIECE_ASSETS[piece.key as keyof typeof PIECE_ASSETS]}
+                        alt={piece.label}
+                    />
                 </div>
             ))}
         </div>
-    )
+    );
 }

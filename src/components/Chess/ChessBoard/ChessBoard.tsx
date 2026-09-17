@@ -1,17 +1,31 @@
-import './ChessBoard.css';
+import styles from './ChessBoard.module.css';
 import { useChessStore } from '../store/useChessStore';
 import { ChessGameProvider } from '../store/ChessGameProvider';
 import { ChessCell } from '../ChessCell/ChessCell';
 import { CoronationPanel } from '../CoronationPanel/CoronationPanel';
-import { useRef, useEffect } from "react"
+import { useRef, useEffect, CSSProperties } from 'react';
+import { SOUND_ASSETS } from '../assets/sounds';
+import type { ChessBoardProps } from '../store/types';
 
-function ChessBoardContent() {
+function ChessBoardContent({ theme, className }: ChessBoardProps) {
   const positions = useChessStore((state) => state.chessBoardpositions);
   const coronation = useChessStore((state) => state.coronation);
 
+  const themeVars: CSSProperties = theme
+    ? ({
+        '--light-square': theme.lightSquare || '#f0d9b5',
+        '--dark-square': theme.darkSquare || '#b58863',
+        '--highlight': theme.highlight || '#baca44',
+        '--accent': theme.accent || '#7daee0',
+      } as CSSProperties)
+    : {};
+
   return (
     <>
-      <section className="chess-board">
+      <section
+        className={`${styles.chessBoard}${className ? ` ${className}` : ''}`}
+        style={themeVars}
+      >
         {positions.map((row, rowIndex) =>
           row.map((cell, colIndex) => (
             <ChessCell
@@ -27,10 +41,10 @@ function ChessBoardContent() {
   );
 }
 
-export function ChessBoard() {
+export function ChessBoard(props: ChessBoardProps = {}) {
   return (
     <ChessGameProvider>
-      <ChessBoardContent />
+      <ChessBoardContent {...props} />
     </ChessGameProvider>
   );
 }
@@ -41,12 +55,13 @@ function PlaySound() {
   const setSoundToPlay = useChessStore((state) => state.setSoundToPlay);
 
   useEffect(() => {
-    if (soundToPlay && audioRef.current) {
-      audioRef.current.src = `/Sound/${soundToPlay}.mp3`;
-      audioRef.current.play()
-      setTimeout(() => {
+    if (soundToPlay && audioRef.current && SOUND_ASSETS[soundToPlay]) {
+      audioRef.current.src = SOUND_ASSETS[soundToPlay];
+      audioRef.current.onended = () => setSoundToPlay(null);
+      audioRef.current.play().catch(() => {
+        // Autoplay prevented, reset sound
         setSoundToPlay(null);
-      }, 2000);
+      });
     }
   }, [soundToPlay, setSoundToPlay]);
 

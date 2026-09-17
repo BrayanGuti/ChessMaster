@@ -4,19 +4,22 @@
   backdrop-filter: blur(12px);
   position: relative;
   z-index: 10;
+  min-height: 70px;
 }
 
 .HomePage-Header-container {
-  max-width: 1600px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 24px 32px;
+  padding: 0 32px;
   width: 100%;
 }
 
 .HomePage-Header-content {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: center;
+  align-items: stretch;
+  width: 100%;
+  min-height: 70px;
 }
 
 .HomePage-Header-logo {
@@ -29,18 +32,17 @@
   text-transform: uppercase;
 }
 
-.HomePage-Header-nav {
+.HomePage-Header-nav-desktop {
   display: none;
 }
 
 @media (min-width: 768px) {
-  .HomePage-Header-nav {
+  .HomePage-Header-nav-desktop {
     display: flex;
-    align-items: center;
-    gap: 64px;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    align-items: stretch;
+    gap: 0;
+    width: auto;
+    height: 100%;
   }
 
   header .HomePage-Header-menu-button {
@@ -48,11 +50,94 @@
   }
 }
 
-.HomePage-Header-link {
-  color: #b0b0b0;
+.HomePage-Header-nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 56px;
+  position: relative;
+  height: 100%;
+}
+
+.HomePage-Header-nav-item-first {
+  padding-left: 48px;
+  padding-right: 56px;
+}
+
+.HomePage-Header-nav-item-first::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.HomePage-Header-nav-item::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.HomePage-Header-nav-divider-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 1px;
+  height: 100%;
+}
+
+.HomePage-Header-nav-divider-internal::before {
+  content: '';
+  position: absolute;
+  width: 1px;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.15);
+  left: 0;
+}
+
+.HomePage-Header-nav-divider-border::before {
+  content: '';
+  position: absolute;
+  width: 1px;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.15);
+  right: 0;
+}
+
+.HomePage-Header-plus {
+  color: #666666;
+  font-size: 0.75rem;
+  z-index: 10;
+  opacity: 0.9;
+  position: absolute;
+  left: -3px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.HomePage-Header-logo-link {
+  color: #ffffff;
   text-decoration: none;
-  font-size: 0.85rem;
-  letter-spacing: 0.06em;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: italic;
+  transition: color 0.3s ease;
+  font-style: italic;
+}
+
+.HomePage-Header-link {
+  color: #a0a0a0;
+  text-decoration: none;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
   transition: color 0.3s ease;
   position: relative;
   text-transform: uppercase;
@@ -60,18 +145,6 @@
 
 .HomePage-Header-link:hover {
   color: #ffffff;
-}
-
-.HomePage-Header-link::before {
-  content: '+';
-  display: inline-block;
-  margin-right: 12px;
-  opacity: 0.6;
-  transition: opacity 0.3s ease;
-}
-
-.HomePage-Header-link:hover::before {
-  opacity: 1;
 }
 
 .HomePage-Header-menu-button {

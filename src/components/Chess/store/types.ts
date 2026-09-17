@@ -72,3 +72,35 @@ export interface ChessBoardState {
 export type ChessBoardPositions = Array<Array<ChessBoardCell>>
 
 export type ChessStoreApi = StoreApi<ChessBoardState>
+
+export interface GameEndResult {
+  winner: 'W' | 'B' | null;
+  reason: 'checkmate' | 'stalemate' | null;
+}
+
+export interface MoveRecord {
+  piece: string;
+  from: string;
+  to: string;
+  captured: string | null;
+  notation: string;
+  turnNumber: number;
+}
+
+export interface ChessBoardTheme {
+  lightSquare?: string;
+  darkSquare?: string;
+  highlight?: string;
+  accent?: string;
+}
+
+export interface ChessBoardProps {
+  size?: number | string;
+  theme?: ChessBoardTheme;
+  showTurnIndicator?: boolean;
+  showMoveHistory?: boolean;
+  showCapturedPieces?: boolean;
+  onGameEnd?: (result: GameEndResult) => void;
+  onMove?: (move: MoveRecord) => void;
+  className?: string;
+}

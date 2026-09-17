@@ -1,0 +1,59 @@
+.chessCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.isClickable {
+  cursor: pointer;
+}
+
+.black {
+  background-color: var(--dark-square, #222);
+}
+
+.white {
+  background-color: var(--light-square, #DDD);
+}
+
+.thisIsTheSelectedPiece {
+  background-color: blue;
+}
+
+.youCanMoveHere {
+  cursor: pointer;
+}
+
+.youCanMoveHere::after {
+  content: "";
+  display: block;
+  width: 30%;
+  height: 30%;
+  border-radius: 50%;
+  background-color: var(--highlight, green);
+}
+
+.youCanAttackHere {
+  cursor: pointer;
+  background-color: red;
+}
+
+.kingInCheck {
+  background-color: rgb(165, 114, 4);
+}
+
+.cornerUpLeft {
+  border-top-left-radius: 15%;
+}
+
+.cornerUpRight {
+  border-top-right-radius: 15%;
+}
+
+.cornerDownLeft {
+  border-bottom-left-radius: 15%;
+}
+
+.cornerDownRight {
+  border-bottom-right-radius: 15%;
+}

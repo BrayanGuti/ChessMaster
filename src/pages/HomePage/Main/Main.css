@@ -19,7 +19,7 @@
 .HomePage-Main-hero-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 60px 120px;
+  padding: 60px 140px;
   position: relative;
   z-index: 2;
   min-height: calc(100vh - 100px);
@@ -31,7 +31,7 @@
 
 @media (max-width: 1200px) {
   .HomePage-Main-hero-container {
-    padding: 60px 80px;
+    padding: 60px 100px;
   }
 }
 
@@ -41,106 +41,83 @@
   }
 }
 
-.HomePage-Main-hero-title-split {
+.HomePage-Main-hero-wrapper {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  width: 100%;
-  margin-bottom: 60px;
-  align-items: flex-start;
-}
-
-@media (max-width: 768px) {
-  .HomePage-Main-hero-title-split {
-    gap: 12px;
-    margin-bottom: 40px;
-  }
-}
-
-.HomePage-Main-hero-title-left,
-.HomePage-Main-hero-title-right {
-  font-size: clamp(2.5rem, 8vw, 5.5rem);
-  font-weight: 900;
-  color: #ffffff;
-  line-height: 1;
-  letter-spacing: -0.03em;
-  margin: 0;
-  text-transform: uppercase;
-}
-
-.HomePage-Main-hero-title-left {
-  text-align: left;
-}
-
-.HomePage-Main-hero-title-right {
-  text-align: right;
-}
-
-.HomePage-Main-hero-content {
-  display: grid;
-  grid-template-columns: 1fr;
   gap: 40px;
-  align-items: flex-start;
   width: 100%;
-}
-
-@media (min-width: 1024px) {
-  .HomePage-Main-hero-content {
-    grid-template-columns: 1fr 1fr;
-    align-items: center;
-  }
-}
-
-.HomePage-Main-hero-left {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  padding-left: 0;
+  align-items: flex-start;
 }
 
 @media (max-width: 1023px) {
-  .HomePage-Main-hero-left {
-    gap: 8px;
+  .HomePage-Main-hero-wrapper {
+    grid-template-columns: 1fr;
+    gap: 60px;
   }
 }
 
-@media (max-width: 768px) {
-  .HomePage-Main-hero-left {
-    gap: 12px;
+.HomePage-Main-hero-left-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.HomePage-Main-hero-right-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 28px;
+}
+
+@media (max-width: 1023px) {
+  .HomePage-Main-hero-right-section {
+    align-items: flex-start;
   }
 }
 
-.HomePage-Main-hero-title {
-  font-size: clamp(2.8rem, 9vw, 5rem);
+.HomePage-Main-hero-title-top,
+.HomePage-Main-hero-title-bottom {
+  font-size: clamp(3.2rem, 11vw, 6rem);
   font-weight: 900;
   color: #ffffff;
-  line-height: 1.05;
-  letter-spacing: -0.03em;
+  line-height: 1;
+  letter-spacing: -0.04em;
   margin: 0;
   text-transform: uppercase;
 }
+
+.HomePage-Main-hero-title-top {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.HomePage-Main-hero-title-bottom {
+  text-align: right;
+  margin-bottom: 20px;
+}
+
 
 .HomePage-Main-hero-description {
   font-size: 0.85rem;
   color: #a0a0a0;
-  max-width: 280px;
+  max-width: 300px;
   line-height: 1.8;
-  margin: -40px 0 0 0;
+  margin: 0 0 28px 0;
   font-weight: 300;
   letter-spacing: 0.02em;
 }
 
 @media (max-width: 1023px) {
   .HomePage-Main-hero-description {
-    margin-top: -20px;
-    max-width: 300px;
+    max-width: 320px;
+    margin-bottom: 24px;
   }
 }
 
 @media (max-width: 768px) {
   .HomePage-Main-hero-description {
-    margin-top: 0;
     max-width: 280px;
+    margin-bottom: 20px;
   }
 }
 
@@ -156,12 +133,12 @@
   align-items: center;
   gap: 14px;
   padding: 14px 24px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 50px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15);
   transition: all 0.3s ease;
   cursor: pointer;
 }
@@ -175,9 +152,9 @@
 }
 
 .HomePage-Main-feature:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 @media (max-width: 1200px) {
@@ -254,26 +231,6 @@
   transform: translateX(6px);
 }
 
-.HomePage-Main-hero-right {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-end;
-  gap: 28px;
-}
-
-@media (max-width: 1023px) {
-  .HomePage-Main-hero-right {
-    align-items: center;
-    gap: 24px;
-  }
-}
-
-@media (max-width: 768px) {
-  .HomePage-Main-hero-right {
-    gap: 20px;
-  }
-}
 
 .HomePage-Main-board {
   width: 100%;
