@@ -38,7 +38,7 @@ export const useChessManager = create<ChessBoardState>(((
             if(checkState.isCheckmate) return
 
 			if(checkState.check){
-                get().handleCellClickWhenChceck(cellInformation, cellOfPieceSelected)
+                get().handleCellClickWhenCheck(cellInformation, cellOfPieceSelected)
                 return
 			}
 
@@ -69,7 +69,7 @@ export const useChessManager = create<ChessBoardState>(((
             get().showAvailableMoves(get().isProtectingCheck(coordsOfAvailableMoves, cellInformation))
         },
 
-        handleCellClickWhenChceck: (cellClicked, cellOfPieceSelected) => {
+        handleCellClickWhenCheck: (cellClicked, cellOfPieceSelected) => {
             if(cellClicked.piece[1] === 'K'){
                 get().selectPieceToMove(cellClicked)
                 return
@@ -236,19 +236,16 @@ export const useChessManager = create<ChessBoardState>(((
             
 		    
 		    if(checkState.isCheckmate){
-		    	console.log('checkmate')
                 get().setSoundToPlay('game-over')
                 return
             }
-            
+
             if(!checkState.check){
                 get().setSoundToPlay(randomSound('move-1', 'move-2'))
-                console.log('no check')
 		    	return
 		    }
-            
+
             get().setSoundToPlay('check')
-            console.log('check')
         },
 
 		selectPieceToDefendCheck: (piece) => {

@@ -57,12 +57,10 @@ function mergeProtectorsAndBlockers(protectors: CheckStatus['protectors'], block
     cellToProtect: protector.cellToAttack
   }))
 
-  console.log('estos son los protectores:', modifiedProtectors)
   const modifiedBlockers = blockers.map((blocker) => ({
     protector: blocker.blocker,
     cellToProtect: blocker.cellToDefend
   }))
-  console.log('estos son los blockers:', modifiedBlockers)
 
   const combinedDefenders = [...modifiedProtectors, ...modifiedBlockers]
 

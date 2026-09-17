@@ -61,7 +61,7 @@ interface ChessBoardState {
 
     changeTurn: () => void;
 
-    handleCellClickWhenChceck: (cell: ChessBoardCell, cellOfPieceSelected: ChessBoardCell | null) => void;
+    handleCellClickWhenCheck: (cell: ChessBoardCell, cellOfPieceSelected: ChessBoardCell | null) => void;
 
     selectPieceToDefendCheck: (defenders: {protector: ChessBoardCell, cellToProtect: ChessBoardCell[]}) => void;
 

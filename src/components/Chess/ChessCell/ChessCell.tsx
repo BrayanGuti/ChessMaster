@@ -1,9 +1,9 @@
 import './ChessCell.css'
 import { ChessPiece } from '../ChessPiece/ChessPiece'
-import { UseChessCellCharacteristics } from '../hooks/ChessCellCharacteristics'
+import { useChessCellCharacteristics } from '../hooks/ChessCellCharacteristics'
 
 export function ChessCell({ cellInformation }: { cellInformation: ChessBoardCell }) {
-  const { color, corner, handleCellClick, youCanMoveHere, thisIsTheSelectedPiece, turn, colorInCheck } = UseChessCellCharacteristics(cellInformation)
+  const { color, corner, handleCellClick, youCanMoveHere, thisIsTheSelectedPiece, turn, colorInCheck } = useChessCellCharacteristics(cellInformation)
   
   const isClickable = cellInformation.piece[0] === turn ? 'isClickable' : ''
   const kingInCheck = (cellInformation.piece[0] === colorInCheck && cellInformation.piece[1] === 'K')  ? 'kingInCheck' : ''

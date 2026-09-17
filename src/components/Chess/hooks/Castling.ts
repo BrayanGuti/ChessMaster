@@ -17,14 +17,20 @@ export function isCastling (KingCoords: ChessBoardCell["coordinates"], destinyCo
   function moveCastleRook (rookColumn: number, destinyCoords: ChessBoardCell["coordinates"], chessBoard: ChessBoardPositions, turn: ChessBoardCell["piece"][0]) {
     const row = destinyCoords.row
     const column = rookColumn
-  
-    const direction = destinyCoords.col === 2 ? 1 : -1
-  
-    const newColumn = destinyCoords.col + direction
-  
-    chessBoard[row][column].piece = ''
-    chessBoard[row][column].hasMoved = true
-    chessBoard[row][newColumn].piece = `${turn}R`
 
-    return chessBoard
+    const direction = destinyCoords.col === 2 ? 1 : -1
+
+    const newColumn = destinyCoords.col + direction
+
+    return chessBoard.map((rowCells, rowIndex) =>
+      rowCells.map((cell, colIndex) => {
+        if (rowIndex === row && colIndex === column) {
+          return { ...cell, piece: '', hasMoved: true }
+        }
+        if (rowIndex === row && colIndex === newColumn) {
+          return { ...cell, piece: `${turn}R` }
+        }
+        return cell
+      })
+    )
   }
