@@ -39,11 +39,11 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: clamp(24px, 5vh, 56px);
+  gap: clamp(20px, 4.5vh, 56px);
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: clamp(24px, 5vh, 60px) 140px;
+  padding: clamp(24px, 5vh, 60px) clamp(24px, 7vw, 140px);
 }
 
 /* ---------- Bloque superior: intro + pasos ---------- */
@@ -173,7 +173,10 @@
 
 .HomePage-GetStartedSection-step-number {
   flex-shrink: 0;
-  font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+  /* Ancho fijo por dígito para que 01/02/03 queden alineados */
+  min-width: 1.35em;
+  font-size: clamp(1.4rem, min(2.4vw, 3.4vh), 2.1rem);
+  font-variant-numeric: tabular-nums;
   font-weight: 900;
   line-height: 1;
   letter-spacing: -0.03em;
@@ -267,15 +270,15 @@
 .HomePage-GetStartedSection-guides {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
+  gap: clamp(16px, 2.4vh, 24px);
 }
 
 .HomePage-GetStartedSection-guide {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: clamp(20px, 3vh, 29px) 31px;
+  gap: clamp(4px, 0.8vh, 8px);
+  padding: clamp(16px, 3vh, 29px) clamp(20px, 2.3vw, 31px);
   border: 1px solid var(--gs-line);
   border-radius: var(--gs-radius);
   background-color: #ffffff;
@@ -332,9 +335,43 @@
 }
 
 /* ---------- Responsive ---------- */
-@media (max-width: 1200px) {
+
+/* Portátiles y pantallas bajas: compacta textos para que la sección quepa en una pantalla */
+@media (min-width: 1024px) and (max-height: 860px) {
   .HomePage-GetStartedSection-container {
-    padding: clamp(24px, 5vh, 60px) 100px;
+    gap: clamp(16px, 3.5vh, 56px);
+    padding-block: clamp(16px, 4vh, 60px);
+  }
+
+  .HomePage-GetStartedSection-guide-title {
+    font-size: clamp(1.15rem, 2.8vh, 1.6rem);
+  }
+
+  .HomePage-GetStartedSection-title {
+    font-size: clamp(2.6rem, min(7vw, 9vh), 6rem);
+  }
+
+  .HomePage-GetStartedSection-description {
+    line-height: 1.6;
+  }
+
+  .HomePage-GetStartedSection-step-description {
+    margin-bottom: 2px;
+    line-height: 1.5;
+  }
+
+  .HomePage-GetStartedSection-code {
+    padding-block: 6px;
+  }
+
+  .HomePage-GetStartedSection-guide-icon {
+    width: 22px;
+    height: 22px;
+    margin-bottom: 0;
+  }
+
+  .HomePage-GetStartedSection-guide-description {
+    line-height: 1.55;
   }
 }
 
@@ -344,14 +381,23 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .HomePage-GetStartedSection-title {
+    font-size: clamp(2.8rem, 12vw, 5rem);
+  }
+
   .HomePage-GetStartedSection-description,
   .HomePage-GetStartedSection-scripts {
-    max-width: none;
+    max-width: 560px;
   }
 
   .HomePage-GetStartedSection-guides {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
+  }
+
+  /* La tercera guía ocupa todo el ancho para no dejar un hueco */
+  .HomePage-GetStartedSection-guide:last-child {
+    grid-column: 1 / -1;
   }
 }
 
@@ -370,7 +416,36 @@
     transform: none;
   }
 
+  .HomePage-GetStartedSection-guides {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .HomePage-GetStartedSection-guide {
     padding: 22px;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .HomePage-GetStartedSection-container {
+    padding: 32px 16px;
+  }
+
+  .HomePage-GetStartedSection-step {
+    padding: 16px;
+  }
+
+  .HomePage-GetStartedSection-code {
+    padding-left: 12px;
+    gap: 8px;
+  }
+
+  .HomePage-GetStartedSection-scripts-list li {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .HomePage-GetStartedSection-scripts-list span {
+    text-align: left;
   }
 }
