@@ -3,7 +3,7 @@
   flex-direction: column;
   border-radius: 12px;
   border: 1px solid var(--border);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  background: var(--panel);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   overflow: hidden;
@@ -28,7 +28,7 @@
 
   /* Thin, transparent scrollbar */
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+  scrollbar-color: var(--track) transparent;
 }
 
 .scrollArea::-webkit-scrollbar {
@@ -40,12 +40,12 @@
 }
 
 .scrollArea::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.14);
+  background: var(--track);
   border-radius: 999px;
 }
 
 .scrollArea:hover::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.28);
+  background: var(--track-strong);
 }
 
 .table {
@@ -58,10 +58,10 @@
   position: sticky;
   top: 0;
   z-index: 1;
-  background: rgba(26, 23, 20, 0.92);
+  background: var(--popover);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid var(--border);
   color: var(--text-muted);
   font-size: 0.68rem;
   font-weight: 600;
@@ -101,11 +101,11 @@
 }
 
 .table tbody tr:nth-child(even) td {
-  background: rgba(255, 255, 255, 0.025);
+  background: var(--row-alt);
 }
 
 .table tbody tr:hover td {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--hover);
 }
 
 .turnNumber {

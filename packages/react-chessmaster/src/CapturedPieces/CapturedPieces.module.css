@@ -13,7 +13,7 @@
   padding: 10px 12px;
   border-radius: 10px;
   border: 1px solid var(--border);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  background: var(--panel);
 }
 
 /* Debajo del nombre del jugador: una sola línea compacta, grupos por tipo de pieza */

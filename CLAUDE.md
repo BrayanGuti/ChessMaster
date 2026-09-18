@@ -130,7 +130,7 @@ Pieces are encoded as 4-character strings: `[Color][Type][File][Rank]`
 
 - **ESLint rules** focus on React hooks (dependency arrays) and React Refresh for hot module reloading
 - **TypeScript strict mode** is enabled; all pieces of state have defined types in `store/types.ts`
-- **CSS structure**: Chess components use CSS Modules (`*.module.css`); all theme tokens (`--light-square`, `--accent`, `--text`, ...) are defined on `.chessGame` in `ChessBoard.module.css`. Site pages use global styles in `apps/web/src/index.css`
+- **CSS structure**: Chess components use CSS Modules (`*.module.css`); all theme tokens (`--light-square`, `--accent`, `--text`, `--panel`, `--popover`, `--hover`, `--track`, ...) are defined on `.chessGame` in `ChessBoard.module.css` with dark-scheme values, and `.light` (prop `colorScheme="light"`) redefines them for light pages. Never hardcode UI colors in component CSS: use a token, or the component becomes unreadable on one of the two backgrounds. Site pages use global styles in `apps/web/src/index.css`
 - **Tests**: `npm test` (Vitest) covers the chess logic in `packages/react-chessmaster/src/__tests__/`; verify UI changes manually in the dev server
 - **Persistence (opt-in)**: the `persist` prop saves each board to localStorage under `react-chessmaster:<key>` (see `store/persistence.ts`). Only a minimal snapshot is stored (pieces, hasMoved, turn, history, promotion, layout); everything derived is rebuilt with `markCellsUnderAttack` on restore. Bump `PERSIST_VERSION` when that snapshot changes shape
 - **Build**: `npm run build` runs `tsc -b` — a plain `tsc` checks nothing because the root tsconfig only has project references

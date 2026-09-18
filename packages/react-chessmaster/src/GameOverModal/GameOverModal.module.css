@@ -21,10 +21,10 @@
   max-width: 100%;
   padding: clamp(20px, 6cqmin, 36px) clamp(24px, 8cqmin, 44px);
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border);
   background:
     linear-gradient(180deg, color-mix(in srgb, var(--accent, #d6ae6b) 10%, transparent), transparent 60%),
-    rgba(22, 20, 18, 0.96);
+    var(--popover);
   box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.9);
   text-align: center;
   animation: panelIn 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2);

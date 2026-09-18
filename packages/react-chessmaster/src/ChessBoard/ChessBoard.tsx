@@ -19,6 +19,7 @@ import type { ChessBoardProps } from '../store/types';
  */
 function ChessBoardContent({
   theme,
+  colorScheme = 'dark',
   className,
   showSettings = true,
   onMove,
@@ -95,7 +96,10 @@ function ChessBoardContent({
     .join(' ');
 
   return (
-    <div className={`${styles.chessGame}${className ? ` ${className}` : ''}`} style={themeVars}>
+    <div
+      className={[styles.chessGame, colorScheme === 'light' && styles.light, className].filter(Boolean).join(' ')}
+      style={themeVars}
+    >
       <div className={styles.stage}>
         <div className={layoutClassName}>
           {playerBadges && (

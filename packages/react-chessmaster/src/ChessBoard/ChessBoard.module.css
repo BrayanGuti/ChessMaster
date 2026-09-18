@@ -18,18 +18,47 @@
   --accent: #d6ae6b; /* acento de la interfaz: jugador activo, switches, historial */
   --drop-ring: rgba(255, 255, 255, 0.75); /* casilla bajo la pieza arrastrada */
 
-  --surface: rgba(255, 255, 255, 0.045);
-  --surface-strong: rgba(255, 255, 255, 0.08);
-  --border: rgba(255, 255, 255, 0.08);
+  /* Interfaz alrededor del tablero (paneles, menú, modal). Esquema oscuro por defecto;
+     .light (prop colorScheme="light") los redefine para páginas con fondo claro. */
   --text: #f3efe6;
   --text-muted: rgba(243, 239, 230, 0.55);
   --text-subtle: rgba(243, 239, 230, 0.32);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.2);
+  --panel: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  --popover: rgba(24, 21, 18, 0.96); /* menú, cabecera fija del historial y modal de fin */
+  --hover: rgba(255, 255, 255, 0.06);
+  --row-alt: rgba(255, 255, 255, 0.025);
+  --control: rgba(255, 255, 255, 0.1); /* botón del engranaje activo */
+  --track: rgba(255, 255, 255, 0.14); /* switches apagados y scrollbar */
+  --track-strong: rgba(255, 255, 255, 0.28);
 
+  color-scheme: dark;
   container: chess-root / inline-size;
   position: relative;
   isolation: isolate;
   width: 100%;
   height: 100%;
+  /* Fuente propia: en una página sin estilos el navegador usaría serif */
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.light {
+  --accent: #a8792e; /* el dorado por defecto no contrasta como texto sobre fondo claro */
+  --text: #1f1b16;
+  --text-muted: rgba(31, 27, 22, 0.62);
+  --text-subtle: rgba(31, 27, 22, 0.42);
+  --border: rgba(0, 0, 0, 0.1);
+  --border-strong: rgba(0, 0, 0, 0.18);
+  --panel: linear-gradient(180deg, rgba(0, 0, 0, 0.035), rgba(0, 0, 0, 0.015));
+  --popover: rgba(252, 250, 246, 0.97);
+  --hover: rgba(0, 0, 0, 0.05);
+  --row-alt: rgba(0, 0, 0, 0.025);
+  --control: rgba(0, 0, 0, 0.06);
+  --track: rgba(0, 0, 0, 0.14);
+  --track-strong: rgba(0, 0, 0, 0.26);
+
+  color-scheme: light;
 }
 
 .chessGame,

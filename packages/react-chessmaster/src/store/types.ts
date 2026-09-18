@@ -123,6 +123,11 @@ export interface ChessDisplaySettings {
 
 export interface ChessBoardProps {
   theme?: ChessBoardTheme;
+  /**
+   * Colors of the panels, menu and dialogs around the board: 'dark' (default) for pages with a
+   * dark background, 'light' for light ones. The board squares come from `theme`.
+   */
+  colorScheme?: 'dark' | 'light';
   showMoveHistory?: boolean;
   showCapturedPieces?: boolean;
   showPlayerBadges?: boolean;
