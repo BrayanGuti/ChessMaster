@@ -1,4 +1,9 @@
 .chessPiece {
     width: 90%;
     height: 90%;
+    /* El drag nativo de <img> se dispara con clics rapidos y bloquea toda la
+       interaccion. Un drag and drop futuro debe usar Pointer Events en la celda. */
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
 }

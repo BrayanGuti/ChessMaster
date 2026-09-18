@@ -7,6 +7,7 @@ import { MoveHistory } from '../MoveHistory/MoveHistory';
 import { CapturedPieces } from '../CapturedPieces/CapturedPieces';
 import { PlayerBadge } from '../PlayerBadge/PlayerBadge';
 import { GameOverModal } from '../GameOverModal/GameOverModal';
+import { ChessErrorBoundary } from '../ErrorBoundary/ChessErrorBoundary';
 import { useRef, useEffect, CSSProperties } from 'react';
 import { SOUND_ASSETS } from '../assets/sounds';
 import type { ChessBoardProps } from '../store/types';
@@ -102,7 +103,9 @@ function ChessBoardContent({
 export function ChessBoard(props: ChessBoardProps = {}) {
   return (
     <ChessGameProvider>
-      <ChessBoardContent {...props} />
+      <ChessErrorBoundary>
+        <ChessBoardContent {...props} />
+      </ChessErrorBoundary>
     </ChessGameProvider>
   );
 }

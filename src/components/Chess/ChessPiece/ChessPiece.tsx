@@ -14,6 +14,7 @@ export function ChessPiece({ piece }: { piece: ChessBoardCell['piece'] }) {
             src={pieceUrl}
             alt={pieceName}
             className={styles.chessPiece}
+            draggable={false}
         />
     );
 }
