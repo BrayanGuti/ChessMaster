@@ -1,13 +1,13 @@
 import { create, StateCreator } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { startGame } from '../hooks/StartGame'
-import { calculateAvailableMoves } from '../hooks/CalculateMoves'
 import { markCellsUnderAttack } from '../hooks/MarkCellsUnderAttack'
-import { hasAnyLegalMove } from '../hooks/CheckMate'
+import { applyGameEnd, hasAnyLegalMove } from '../hooks/CheckMate'
 import { isCastling } from '../hooks/Castling'
-import { getLegalMoves, parseUci } from '../hooks/LegalMoves'
+import { getLegalMoves, getLegalMovesFrom, parseUci } from '../hooks/LegalMoves'
+import { getEnPassantCapturedSquare, getEnPassantTarget } from '../hooks/EnPassant'
 import { toFEN } from '../hooks/Fen'
-import { ChessBoardState, ChessBoardCell, ChessDisplaySettings, ChessStoreApi, ColorChoice, GameConfig, MoveRecord, CheckStatus, PieceColor } from './types'
+import { ChessBoardState, ChessDisplaySettings, ChessStoreApi, ColorChoice, GameConfig, MoveRecord, CheckStatus, PieceColor } from './types'
 import { PERSIST_VERSION, PersistedGame, isPersistedGame, migratePersistedGame, restoreGame, safeLocalStorage, toPersistedGame } from './persistence'
 
 const INITIAL_CHECK_STATE: CheckStatus = {
@@ -130,9 +130,9 @@ function createGameState(initialDisplaySettings: ChessDisplaySettings, initialGa
       })),
 
       legalMoves: () => {
-          const { chessBoardpositions, turn, checkState, coronation } = get()
+          const { chessBoardpositions, turn, checkState, coronation, moveHistory } = get()
           if (coronation.status || checkState.isCheckmate || checkState.isStalemate) return []
-          return getLegalMoves(chessBoardpositions, turn).map(move => move.uci)
+          return getLegalMoves(chessBoardpositions, turn, getEnPassantTarget(moveHistory)).map(move => move.uci)
       },
 
       // Plays through the same path as a human move (movePiece), so castling, captures, history,
@@ -162,7 +162,7 @@ function createGameState(initialDisplaySettings: ChessDisplaySettings, initialGa
 
       toFEN: () => {
           const { chessBoardpositions, turn, moveHistory } = get()
-          return toFEN(chessBoardpositions, turn, moveHistory)
+          return toFEN(chessBoardpositions, turn, moveHistory, getEnPassantTarget(moveHistory))
       },
 
       clickCell: (cellInformation) => {
@@ -173,11 +173,7 @@ function createGameState(initialDisplaySettings: ChessDisplaySettings, initialGa
           if(coronation.status) return
           if(checkState.isCheckmate || checkState.isStalemate) return
 
-          if(checkState.check){
-              get().handleCellClickWhenCheck(cellInformation, cellOfPieceSelected)
-              return
-          }
-
+          // In check the same rules apply: selectPieceToMove only offers moves that get out of it
           if(cellInformation.piece === '' && cellOfPieceSelected === null) return
 
           if(cellOfPieceSelected === null && cellInformation.piece[0] === get().turn){
@@ -199,59 +195,13 @@ function createGameState(initialDisplaySettings: ChessDisplaySettings, initialGa
           get().movePiece(cellInformation.coordinates)
       },
 
+      // Move hints come from the same legality rule the engine uses (getLegalMovesFrom), so a
+      // human and the computer can always play exactly the same moves
       selectPieceToMove: (cellInformation) => {
+          const { chessBoardpositions, moveHistory } = get()
           set({ cellOfPieceSelected: cellInformation})
-          const coordsOfAvailableMoves = calculateAvailableMoves(cellInformation, get().chessBoardpositions)
-          get().showAvailableMoves(get().isProtectingCheck(coordsOfAvailableMoves, cellInformation))
-      },
-
-      handleCellClickWhenCheck: (cellClicked, cellOfPieceSelected) => {
-          if(cellClicked.piece[1] === 'K'){
-              get().selectPieceToMove(cellClicked)
-              return
-          }
-          const pieces = get().checkState.allDefenders;
-          for (let i = 0; i < pieces.length; i++) {
-            const piece = pieces[i];
-
-            if (piece.protector.cellName === cellClicked.cellName) {
-              get().selectPieceToDefendCheck(piece)
-              return
-            }
-          }
-          if(cellOfPieceSelected !== null){
-              get().movePiece(cellClicked.coordinates)
-          }
-      },
-
-      isProtectingCheck: (moves, cellInformation) => {
-          if(cellInformation.piece[1] === 'K') return moves
-          const { chessBoardpositions } = get()
-          const filteredMoves: ChessBoardCell["coordinates"][] = []
-          const chessBoardWithoutCellSelected = chessBoardpositions.map(row =>
-              row.map(cell =>
-                  cell.piece === cellInformation.piece
-                      ? { ...cell, piece: "" }
-                      : { ...cell }
-              )
-          )
-
-          const { checkState } = markCellsUnderAttack(chessBoardWithoutCellSelected)
-          if (checkState.check && checkState.numberOfAttackersIsOne) {
-              checkState.attackers?.path.forEach(cellPath => {
-                  moves.forEach(move => {
-                      if (cellPath.coordinates.col === move.col && cellPath.coordinates.row === move.row) {
-                          filteredMoves.push(move)
-                      }
-                      if(move.col === checkState.attackers?.attackerCell.coordinates.col && move.row === checkState.attackers?.attackerCell.coordinates.row){
-                          filteredMoves.push(move)
-                      }
-                  })
-              })
-
-              return filteredMoves.length > 0 ? filteredMoves : []
-          }
-          return moves
+          const moves = getLegalMovesFrom(chessBoardpositions, cellInformation, getEnPassantTarget(moveHistory))
+          get().showAvailableMoves(moves.map(move => move.to))
       },
 
       makeCoronation: (piece: string) => {
@@ -281,7 +231,13 @@ function createGameState(initialDisplaySettings: ChessDisplaySettings, initialGa
 
           const targetCell = chessBoardpositions[destinyCoords.row][destinyCoords.col]
           if (targetCell?.YouCanMoveHere) {
-              const capturedPiece = targetCell.piece || null
+              // En passant: the captured pawn stands beside the capturing pawn, not on the target square
+              const enPassantSquare = getEnPassantCapturedSquare(
+                  chessBoardpositions, cellOfPieceSelected.coordinates, destinyCoords, getEnPassantTarget(moveHistory)
+              )
+              const capturedPiece = enPassantSquare
+                  ? chessBoardpositions[enPassantSquare.row][enPassantSquare.col].piece
+                  : targetCell.piece || null
 
               const boardWithCastling = isCastling(
                   cellOfPieceSelected.coordinates,
@@ -301,19 +257,28 @@ function createGameState(initialDisplaySettings: ChessDisplaySettings, initialGa
                       if (cell.coordinates.row === cellOfPieceSelected.coordinates.row && cell.coordinates.col === cellOfPieceSelected.coordinates.col) {
                           return { ...cell, piece: '', hasMoved: true }
                       }
+                      if (enPassantSquare && cell.coordinates.row === enPassantSquare.row && cell.coordinates.col === enPassantSquare.col) {
+                          return { ...cell, piece: '' }
+                      }
                       return cell
                   })
               )
 
-              const { checkState: nextCheckState } = markCellsUnderAttack(newChessBoardPositions)
               const record: MoveRecord = {
                   piece: cellOfPieceSelected.piece,
                   from: cellOfPieceSelected.cellName,
                   to: targetCell.cellName,
                   captured: capturedPiece,
-                  notation: buildNotation(cellOfPieceSelected.piece, targetCell.cellName, capturedPiece, nextCheckState),
+                  notation: '',
                   turnNumber: Math.floor(moveHistory.length / 2) + 1
               }
+              const opponent = cellOfPieceSelected.piece[0] === 'W' ? 'B' : 'W'
+              const { newBoard: nextBoard, checkState: nextCheckState } = markCellsUnderAttack(newChessBoardPositions)
+              const gives = {
+                  check: nextCheckState.check,
+                  isCheckmate: nextCheckState.check && !hasAnyLegalMove(nextBoard, opponent, getEnPassantTarget([record]))
+              }
+              record.notation = buildNotation(cellOfPieceSelected.piece, targetCell.cellName, capturedPiece, gives)
 
               set({ chessBoardpositions: newChessBoardPositions, cellOfPieceSelected: null })
               get().addMoveRecord(record)
@@ -382,12 +347,7 @@ function createGameState(initialDisplaySettings: ChessDisplaySettings, initialGa
       updateCellsUnderAttack: (sideToMove) => {
           const { newBoard, checkState } = markCellsUnderAttack(get().chessBoardpositions)
           const nextTurnColor = sideToMove ?? (get().turn === 'W' ? 'B' : 'W')
-
-          // With a promotion pending the pawn is still on the last rank: the position is final only
-          // after makeCoronation, which calls this again
-          if (!get().coronation.status && !checkState.check && !checkState.isCheckmate && !hasAnyLegalMove(newBoard, nextTurnColor)) {
-              checkState.isStalemate = true
-          }
+          applyGameEnd(newBoard, checkState, nextTurnColor, getEnPassantTarget(get().moveHistory), get().coronation.status)
 
           set({ chessBoardpositions: newBoard })
           set({ checkState })
@@ -403,15 +363,6 @@ function createGameState(initialDisplaySettings: ChessDisplaySettings, initialGa
           }
 
           get().setSoundToPlay('check')
-      },
-
-      selectPieceToDefendCheck: (piece) => {
-          set({ cellOfPieceSelected: piece.protector })
-          const coordsOfAvailableMoves: ChessBoardCell['coordinates'][] = []
-          piece.cellToProtect.forEach(cell => {
-              coordsOfAvailableMoves.push(cell.coordinates)
-          })
-          get().showAvailableMoves(coordsOfAvailableMoves)
       }
   })
 }

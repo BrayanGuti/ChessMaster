@@ -46,6 +46,7 @@ function ChessBoardContent({
   showSettings = true,
   showGamePanel = true,
   modes,
+  opponent,
   onMove,
   onGameEnd,
   onReset,
@@ -61,7 +62,7 @@ function ChessBoardContent({
   const store = useChessStoreApi();
   const allowedModes = resolveModes(modes);
 
-  useComputerOpponent();
+  useComputerOpponent(opponent?.getMove);
 
   // A saved game may use a mode the developer no longer allows: start over in an allowed one
   const modeAllowed = allowedModes.includes(gameMode);

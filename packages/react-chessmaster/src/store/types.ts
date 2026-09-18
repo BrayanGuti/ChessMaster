@@ -107,12 +107,6 @@ export interface ChessBoardState {
     changeTurn: () => void;
 
     resetGame: () => void;
-
-    handleCellClickWhenCheck: (cell: ChessBoardCell, cellOfPieceSelected: ChessBoardCell | null) => void;
-
-    selectPieceToDefendCheck: (defenders: {protector: ChessBoardCell, cellToProtect: ChessBoardCell[]}) => void;
-
-    isProtectingCheck: (coords: {col: number; row: number;}[], cell: ChessBoardCell) => {col: number; row: number;}[];
 }
 
 export type ChessBoardPositions = Array<Array<ChessBoardCell>>
@@ -148,8 +142,10 @@ export interface OpponentOptions {
   /** Strength from 1 (weakest) to 5. Default: 2 */
   level?: OpponentLevel;
   /**
-   * Your own engine: receives the position in FEN and resolves a move in UCI notation
-   * ("e2e4", "e7e8q"). Not used yet: the built-in engine plays every move for now.
+   * Your own engine instead of the built-in one (js-chess-engine): receives the position in FEN
+   * and resolves a move in UCI notation ("e2e4", "e7e8q"). `level` is then only a label; use it
+   * yourself if your engine has strengths. An illegal answer or a rejected promise is replaced
+   * by a random legal move, with a console warning.
    */
   getMove?: (fen: string) => Promise<string>;
 }

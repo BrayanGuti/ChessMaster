@@ -1,7 +1,8 @@
 import type { StateStorage } from 'zustand/middleware'
 import { createBoard } from '../hooks/StartGame'
 import { markCellsUnderAttack } from '../hooks/MarkCellsUnderAttack'
-import { hasAnyLegalMove } from '../hooks/CheckMate'
+import { applyGameEnd } from '../hooks/CheckMate'
+import { getEnPassantTarget } from '../hooks/EnPassant'
 import type { ChessBoardState, ChessDisplaySettings, ColorChoice, GameMode, MoveRecord, OpponentLevel, PieceColor } from './types'
 
 export const STORAGE_PREFIX = 'react-chessmaster:'
@@ -163,11 +164,8 @@ export function restoreGame(saved: PersistedGame): Partial<ChessBoardState> {
   )
   const { newBoard, checkState } = markCellsUnderAttack(board)
 
-  // Unlike updateCellsUnderAttack (which runs before changeTurn), `turn` here is already the
-  // side to move. A pending promotion is recomputed by makeCoronation, so it is skipped.
-  if (!saved.coronation.status && !checkState.check && !checkState.isCheckmate && !hasAnyLegalMove(newBoard, saved.turn)) {
-    checkState.isStalemate = true
-  }
+  // Unlike updateCellsUnderAttack (which runs before changeTurn), `turn` here is already the side to move
+  applyGameEnd(newBoard, checkState, saved.turn, getEnPassantTarget(saved.moveHistory), saved.coronation.status)
 
   return {
     chessBoardpositions: newBoard,

@@ -1,6 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useChessStore, useChessStoreApi } from '../store/useChessStore'
-import { randomEngine, type ChessEngine } from './engine'
+import type { ChessEngine } from './engine'
+import { jsChessEngine } from './jsChessEngine'
 
 /** Minimum time the computer "thinks", so its reply never lands instantly after the player's move */
 export const MIN_THINKING_MS = 500
@@ -9,8 +10,19 @@ export const MIN_THINKING_MS = 500
  * Plays the computer's moves in 'computer' mode. Runs whenever it becomes the engine's turn,
  * including right after mount, so a game reloaded on the engine's turn continues by itself.
  * If the game changes while the engine is thinking (new game, unmount), the answer is dropped.
+ *
+ * `getMove` (the `opponent.getMove` prop) replaces the built-in engine with the host's own.
  */
-export function useComputerOpponent(engine: ChessEngine = randomEngine) {
+export function useComputerOpponent(getMove?: (fen: string) => Promise<string>) {
+  // The latest getMove without restarting the search when the host passes a new inline function
+  const getMoveRef = useRef(getMove)
+  getMoveRef.current = getMove
+  const hasCustomEngine = Boolean(getMove)
+  const engine = useMemo<ChessEngine>(
+    () => (hasCustomEngine ? ({ fen }) => getMoveRef.current!(fen) : jsChessEngine),
+    [hasCustomEngine]
+  )
+
   const store = useChessStoreApi()
   const gameMode = useChessStore((state) => state.gameMode)
   const playerColor = useChessStore((state) => state.playerColor)
@@ -43,8 +55,8 @@ export function useComputerOpponent(engine: ChessEngine = randomEngine) {
         // The game moved on while thinking (new game, restored position...)
         if (state.gameId !== gameId || state.turn !== turn || state.moveHistory.length !== moveCount) return
         if (!state.applyMove(move)) {
-          console.warn(`[react-chessmaster] The engine answered an illegal move (${move}); playing a legal one instead.`)
-          state.applyMove(moves[0])
+          console.warn(`[react-chessmaster] The engine answered an illegal move (${move}); playing a random legal move instead.`)
+          state.applyMove(moves[Math.floor(Math.random() * moves.length)])
         }
       })
       .finally(() => {

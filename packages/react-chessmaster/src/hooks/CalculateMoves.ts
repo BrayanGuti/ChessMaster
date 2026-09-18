@@ -2,14 +2,19 @@ import { ChessBoardCell, ChessBoardPositions, ChessBoardState } from "../store/t
 
 type posiblesMoves = ChessBoardCell['coordinates'][]
 
+/**
+ * Moves a piece could make (not yet filtered for king safety).
+ * `enPassant` is the square a pawn may capture on en passant (see getEnPassantTarget), if any.
+ */
 export function calculateAvailableMoves(
-  selectedCell: ChessBoardCell, 
-  chessBoard: ChessBoardState['chessBoardpositions']
+  selectedCell: ChessBoardCell,
+  chessBoard: ChessBoardState['chessBoardpositions'],
+  enPassant: ChessBoardCell['coordinates'] | null = null
 ): ChessBoardCell['coordinates'][] {
   const { col, row } = selectedCell.coordinates;
   const pieceColor = chessBoard[row][col].piece[0];
 
-  const futurePossibleMoves = calculateFuturesMoves(selectedCell, chessBoard, true, false);
+  const futurePossibleMoves = calculateFuturesMoves(selectedCell, chessBoard, true, false, enPassant);
   const possibleMoves = futurePossibleMoves.filter(({ row: r, col: c }) => {
     return chessBoard[r][c].piece[0] !== pieceColor;
   })
@@ -21,7 +26,8 @@ export function calculateFuturesMoves(
     selectedCell: ChessBoardCell, 
     chessBoard: ChessBoardState['chessBoardpositions'],
     castle = false,
-    CheckingAttracks = true
+    CheckingAttracks = true,
+    enPassant: ChessBoardCell['coordinates'] | null = null
   ): posiblesMoves {
     let posiblesMoves: posiblesMoves = []
 
@@ -40,12 +46,12 @@ export function calculateFuturesMoves(
       posiblesMoves = kingMove(chessBoard, selectedCoordinates, castle)
     } 
     else if (pieceType === 'P') {
-      posiblesMoves = pawnMove(selectedCell, chessBoard, selectedCoordinates, CheckingAttracks)
+      posiblesMoves = pawnMove(selectedCell, chessBoard, selectedCoordinates, CheckingAttracks, enPassant)
     }
   return posiblesMoves
 }
 
-function pawnMove (pieceCell: ChessBoardCell, chessBoard: ChessBoardState['chessBoardpositions'], selectedCoordinates: ChessBoardCell['coordinates'], CheckingAttracks: boolean,): ChessBoardCell['coordinates'][] {
+function pawnMove (pieceCell: ChessBoardCell, chessBoard: ChessBoardState['chessBoardpositions'], selectedCoordinates: ChessBoardCell['coordinates'], CheckingAttracks: boolean, enPassant: ChessBoardCell['coordinates'] | null = null): ChessBoardCell['coordinates'][] {
   const { col, row } = selectedCoordinates 
   const posiblesMoves: posiblesMoves = []
   const firstMove = pieceCell.hasMoved
@@ -63,7 +69,8 @@ function pawnMove (pieceCell: ChessBoardCell, chessBoard: ChessBoardState['chess
   const possibleColumns = [col + 1, col - 1]
   possibleColumns.forEach(column => {
     const targetRow = row + direction
-    if (isOnBoard(targetRow, column) && (CheckingAttracks || chessBoard[targetRow][column].piece !== '')) {
+    const isEnPassant = enPassant !== null && enPassant.row === targetRow && enPassant.col === column
+    if (isOnBoard(targetRow, column) && (CheckingAttracks || chessBoard[targetRow][column].piece !== '' || isEnPassant)) {
       posiblesMoves.push({ row: targetRow, col: column})
     }
   })

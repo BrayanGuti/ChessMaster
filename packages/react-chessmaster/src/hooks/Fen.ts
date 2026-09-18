@@ -1,12 +1,17 @@
-import { ChessBoardPositions, MoveRecord } from "../store/types"
+import { ChessBoardCell, ChessBoardPositions, MoveRecord } from "../store/types"
 
 /**
  * Forsyth–Edwards Notation of the current position, the format chess engines take as input.
  * - Castling rights come from the king and rook `hasMoved` flags on their starting squares.
- * - En passant is always "-": the game does not implement en passant captures yet.
+ * - The en passant square is given after any two-square pawn advance (see getEnPassantTarget).
  * - The halfmove clock counts moves since the last pawn move or capture (fifty-move rule).
  */
-export function toFEN(board: ChessBoardPositions, turn: 'W' | 'B', moveHistory: MoveRecord[]): string {
+export function toFEN(
+  board: ChessBoardPositions,
+  turn: 'W' | 'B',
+  moveHistory: MoveRecord[],
+  enPassant: ChessBoardCell['coordinates'] | null = null
+): string {
   const placement = board
     .map(row => {
       let rank = ''
@@ -47,5 +52,7 @@ export function toFEN(board: ChessBoardPositions, turn: 'W' | 'B', moveHistory: 
 
   const fullmoveNumber = Math.floor(moveHistory.length / 2) + 1
 
-  return `${placement} ${turn === 'W' ? 'w' : 'b'} ${castling} - ${halfmoveClock} ${fullmoveNumber}`
+  const enPassantSquare = enPassant ? board[enPassant.row][enPassant.col].cellName : '-'
+
+  return `${placement} ${turn === 'W' ? 'w' : 'b'} ${castling} ${enPassantSquare} ${halfmoveClock} ${fullmoveNumber}`
 }

@@ -148,7 +148,8 @@ describe('toFEN', () => {
   it('tracks turn, castling rights and move counters', () => {
     const store = createChessStore()
     store.getState().applyMove('e2e4')
-    expect(store.getState().toFEN()).toBe('rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1')
+    // After a two-square pawn advance the en passant square is given, as in standard FEN
+    expect(store.getState().toFEN()).toBe('rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1')
 
     store.getState().applyMove('e7e5')
     store.getState().applyMove('e1e2') // the king moves: white loses both castling rights

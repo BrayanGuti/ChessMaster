@@ -8,13 +8,14 @@ export interface EngineRequest {
   level: OpponentLevel
 }
 
-/** Resolves the move to play, in UCI notation ("e2e4", "e7e8q"). */
+/**
+ * Resolves the move to play, in UCI notation ("e2e4", "e7e8q").
+ * Implementations: jsChessEngine (built-in, see jsChessEngine.ts) and the host's
+ * `opponent.getMove` (wrapped in useComputerOpponent).
+ */
 export type ChessEngine = (request: EngineRequest) => Promise<string>
 
-/**
- * PROVISIONAL engine (phase 4.5a): plays a random legal move, ignoring the level.
- * It exists to exercise the whole "vs Computer" flow; phase 4.5b replaces it with a real engine.
- */
+/** Plays a random legal move, ignoring the level. Only used by tests (fast self-play). */
 export const randomEngine: ChessEngine = async ({ legalMoves }) => {
   if (legalMoves.length === 0) throw new Error('No legal moves to choose from')
   return legalMoves[Math.floor(Math.random() * legalMoves.length)]
