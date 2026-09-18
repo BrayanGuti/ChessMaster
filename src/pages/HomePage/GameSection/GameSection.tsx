@@ -9,7 +9,6 @@ export function GameSection() {
           showMoveHistory
           showCapturedPieces
           showPlayerBadges
-          className={styles.board}
         />
       </div>
     </section>

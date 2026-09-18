@@ -1,10 +1,8 @@
 .gameSection {
-  /* Espacio vertical que ocupa todo lo que no es el tablero (paddings, badges, gaps) */
   --section-padding: clamp(16px, 3vh, 32px);
   --container-padding: 24px;
-  --vertical-chrome: 290px;
-  --side-panel: 276px; /* panel lateral (260px) + gap (16px) */
-  --board-size: max(280px, calc(100dvh - var(--vertical-chrome)));
+  /* Alto disponible para el juego dentro del marco */
+  --stage-h: max(420px, calc(100dvh - 2 * var(--section-padding) - 2 * var(--container-padding) - 2px));
 
   min-height: 100vh;
   min-height: 100dvh;
@@ -17,27 +15,18 @@
 }
 
 .container {
-  /* El ancho se deriva del alto disponible para que tablero + badges quepan en pantalla */
-  width: min(
-    100%,
-    calc(var(--board-size) + var(--side-panel) + 2 * var(--container-padding) + 2px)
-  );
+  /* El ChessBoard llena este marco; su ancho acompaña al alto para no dejar huecos */
+  width: min(100%, calc(var(--stage-h) * 1.2 + 2 * var(--container-padding) + 2px));
+  height: calc(var(--stage-h) + 2 * var(--container-padding) + 2px);
   padding: var(--container-padding);
   background-color: #0f0f0f;
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-.board {
-  width: 100%;
-}
-
 @media (max-width: 768px) {
   .gameSection {
     --section-padding: 12px;
     --container-padding: 12px;
-    --vertical-chrome: 370px;
-    --side-panel: 0px; /* el panel pasa debajo del tablero */
-    --board-size: max(260px, calc(100dvh - var(--vertical-chrome)));
   }
 }

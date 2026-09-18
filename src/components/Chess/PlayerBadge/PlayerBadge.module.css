@@ -149,7 +149,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@container chess-stage (max-width: 480px) {
   .playerBadge {
     gap: 10px;
     padding: 8px 10px 8px 8px;

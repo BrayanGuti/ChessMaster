@@ -7,6 +7,7 @@
 }
 
 .panel {
+  flex-shrink: 0;
   padding: 10px 12px;
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -27,16 +28,11 @@
   height: 20px;
   margin-left: -9px;
   filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.55));
-  transition: transform 0.2s ease;
   animation: pieceIn 0.35s ease-out;
 }
 
 .icon:first-child {
   margin-left: 0;
-}
-
-.group:hover .icon {
-  transform: translateY(-2px);
 }
 
 /* Dark pieces need a soft halo to stay readable on dark backgrounds */
@@ -77,6 +73,5 @@
 @media (prefers-reduced-motion: reduce) {
   .icon {
     animation: none;
-    transition: none;
   }
 }

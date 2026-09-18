@@ -8,9 +8,10 @@ import { CapturedPieces } from '../CapturedPieces/CapturedPieces';
 import { PlayerBadge } from '../PlayerBadge/PlayerBadge';
 import { GameOverModal } from '../GameOverModal/GameOverModal';
 import { ChessErrorBoundary } from '../ErrorBoundary/ChessErrorBoundary';
-import { useRef, useEffect, CSSProperties } from 'react';
+import { ChessSettings } from '../ChessSettings/ChessSettings';
+import { useRef, useEffect, useState, CSSProperties } from 'react';
 import { SOUND_ASSETS } from '../assets/sounds';
-import type { ChessBoardProps } from '../store/types';
+import type { ChessBoardProps, ChessDisplaySettings } from '../store/types';
 
 function ChessBoardContent({
   theme,
@@ -18,6 +19,7 @@ function ChessBoardContent({
   showMoveHistory,
   showCapturedPieces,
   showPlayerBadges,
+  showSettings = true,
   onMove,
   onGameEnd,
 }: ChessBoardProps) {
@@ -25,6 +27,14 @@ function ChessBoardContent({
   const coronation = useChessStore((state) => state.coronation);
   const moveHistory = useChessStore((state) => state.moveHistory);
   const checkState = useChessStore((state) => state.checkState);
+
+  // Props only seed the initial layout; the settings menu can change it at runtime
+  const [settings, setSettings] = useState<ChessDisplaySettings>(() => ({
+    playerBadges: Boolean(showPlayerBadges),
+    capturedPieces: Boolean(showCapturedPieces),
+    moveHistory: Boolean(showMoveHistory),
+    sound: true,
+  }));
 
   useEffect(() => {
     if (onMove && moveHistory.length > 0) {
@@ -55,10 +65,7 @@ function ChessBoardContent({
     : {};
 
   const board = (
-    <section
-      className={`${styles.chessBoard}${className ? ` ${className}` : ''}`}
-      style={themeVars}
-    >
+    <section className={styles.chessBoard}>
       {positions.map((row, rowIndex) =>
         row.map((cell, colIndex) => (
           <ChessCell
@@ -72,34 +79,51 @@ function ChessBoardContent({
     </section>
   );
 
-  if (!showMoveHistory && !showCapturedPieces && !showPlayerBadges) {
-    return (
-      <>
-        {board}
-        <PlaySound />
-      </>
-    );
-  }
+  const { playerBadges, capturedPieces, moveHistory: showHistory, sound } = settings;
 
   // With badges visible, captured pieces live inside each player's badge
-  const capturedInBadges = Boolean(showPlayerBadges && showCapturedPieces);
-  const capturedInPanel = Boolean(showCapturedPieces && !capturedInBadges);
+  const capturedInBadges = playerBadges && capturedPieces;
+  const capturedInPanel = capturedPieces && !playerBadges;
+  const hasSidePanel = showHistory || capturedInPanel;
+  const hasTopBar = playerBadges || showSettings;
+
+  const layoutClassName = [
+    styles.layout,
+    playerBadges && styles.withBadges,
+    !playerBadges && showSettings && styles.withToolbar,
+    hasSidePanel && styles.withSidePanel,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
-    <div className={styles.chessBoardWrapper}>
-      {showPlayerBadges && <PlayerBadge color="B" showCapturedPieces={capturedInBadges} />}
-      <div className={styles.chessBoardRow}>
-        {board}
-        {(showMoveHistory || capturedInPanel) && (
-          <aside className={styles.sidePanel}>
-            {capturedInPanel && <CapturedPieces color="B" />}
-            {showMoveHistory && <MoveHistory />}
-            {capturedInPanel && <CapturedPieces color="W" />}
-          </aside>
-        )}
+    <div className={`${styles.chessGame}${className ? ` ${className}` : ''}`} style={themeVars}>
+      <div className={styles.stage}>
+        <div className={layoutClassName}>
+          {hasTopBar && (
+            <div className={styles.topBar}>
+              {playerBadges && (
+                <PlayerBadge color="B" showCapturedPieces={capturedInBadges} className={styles.badge} />
+              )}
+              {showSettings && <ChessSettings settings={settings} onChange={setSettings} />}
+            </div>
+          )}
+          <div className={styles.row}>
+            <div className={styles.boardArea}>{board}</div>
+            {hasSidePanel && (
+              <aside className={styles.sidePanel}>
+                {capturedInPanel && <CapturedPieces color="B" />}
+                {showHistory && <MoveHistory className={styles.history} />}
+                {capturedInPanel && <CapturedPieces color="W" />}
+              </aside>
+            )}
+          </div>
+          {playerBadges && (
+            <PlayerBadge color="W" showCapturedPieces={capturedInBadges} className={styles.badge} />
+          )}
+        </div>
       </div>
-      {showPlayerBadges && <PlayerBadge color="W" showCapturedPieces={capturedInBadges} />}
-      <PlaySound />
+      <PlaySound muted={!sound} />
     </div>
   );
 }
@@ -114,12 +138,16 @@ export function ChessBoard(props: ChessBoardProps = {}) {
   );
 }
 
-function PlaySound() {
+function PlaySound({ muted }: { muted: boolean }) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const soundToPlay = useChessStore((state) => state.soundToPlay);
   const setSoundToPlay = useChessStore((state) => state.setSoundToPlay);
 
   useEffect(() => {
+    if (soundToPlay && muted) {
+      setSoundToPlay(null);
+      return;
+    }
     if (soundToPlay && audioRef.current && SOUND_ASSETS[soundToPlay]) {
       audioRef.current.src = SOUND_ASSETS[soundToPlay];
       audioRef.current.onended = () => setSoundToPlay(null);
@@ -128,7 +156,7 @@ function PlaySound() {
         setSoundToPlay(null);
       });
     }
-  }, [soundToPlay, setSoundToPlay]);
+  }, [soundToPlay, muted, setSoundToPlay]);
 
   return <audio ref={audioRef} />;
 }

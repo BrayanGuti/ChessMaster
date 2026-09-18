@@ -1,18 +1,141 @@
-:root {
+/*
+ * Layout portable del juego.
+ * - .chessGame llena a su contenedor padre (width/height 100%). Si el padre no tiene
+ *   alto definido, .stage usa aspect-ratio como alto de respaldo.
+ * - Todo se dimensiona con container queries (cqw/cqh), nunca con el viewport, así que
+ *   funciona igual en una página completa, una tarjeta o un sidebar.
+ * - El tablero siempre es cuadrado y ocupa todo el espacio que dejan libres los paneles
+ *   visibles (jugadores, historial, capturas).
+ */
+
+.chessGame {
   --light-square: #f0d9b5;
   --dark-square: #b58863;
   --highlight: #baca44;
   --accent: #7daee0;
+
+  container: chess-root / inline-size;
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  height: 100%;
+}
+
+.chessGame,
+.chessGame *,
+.chessGame *::before,
+.chessGame *::after {
+  box-sizing: border-box;
+}
+
+.stage {
+  container: chess-stage / size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+.stage:has(.withSidePanel) {
+  aspect-ratio: 5 / 4;
+}
+
+@container chess-root (max-width: 640px) {
+  .stage:has(.withBadges),
+  .stage:has(.withSidePanel) {
+    aspect-ratio: 3 / 4;
+  }
+
+  .stage:has(.withBadges.withSidePanel) {
+    aspect-ratio: 1 / 2;
+  }
+}
+
+.layout {
+  /* Medidas de los elementos que rodean al tablero (estimadas; el tablero absorbe el resto) */
+  --gap: 12px;
+  --badge-h: 74px;
+  --toolbar-h: 36px;
+  --panel-w: 260px;
+  --panel-h: 150px;
+
+  --top: 0px;
+  --bottom: 0px;
+  --side: 0px;
+  --below: 0px;
+
+  --board: max(
+    120px,
+    min(
+      100cqw - var(--side),
+      100cqh - var(--top) - var(--bottom) - var(--below)
+    )
+  );
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  width: min(100%, calc(var(--board) + var(--side)));
+  height: min(100%, calc(var(--board) + var(--top) + var(--bottom) + var(--below)));
+}
+
+.layout.withBadges {
+  --top: calc(var(--badge-h) + var(--gap));
+  --bottom: calc(var(--badge-h) + var(--gap));
+}
+
+.layout.withToolbar {
+  --top: calc(var(--toolbar-h) + var(--gap));
+}
+
+.layout.withSidePanel {
+  --side: calc(var(--panel-w) + var(--gap));
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.topBar .badge {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.layout > .badge {
+  flex-shrink: 0;
+}
+
+.row {
+  display: flex;
+  gap: var(--gap);
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+.boardArea {
+  /* Contenedor propio: el tablero toma el mayor cuadrado que cabe aquí */
+  container-type: size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
 }
 
 .chessBoard {
-  z-index: 99999;
-  width: 100%;
-  height: 100%;
+  z-index: 1;
+  width: min(100cqw, 100cqh);
+  height: min(100cqw, 100cqh);
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   grid-template-rows: repeat(8, 1fr);
-  aspect-ratio: 1 / 1;
   background-color: #444;
   box-shadow: 0px 0px 15px 5px rgba(0, 0, 0, 0.5);
   border-radius: 3%;
@@ -21,41 +144,38 @@
   -webkit-user-select: none;
 }
 
-.chessBoardWrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-}
-
-.chessBoardRow {
-  display: flex;
-  gap: 16px;
-  align-items: flex-start;
-  width: 100%;
-}
-
-.chessBoardRow > .chessBoard {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
 .sidePanel {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: 260px;
+  width: var(--panel-w);
   flex-shrink: 0;
+  min-height: 0;
 }
 
-@media (max-width: 768px) {
-  .chessBoardRow {
+.history {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Contenedor estrecho: el panel lateral pasa debajo del tablero */
+@container chess-stage (max-width: 640px) {
+  .layout {
+    --gap: 10px;
+    --badge-h: 66px;
+  }
+
+  .layout.withSidePanel {
+    --side: 0px;
+    --below: calc(var(--panel-h) + var(--gap));
+  }
+
+  .row {
     flex-direction: column;
-    align-items: stretch;
   }
 
   .sidePanel {
     width: 100%;
+    height: var(--panel-h);
   }
 }

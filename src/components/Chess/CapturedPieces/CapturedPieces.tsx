@@ -51,8 +51,6 @@ export function CapturedPieces({
 
   const isInline = variant === 'inline';
 
-  if (groups.length === 0 && !isInline) return null;
-
   return (
     <div
       className={`${styles.capturedPieces} ${isInline ? styles.inline : styles.panel}${className ? ` ${className}` : ''}`}

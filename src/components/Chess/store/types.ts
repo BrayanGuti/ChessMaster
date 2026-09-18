@@ -101,6 +101,13 @@ export interface ChessBoardTheme {
   accent?: string;
 }
 
+export interface ChessDisplaySettings {
+  playerBadges: boolean;
+  capturedPieces: boolean;
+  moveHistory: boolean;
+  sound: boolean;
+}
+
 export interface ChessBoardProps {
   size?: number | string;
   theme?: ChessBoardTheme;
@@ -108,6 +115,8 @@ export interface ChessBoardProps {
   showMoveHistory?: boolean;
   showCapturedPieces?: boolean;
   showPlayerBadges?: boolean;
+  /** Shows the gear menu that lets the player toggle the panels above at runtime. Default: true */
+  showSettings?: boolean;
   onGameEnd?: (result: GameEndResult) => void;
   onMove?: (move: MoveRecord) => void;
   className?: string;

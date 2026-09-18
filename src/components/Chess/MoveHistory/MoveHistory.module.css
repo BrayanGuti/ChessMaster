@@ -7,6 +7,7 @@
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   overflow: hidden;
+  min-height: 0;
 }
 
 .title {
@@ -19,20 +20,15 @@
 }
 
 .scrollArea {
-  max-height: 320px;
+  /* El alto lo decide el contenedor (panel lateral o bajo el tablero) */
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
 
   /* Thin, transparent scrollbar */
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
-}
-
-@media (max-width: 768px) {
-  /* En móvil el historial va debajo del tablero: lo acotamos para no robarle alto */
-  .scrollArea {
-    max-height: 96px;
-  }
 }
 
 .scrollArea::-webkit-scrollbar {
