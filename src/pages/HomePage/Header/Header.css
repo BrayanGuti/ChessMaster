@@ -10,7 +10,7 @@
 .HomePage-Header-container {
   max-width: 100%;
   margin: 0 auto;
-  padding: 0 120px;
+  padding: 0 20px;
   width: 100%;
   height: 70px;
 }
@@ -38,6 +38,10 @@
 }
 
 @media (min-width: 1000px) {
+  .HomePage-Header-container {
+    padding: 0 120px;
+  }
+
   .HomePage-Header-nav-desktop {
     display: flex;
     align-items: stretch;
