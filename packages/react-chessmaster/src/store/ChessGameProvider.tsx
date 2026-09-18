@@ -47,7 +47,7 @@ export function ChessGameProvider({
     mountedStorageKeys.set(key, count)
     if (count > 1) {
       console.warn(
-        `[react-chess] ${count} boards share the storage key "${key}" and will overwrite each other's saved game. ` +
+        `[react-chessmaster] ${count} boards share the storage key "${key}" and will overwrite each other's saved game. ` +
           'Give each board its own string, e.g. persist="game-1".'
       )
     }

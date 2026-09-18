@@ -130,7 +130,7 @@ export interface ChessBoardProps {
   showSettings?: boolean;
   /**
    * Saves the game (and the panel layout) in localStorage so it survives reloads.
-   * `true` uses the key "react-chess:default"; a string uses "react-chess:<string>",
+   * `true` uses the key "react-chessmaster:default"; a string uses "react-chessmaster:<string>",
    * so each board on a page needs its own string. Read once, when the board mounts.
    */
   persist?: boolean | string;

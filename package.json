@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "npm run dev -w apps/web",
     "build": "npm run typecheck -w packages/react-chessmaster && npm run build -w apps/web",
+    "build:package": "npm run build -w packages/react-chessmaster",
     "lint": "eslint .",
     "preview": "npm run preview -w apps/web",
     "test": "npm test -w packages/react-chessmaster --",

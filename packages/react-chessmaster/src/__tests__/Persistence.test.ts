@@ -4,7 +4,7 @@ import { PERSIST_VERSION, resolveStorageKey, toPersistedGame } from '../store/pe
 import { ChessStoreApi } from '../store/types'
 import { getCellByName } from './fixtures'
 
-const KEY = 'react-chess:test'
+const KEY = 'react-chessmaster:test'
 
 /** Plays a move through the same actions the UI uses: click the piece, then the target cell. */
 function play(store: ChessStoreApi, from: string, to: string) {
@@ -29,8 +29,8 @@ function pieces(store: ChessStoreApi) {
 
 describe('resolveStorageKey', () => {
   it('maps the persist prop to a namespaced key', () => {
-    expect(resolveStorageKey(true)).toBe('react-chess:default')
-    expect(resolveStorageKey('game-1')).toBe('react-chess:game-1')
+    expect(resolveStorageKey(true)).toBe('react-chessmaster:default')
+    expect(resolveStorageKey('game-1')).toBe('react-chessmaster:game-1')
     expect(resolveStorageKey(false)).toBeNull()
     expect(resolveStorageKey(undefined)).toBeNull()
     expect(resolveStorageKey('  ')).toBeNull()
@@ -84,12 +84,12 @@ describe('game persistence', () => {
   })
 
   it('keeps boards with different keys apart', () => {
-    const first = reload('react-chess:one')
-    const second = reload('react-chess:two')
+    const first = reload('react-chessmaster:one')
+    const second = reload('react-chessmaster:two')
     play(first, 'e2', 'e4')
 
-    expect(reload('react-chess:one').getState().moveHistory).toHaveLength(1)
-    expect(reload('react-chess:two').getState().moveHistory).toHaveLength(0)
+    expect(reload('react-chessmaster:one').getState().moveHistory).toHaveLength(1)
+    expect(reload('react-chessmaster:two').getState().moveHistory).toHaveLength(0)
     expect(second.getState().moveHistory).toHaveLength(0)
   })
 

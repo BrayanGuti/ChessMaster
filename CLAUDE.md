@@ -23,7 +23,8 @@ packages/react-chessmaster/   # The npm package @brayanguti/react-chessmaster (t
 apps/web/                     # The ChessMaster website: demo + docs, consumes the package
 ```
 
-- `apps/web` imports the component as `@brayanguti/react-chessmaster`; npm workspaces symlink it, and its `exports` points at `src/index.ts`, so Vite serves the package source directly with HMR (no package build needed in development).
+- `apps/web` imports the component as `@brayanguti/react-chessmaster`; npm workspaces symlink it. The package's `exports` has a custom `source` condition pointing at `src/index.ts`, enabled only in `apps/web` (`resolve.conditions` in its vite.config.ts and `customConditions` in tsconfig.app.json). So the site always uses the package source with HMR and never needs `dist/`; npm users get `dist/`.
+- Package build (`npm run build:package`): Vite library mode in `packages/react-chessmaster/vite.config.ts` → `dist/index.js` (ESM, starts with `"use client"` and imports `./style.css`), `dist/style.css`, and `dist/index.d.ts` (vite-plugin-dts, rolled up to the public API). react and zustand are external; images and sounds are inlined as data URIs. CSS module classes are named `rcm_<local>_<hash>`.
 - The package is `"private": true` until it is ready to publish, to prevent accidental `npm publish`.
 - Each workspace declares every tool its own scripts use (e.g. `typescript` and `vite` in both). Vercel builds with Root Directory `apps/web` and installs only that workspace's dependencies, so anything declared only in the root `package.json` (which holds just ESLint) does not exist there.
 
@@ -131,5 +132,5 @@ Pieces are encoded as 4-character strings: `[Color][Type][File][Rank]`
 - **TypeScript strict mode** is enabled; all pieces of state have defined types in `store/types.ts`
 - **CSS structure**: Chess components use CSS Modules (`*.module.css`); all theme tokens (`--light-square`, `--accent`, `--text`, ...) are defined on `.chessGame` in `ChessBoard.module.css`. Site pages use global styles in `apps/web/src/index.css`
 - **Tests**: `npm test` (Vitest) covers the chess logic in `packages/react-chessmaster/src/__tests__/`; verify UI changes manually in the dev server
-- **Persistence (opt-in)**: the `persist` prop saves each board to localStorage under `react-chess:<key>` (see `store/persistence.ts`). Only a minimal snapshot is stored (pieces, hasMoved, turn, history, promotion, layout); everything derived is rebuilt with `markCellsUnderAttack` on restore. Bump `PERSIST_VERSION` when that snapshot changes shape
+- **Persistence (opt-in)**: the `persist` prop saves each board to localStorage under `react-chessmaster:<key>` (see `store/persistence.ts`). Only a minimal snapshot is stored (pieces, hasMoved, turn, history, promotion, layout); everything derived is rebuilt with `markCellsUnderAttack` on restore. Bump `PERSIST_VERSION` when that snapshot changes shape
 - **Build**: `npm run build` runs `tsc -b` — a plain `tsc` checks nothing because the root tsconfig only has project references

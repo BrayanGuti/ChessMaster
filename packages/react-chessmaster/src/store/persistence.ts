@@ -4,7 +4,7 @@ import { markCellsUnderAttack } from '../hooks/MarkCellsUnderAttack'
 import { hasAnyLegalMove } from '../hooks/CheckMate'
 import type { ChessBoardState, ChessDisplaySettings, MoveRecord } from './types'
 
-export const STORAGE_PREFIX = 'react-chess:'
+export const STORAGE_PREFIX = 'react-chessmaster:'
 
 /** Bump when PersistedGame changes shape; saved games with another version are discarded. */
 export const PERSIST_VERSION = 1

@@ -4,15 +4,45 @@
   "private": true,
   "description": "A complete, drop-in chess board for React: full rules, drag and drop, sounds, themes and saved games.",
   "license": "MIT",
+  "author": "Brayan Gutierrez (https://github.com/BrayanGuti)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BrayanGuti/ChessMaster.git",
+    "directory": "packages/react-chessmaster"
+  },
+  "homepage": "https://github.com/BrayanGuti/ChessMaster#readme",
+  "bugs": "https://github.com/BrayanGuti/ChessMaster/issues",
+  "keywords": [
+    "chess",
+    "chessboard",
+    "react",
+    "react-component",
+    "board-game",
+    "game"
+  ],
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
   },
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
   "scripts": {
+    "build": "tsc --noEmit && vite build",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage"
+    "test:coverage": "vitest --coverage",
+    "prepack": "npm run build"
   },
   "peerDependencies": {
     "react": ">=18"
@@ -27,6 +57,7 @@
     "react": "^18.3.1",
     "typescript": "^5.5.3",
     "vite": "^5.4.1",
+    "vite-plugin-dts": "^4.5.4",
     "vitest": "^1.0.0"
   }
 }
