@@ -40,10 +40,15 @@ src/pages/
 ### Chess Game System
 ```
 src/components/Chess/
-├── ChessBoard/        # Main 8x8 board renderer, handles board layout
+├── index.ts           # Public API (ChessBoard + public types). Import the component only from here.
+├── ChessBoard/        # Public <ChessBoard> (layout, panels, sounds) + Board.tsx (8x8 grid) + drag logic
 ├── ChessCell/         # Individual cell component with click handlers
 ├── ChessPiece/        # Piece SVG renderer with position styling
 ├── CoronationPanel/   # Modal for pawn promotion (choosing Queen/Rook/Bishop/Knight)
+├── ChessSettings/     # Gear menu to toggle panels at runtime
+├── PlayerBadge/ CapturedPieces/ MoveHistory/ GameOverModal/ ErrorBoundary/
+├── assets/            # Pieces, sounds and avatars, imported as ES modules (pieces.ts, sounds.ts, avatars.ts)
+├── __tests__/         # Vitest tests for the chess logic
 ├── hooks/             # Core chess logic (NOT React hooks, utility functions)
 │   ├── StartGame.ts           # Initialize board with starting positions
 │   ├── CalculateMoves.ts      # Determine legal moves for a piece (accounts for piece type)
@@ -52,13 +57,17 @@ src/components/Chess/
 │   ├── ChessCellCharacteristics.ts  # Identify cell properties (color, coordinates)
 │   └── MarkCellsUnderAttack.ts      # Calculate attacked cells & check state
 └── store/
-    ├── type.d.ts              # TypeScript type definitions (ChessBoardState, ChessBoardCell)
-    └── useChessManager.ts     # Zustand store managing all game state
+    ├── types.ts               # All types, including the public ChessBoardProps
+    ├── createChessStore.ts    # Zustand store factory (one store per board instance)
+    ├── ChessGameProvider.tsx  # Context provider that creates the store for each <ChessBoard>
+    └── useChessStore.ts       # Selector hook used by the components
 ```
+
+The Chess folder is meant to become a standalone npm package: it must not import anything from outside `src/components/Chess` (no site CSS, no `public/`, no site-only dependencies like `lucide-react`).
 
 ### Game State Management (Zustand Store)
 
-The `useChessManager` store is the single source of truth. Key state fields:
+Each `<ChessBoard>` gets its own store from `createChessStore()` via `ChessGameProvider`, so several boards can coexist. Key state fields:
 
 - **chessBoardpositions**: 8×8 array of cells with piece positions, coordinates, and move markers
 - **turn**: Current player ('W' for white, 'B' for black)
@@ -73,7 +82,7 @@ Key methods: `clickCell()`, `selectPieceToMove()`, `movePiece()`, `makeCoronatio
 
 ### Move Calculation
 - `CalculateMoves.ts` computes all possible moves for a piece without checking if they expose the king to check
-- `useChessManager.isProtectingCheck()` filters moves to only legal ones (those that don't leave king in check)
+- The store's `isProtectingCheck()` filters moves to only legal ones (those that don't leave king in check)
 - Available moves are marked in board state with `YouCanMoveHere: true`
 
 ### Check & Checkmate Detection
@@ -89,8 +98,8 @@ Pieces are encoded as 4-character strings: `[Color][Type][File][Rank]`
 - Example: "WPe2" = white pawn at e2
 
 ### Assets
-- **SVG pieces** in `public/Pieces/` (named like WP.svg, BK.svg for piece notation)
-- **Sound effects** in `public/Sound/` (move, capture, castling, check, game-over variations)
+- **SVG pieces** in `src/components/Chess/assets/Pieces/` (named like WP.svg, BK.svg for piece notation)
+- **Sound effects** in `src/components/Chess/assets/Sound/` (move, capture, castling, check, game-over variations)
 - Pieces are licensed/sourced separately and styled via CSS positioning
 
 ## Git Commit Policy
@@ -104,8 +113,8 @@ Pieces are encoded as 4-character strings: `[Color][Type][File][Rank]`
 ## Development Notes
 
 - **ESLint rules** focus on React hooks (dependency arrays) and React Refresh for hot module reloading
-- **TypeScript strict mode** is enabled; all pieces of state have defined types in `type.d.ts`
-- **CSS structure**: Each component has a paired `.css` file; global styles in `src/index.css`
-- **No test suite**: Verify features manually in the dev server or production build
+- **TypeScript strict mode** is enabled; all pieces of state have defined types in `store/types.ts`
+- **CSS structure**: Chess components use CSS Modules (`*.module.css`); all theme tokens (`--light-square`, `--accent`, `--text`, ...) are defined on `.chessGame` in `ChessBoard.module.css`. Site pages use global styles in `src/index.css`
+- **Tests**: `npm test` (Vitest) covers the chess logic in `src/components/Chess/__tests__/`; verify UI changes manually in the dev server
 - **No persistence**: Game state is not saved to localStorage; reloading resets the board
 - Comments in store note future features: persist middleware and confetti animations

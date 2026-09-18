@@ -114,9 +114,7 @@ export interface ChessDisplaySettings {
 }
 
 export interface ChessBoardProps {
-  size?: number | string;
   theme?: ChessBoardTheme;
-  showTurnIndicator?: boolean;
   showMoveHistory?: boolean;
   showCapturedPieces?: boolean;
   showPlayerBadges?: boolean;

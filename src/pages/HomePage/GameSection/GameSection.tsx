@@ -1,13 +1,16 @@
 import styles from "./GameSection.module.css";
-import { ChessBoard } from "../../../components/Chess/ChessBoard/ChessBoard";
+import { ChessBoard } from "../../../components/Chess";
 import {
   Crown,
+  LayoutGrid,
+  Maximize2,
   Move,
+  Palette,
   ShieldCheck,
   SlidersHorizontal,
   Users,
   Volume2,
-  Zap,
+  Webhook,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -27,7 +30,7 @@ const FEATURES: Feature[] = [
     icon: ShieldCheck,
     title: "Complete Rules",
     description:
-      "Only legal moves are allowed, and no move can leave your own king in check.",
+      "Only legal moves are allowed, with check, checkmate and stalemate detected.",
   },
   {
     icon: Crown,
