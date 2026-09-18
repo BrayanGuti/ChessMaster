@@ -4,7 +4,7 @@
   backdrop-filter: blur(12px);
   position: relative;
   z-index: 10;
-  min-height: 70px;
+  min-height: var(--header-height);
 }
 
 .HomePage-Header-container {
@@ -12,7 +12,8 @@
   margin: 0 auto;
   padding: 0 20px;
   width: 100%;
-  height: 70px;
+  /* Descontamos el border-bottom del header para que mida exactamente --header-height */
+  height: calc(var(--header-height) - 1px);
 }
 
 .HomePage-Header-content {
@@ -88,7 +89,7 @@
   top: 0;
   bottom: 0;
   width: 1px;
-  background-color: rgba(255, 255, 255, 0.15);
+  background-color: rgba(255, 255, 255, 0.24);
 }
 
 .HomePage-Header-nav-item::after {
@@ -98,7 +99,7 @@
   top: 0;
   bottom: 0;
   width: 1px;
-  background-color: rgba(255, 255, 255, 0.15);
+  background-color: rgba(255, 255, 255, 0.24);
 }
 
 .HomePage-Header-nav-divider-container {
@@ -115,7 +116,7 @@
   position: absolute;
   width: 1px;
   height: 100%;
-  background-color: rgba(255, 255, 255, 0.15);
+  background-color: rgba(255, 255, 255, 0.24);
   left: 0;
 }
 
@@ -124,19 +125,20 @@
   position: absolute;
   width: 1px;
   height: 100%;
-  background-color: rgba(255, 255, 255, 0.15);
+  background-color: rgba(255, 255, 255, 0.24);
   right: 0;
 }
 
 .HomePage-Header-plus {
-  color: #666666;
-  font-size: 0.75rem;
+  color: #8c8c8c;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1;
   z-index: 10;
-  opacity: 0.9;
   position: absolute;
-  left: -3px;
+  left: 0;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translate(-50%, -50%);
 }
 
 .HomePage-Header-logo-link {

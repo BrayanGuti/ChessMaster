@@ -1,5 +1,9 @@
 .HomePage-HeroSection-main {
-  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: calc(100vh - var(--header-height));
+  min-height: calc(100dvh - var(--header-height));
   background-color: #ffffff;
   position: relative;
   overflow: hidden;
@@ -20,26 +24,26 @@
 .HomePage-HeroSection-hero-container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 60px 140px;
+  padding: clamp(24px, 5vh, 60px) 140px;
   position: relative;
   z-index: 2;
-  min-height: calc(100vh - 100px);
+  flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   width: 100%;
 }
 
 @media (max-width: 1200px) {
   .HomePage-HeroSection-hero-container {
-    padding: 60px 100px;
+    padding: clamp(24px, 5vh, 60px) 100px;
   }
 }
 
 @media (max-width: 768px) {
   .HomePage-HeroSection-hero-container {
-    padding: 60px 32px;
+    padding: clamp(20px, 4vh, 60px) 24px;
   }
 }
 
@@ -48,13 +52,13 @@
   grid-template-columns: 1fr 1fr;
   gap: 40px;
   width: 100%;
-  align-items: flex-start;
+  align-items: center;
 }
 
 @media (max-width: 1023px) {
   .HomePage-HeroSection-hero-wrapper {
     grid-template-columns: 1fr;
-    gap: 60px;
+    gap: clamp(16px, 4vh, 60px);
   }
 }
 
@@ -82,7 +86,7 @@
 
 .HomePage-HeroSection-horse-image {
   width: 100%;
-  max-width: 420px;
+  max-width: min(420px, 55dvh);
   height: auto;
   object-fit: contain;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08))
@@ -92,13 +96,13 @@
 
 @media (max-width: 1023px) {
   .HomePage-HeroSection-horse-image {
-    max-width: 260px;
+    max-width: min(260px, 24dvh);
   }
 }
 
 .HomePage-HeroSection-hero-title-top,
 .HomePage-HeroSection-hero-title-bottom {
-  font-size: clamp(3.2rem, 11vw, 6rem);
+  font-size: clamp(2.8rem, min(11vw, 10vh), 6rem);
   font-weight: 900;
   color: #000000;
   line-height: 1;
@@ -109,7 +113,7 @@
 
 .HomePage-HeroSection-hero-title-top {
   text-align: left;
-  margin-bottom: 20px;
+  margin-bottom: clamp(10px, 2vh, 20px);
 }
 
 .HomePage-HeroSection-hero-title-bottom {
@@ -122,7 +126,7 @@
   color: #8a8a8a;
   max-width: 300px;
   line-height: 1.8;
-  margin: 0 0 28px 0;
+  margin: 0 0 clamp(14px, 3vh, 28px) 0;
   font-weight: 300;
   letter-spacing: 0.02em;
 }
@@ -130,14 +134,14 @@
 @media (max-width: 1023px) {
   .HomePage-HeroSection-hero-description {
     max-width: 320px;
-    margin-bottom: 24px;
+    margin-bottom: clamp(12px, 2.5vh, 24px);
   }
 }
 
 @media (max-width: 768px) {
   .HomePage-HeroSection-hero-description {
     max-width: 280px;
-    margin-bottom: 20px;
+    margin-bottom: clamp(12px, 2vh, 20px);
   }
 }
 
@@ -145,7 +149,7 @@
   display: flex;
   align-items: flex-start;
   gap: 32px;
-  margin: 28px 0 0 0;
+  margin: clamp(8px, 2vh, 28px) 0 0 0;
 }
 
 .HomePage-HeroSection-brand-text {
@@ -155,7 +159,7 @@
 }
 
 .HomePage-HeroSection-brand-title {
-  font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+  font-size: clamp(1.3rem, min(3.2vw, 4vh), 2.4rem);
   font-weight: 800;
   color: #000000;
   line-height: 1.15;
@@ -190,7 +194,7 @@
 .HomePage-HeroSection-brand-line {
   width: 100%;
   flex-shrink: 0;
-  min-height: 90px;
+  min-height: clamp(48px, 9vh, 90px);
   background-color: #000000;
 }
 
@@ -214,7 +218,7 @@
   background-color: rgba(0, 0, 0, 0.9);
   color: #ffffff;
   border: none;
-  padding: 24px 48px;
+  padding: clamp(14px, 2.6vh, 24px) clamp(32px, 5vw, 48px);
   border-radius: 50px;
   font-size: 0.95rem;
   font-weight: 700;
@@ -226,7 +230,7 @@
   gap: 12px;
   letter-spacing: 0.05em;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
-  margin: 4px 0 28px 0;
+  margin: 4px 0 clamp(12px, 3vh, 28px) 0;
   width: fit-content;
   align-self: flex-start;
 }
@@ -245,4 +249,26 @@
 
 .HomePage-HeroSection-play-button:hover .HomePage-HeroSection-arrow {
   transform: translateX(6px);
+}
+
+/* Pantallas bajas (móviles pequeños / laptops con poca altura): compactamos más */
+@media (max-height: 700px) {
+  .HomePage-HeroSection-brand-grid {
+    width: 28px;
+    height: 42px;
+  }
+
+  .HomePage-HeroSection-brand-text {
+    gap: 6px;
+  }
+
+  .HomePage-HeroSection-brand-subtitle {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-height: 700px) and (max-width: 1023px) {
+  .HomePage-HeroSection-horse-image {
+    max-width: min(200px, 20dvh);
+  }
 }

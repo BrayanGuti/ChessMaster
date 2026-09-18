@@ -1,14 +1,28 @@
 .gameSection {
+  /* Espacio vertical que ocupa todo lo que no es el tablero (paddings, badges, gaps) */
+  --section-padding: clamp(16px, 3vh, 32px);
+  --container-padding: 24px;
+  --vertical-chrome: 290px;
+  --side-panel: 276px; /* panel lateral (260px) + gap (16px) */
+  --board-size: max(280px, calc(100dvh - var(--vertical-chrome)));
+
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
   background-color: #0f0f0f;
-  padding: 80px 32px;
+  padding: var(--section-padding) clamp(12px, 4vw, 48px);
   display: flex;
+  align-items: center;
   justify-content: center;
 }
 
 .container {
-  width: 100%;
-  max-width: 720px;
-  padding: 24px;
+  /* El ancho se deriva del alto disponible para que tablero + badges quepan en pantalla */
+  width: min(
+    100%,
+    calc(var(--board-size) + var(--side-panel) + 2 * var(--container-padding) + 2px)
+  );
+  padding: var(--container-padding);
   background-color: #0f0f0f;
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -20,10 +34,10 @@
 
 @media (max-width: 768px) {
   .gameSection {
-    padding: 48px 16px;
-  }
-
-  .container {
-    padding: 16px;
+    --section-padding: 12px;
+    --container-padding: 12px;
+    --vertical-chrome: 370px;
+    --side-panel: 0px; /* el panel pasa debajo del tablero */
+    --board-size: max(260px, calc(100dvh - var(--vertical-chrome)));
   }
 }

@@ -1,4 +1,5 @@
 import "./HeroSection.css";
+import { scrollToSection } from "../scrollToSection";
 
 export function HeroSection() {
   return (
@@ -13,7 +14,10 @@ export function HeroSection() {
               Transform your AI chess vision into true mastery with intelligent,
               results-focused strategy.
             </p>
-            <button className="HomePage-HeroSection-play-button">
+            <button
+              className="HomePage-HeroSection-play-button"
+              onClick={() => scrollToSection("game")}
+            >
               Play Now
               <span className="HomePage-HeroSection-arrow">→</span>
             </button>

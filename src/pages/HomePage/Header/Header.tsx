@@ -1,7 +1,8 @@
-import './Header.css';
-import { useState } from 'react';
-import { Link } from 'react-router-dom'
-import { Menu, X } from 'lucide-react';
+import "./Header.css";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Menu, X } from "lucide-react";
+import { scrollToSection } from "../scrollToSection";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,28 +13,33 @@ export function Header() {
         <div className="HomePage-Header-content">
           <nav className="HomePage-Header-nav-desktop">
             <div className="HomePage-Header-nav-item HomePage-Header-nav-item-first">
-              <Link to="/" className="HomePage-Header-logo-link">ChessPro</Link>
+              ChessPro
             </div>
             <div className="HomePage-Header-nav-divider-container HomePage-Header-nav-divider-internal">
               <span className="HomePage-Header-plus">+</span>
             </div>
             <div className="HomePage-Header-nav-item">
-              <NavLink href="/">Home</NavLink>
+              <ScrollLink targetId="creator">Creator</ScrollLink>
             </div>
             <div className="HomePage-Header-nav-divider-container HomePage-Header-nav-divider-internal">
               <span className="HomePage-Header-plus">+</span>
             </div>
             <div className="HomePage-Header-nav-item">
-              <NavLink href="#tournaments">Tournaments</NavLink>
+              <NavLink
+                href="https://github.com/BrayanGuti/ChessMaster"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Code Base
+              </NavLink>
             </div>
             <div className="HomePage-Header-nav-divider-container HomePage-Header-nav-divider-internal">
               <span className="HomePage-Header-plus">+</span>
             </div>
             <div className="HomePage-Header-nav-item HomePage-Header-nav-item-video">
-              <NavLink href="#video">Watch Video</NavLink>
+              <NavLink href="#tournaments">Get started</NavLink>
             </div>
-            <div className="HomePage-Header-nav-divider-container HomePage-Header-nav-divider-border">
-            </div>
+            <div className="HomePage-Header-nav-divider-container HomePage-Header-nav-divider-border"></div>
           </nav>
           <img
             src="/webicon.png"
@@ -44,16 +50,31 @@ export function Header() {
             className="HomePage-Header-menu-button"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            {isMenuOpen ? <X className="HomePage-Header-menu-icon" /> : <Menu className="HomePage-Header-menu-icon" />}
+            {isMenuOpen ? (
+              <X className="HomePage-Header-menu-icon" />
+            ) : (
+              <Menu className="HomePage-Header-menu-icon" />
+            )}
           </button>
         </div>
       </div>
       {isMenuOpen && (
         <div className="HomePage-Header-mobile-menu">
           <nav className="HomePage-Header-mobile-nav">
-            <NavLink href="/">Home</NavLink>
-            <NavLink href="#tournaments">Tournaments</NavLink>
-            <NavLink href="#video">Watch Video</NavLink>
+            <ScrollLink
+              targetId="creator"
+              onNavigate={() => setIsMenuOpen(false)}
+            >
+              Creator
+            </ScrollLink>
+            <NavLink
+              href="https://github.com/BrayanGuti/ChessMaster"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Code Base
+            </NavLink>
+            <NavLink href="#tournaments">Get started</NavLink>
           </nav>
         </div>
       )}
@@ -64,15 +85,39 @@ export function Header() {
 interface NavLinkProps {
   href: string;
   children: string;
+  target?: string;
+  rel?: string;
 }
 
-function NavLink({ href, children }: NavLinkProps) {
+function NavLink({ href, children, target, rel }: NavLinkProps) {
   return (
-    <Link
-      to={href}
-      className="HomePage-Header-link"
-    >
+    <Link to={href} className="HomePage-Header-link" target={target} rel={rel}>
       {children}
     </Link>
+  );
+}
+
+interface ScrollLinkProps {
+  targetId: string;
+  children: string;
+  onNavigate?: () => void;
+}
+
+function ScrollLink({ targetId, children, onNavigate }: ScrollLinkProps) {
+  const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    // Primero cerramos el menú móvil para que el destino se calcule con el layout final
+    onNavigate?.();
+    scrollToSection(targetId);
+  };
+
+  return (
+    <a
+      href={`#${targetId}`}
+      className="HomePage-Header-link"
+      onClick={handleClick}
+    >
+      {children}
+    </a>
   );
 }

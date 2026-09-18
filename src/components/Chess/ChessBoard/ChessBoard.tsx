@@ -81,20 +81,24 @@ function ChessBoardContent({
     );
   }
 
+  // With badges visible, captured pieces live inside each player's badge
+  const capturedInBadges = Boolean(showPlayerBadges && showCapturedPieces);
+  const capturedInPanel = Boolean(showCapturedPieces && !capturedInBadges);
+
   return (
     <div className={styles.chessBoardWrapper}>
-      {showPlayerBadges && <PlayerBadge color="B" />}
+      {showPlayerBadges && <PlayerBadge color="B" showCapturedPieces={capturedInBadges} />}
       <div className={styles.chessBoardRow}>
         {board}
-        {(showMoveHistory || showCapturedPieces) && (
+        {(showMoveHistory || capturedInPanel) && (
           <aside className={styles.sidePanel}>
-            {showCapturedPieces && <CapturedPieces color="B" />}
+            {capturedInPanel && <CapturedPieces color="B" />}
             {showMoveHistory && <MoveHistory />}
-            {showCapturedPieces && <CapturedPieces color="W" />}
+            {capturedInPanel && <CapturedPieces color="W" />}
           </aside>
         )}
       </div>
-      {showPlayerBadges && <PlayerBadge color="W" />}
+      {showPlayerBadges && <PlayerBadge color="W" showCapturedPieces={capturedInBadges} />}
       <PlaySound />
     </div>
   );

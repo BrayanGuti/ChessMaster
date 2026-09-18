@@ -3,6 +3,7 @@ import { Header } from './Header/Header'
 import { Footer } from './Footer/Footer'
 import { HeroSection } from './HeroSection/HeroSection'
 import { GameSection } from './GameSection/GameSection'
+import { CreatorSection } from './CreatorSection/CreatorSection'
 
 
 export function HomePage() {
@@ -11,6 +12,7 @@ export function HomePage() {
       <Header />
       <HeroSection />
       <GameSection />
+      <CreatorSection />
       <Footer />
     </div>
   )

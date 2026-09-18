@@ -1,0 +1,687 @@
+.HomePage-CreatorSection-section {
+  /* Paleta blanco y negro alineada con HeroSection */
+  --creator-card-bg: #ffffff;
+  --creator-ink: #000000;
+  --creator-dark: rgba(0, 0, 0, 0.9);
+  --creator-charcoal: #1a1a1a;
+  --creator-grey: #6b6b6b;
+  --creator-muted: #8a8a8a;
+  --creator-soft: #f0f0f0;
+  --creator-light: #e4e4e4;
+  --creator-radius: 19px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: clamp(16px, 4vh, 48px) 20px;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif;
+}
+
+.HomePage-CreatorSection-card {
+  display: grid;
+  grid-template-columns: 53px minmax(336px, 34%) 1fr;
+  gap: 24px;
+  width: 100%;
+  max-width: 1344px;
+  padding: 34px 38px 34px 24px;
+  background-color: var(--creator-card-bg);
+  border-radius: 22px;
+  color: var(--creator-ink);
+  box-shadow:
+    0 14px 38px rgba(0, 0, 0, 0.15),
+    0 48px 96px rgba(0, 0, 0, 0.35);
+}
+
+/* ---------- Side nav ---------- */
+.HomePage-CreatorSection-side-nav {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  padding: 77px 0 29px;
+}
+
+.HomePage-CreatorSection-side-nav-item {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--creator-ink);
+}
+
+/* ---------- Profile card ---------- */
+.HomePage-CreatorSection-profile-column {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.HomePage-CreatorSection-tab {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 53px;
+  padding: 0 26px 0 7px;
+  background-color: var(--creator-card-bg);
+  border-bottom-right-radius: 19px;
+  font-size: 1.14rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+/* Curvas invertidas para que la pestaña se funda con la tarjeta de perfil */
+.HomePage-CreatorSection-tab::before,
+.HomePage-CreatorSection-tab::after {
+  content: "";
+  position: absolute;
+  width: 19px;
+  height: 19px;
+  background: radial-gradient(
+    circle at 100% 100%,
+    transparent 18.5px,
+    var(--creator-card-bg) 19px
+  );
+}
+
+.HomePage-CreatorSection-tab::before {
+  top: 0;
+  right: -19px;
+}
+
+.HomePage-CreatorSection-tab::after {
+  bottom: -19px;
+  left: 0;
+}
+
+.HomePage-CreatorSection-tab-icon {
+  width: 19px;
+  height: 19px;
+}
+
+.HomePage-CreatorSection-profile {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: min(624px, calc(100dvh - 160px));
+  padding: clamp(24px, 4vh, 43px) 34px clamp(24px, 4vh, 38px);
+  background-color: var(--creator-dark);
+  border-radius: var(--creator-radius);
+  color: #ffffff;
+  overflow: hidden;
+}
+
+.HomePage-CreatorSection-avatar-ring {
+  align-self: flex-end;
+  width: min(72%, 312px, 32dvh);
+  aspect-ratio: 1;
+  min-height: 0;
+  flex-shrink: 0;
+  padding: 8px;
+  margin-right: -7px;
+  border: 4px solid #ffffff;
+  border-radius: 50%;
+}
+
+.HomePage-CreatorSection-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: var(--creator-light);
+  overflow: hidden;
+}
+
+.HomePage-CreatorSection-avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 68% 52%;
+  /* Encuadra cabeza y hombros (la cara está a la derecha de la foto original) */
+  transform: scale(2) translate(-9%, -1%);
+  transform-origin: 68% 52%;
+}
+
+.HomePage-CreatorSection-name {
+  display: flex;
+  flex-direction: column;
+  margin-top: auto;
+  padding-top: clamp(16px, 3vh, 34px);
+  font-size: clamp(2.2rem, min(4.3vw, 5.5vh), 3.72rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.HomePage-CreatorSection-name-intro {
+  font-weight: 300;
+}
+
+.HomePage-CreatorSection-email {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  align-self: flex-start;
+  margin-top: 26px;
+  padding-bottom: 7px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.85);
+  max-width: 100%;
+  font-size: clamp(0.8rem, 0.72rem + 0.25vw, 0.96rem);
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  overflow-wrap: anywhere;
+}
+
+.HomePage-CreatorSection-email-icon {
+  flex-shrink: 0;
+  width: 19px;
+  height: 19px;
+}
+
+.HomePage-CreatorSection-badge {
+  position: absolute;
+  right: 22px;
+  bottom: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.15);
+}
+
+.HomePage-CreatorSection-badge-text {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  animation: HomePage-CreatorSection-spin 18s linear infinite;
+}
+
+.HomePage-CreatorSection-badge-text text {
+  fill: var(--creator-ink);
+  font-size: 9.6px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.HomePage-CreatorSection-badge-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: var(--creator-ink);
+  box-shadow:
+    0 0 0 7px #ffffff,
+    0 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+@keyframes HomePage-CreatorSection-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- Right content ---------- */
+.HomePage-CreatorSection-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+.HomePage-CreatorSection-title {
+  position: relative;
+  align-self: flex-start;
+  margin: 0;
+  padding-right: 26px;
+  font-size: clamp(3.2rem, min(9.6vw, 13vh), 8.4rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  color: var(--creator-ink);
+}
+
+.HomePage-CreatorSection-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1.1fr 0.9fr;
+  grid-template-rows: 1.55fr 1fr;
+  gap: 24px;
+}
+
+/* Marca de esquina ⌝ */
+.HomePage-CreatorSection-corner {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 11px;
+  height: 11px;
+  border-top: 2px solid var(--creator-ink);
+  border-right: 2px solid var(--creator-ink);
+}
+
+.HomePage-CreatorSection-corner-light {
+  border-color: #ffffff;
+}
+
+.HomePage-CreatorSection-corner-title {
+  top: 0.12em;
+  right: 0;
+  width: 22px;
+  height: 22px;
+  border-width: 6px;
+}
+
+.HomePage-CreatorSection-media {
+  grid-column: 1 / 3;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 14px;
+  min-height: clamp(180px, 28vh, 288px);
+  padding: 29px 31px;
+  border-radius: var(--creator-radius);
+  background-color: var(--creator-soft);
+  overflow: hidden;
+}
+
+.HomePage-CreatorSection-media-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--creator-grey);
+}
+
+.HomePage-CreatorSection-media-text {
+  margin: 0;
+  max-width: 560px;
+  font-size: 1.14rem;
+  font-weight: 300;
+  line-height: 1.8;
+  letter-spacing: 0.02em;
+  color: var(--creator-charcoal);
+}
+
+.HomePage-CreatorSection-stats {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--creator-radius);
+  overflow: hidden;
+}
+
+.HomePage-CreatorSection-stat {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 19px 24px;
+  font-size: 1.05rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: inherit;
+  text-decoration: none;
+  transition: filter 0.3s ease;
+}
+
+.HomePage-CreatorSection-stat:hover {
+  filter: brightness(0.9);
+}
+
+.HomePage-CreatorSection-stat-icon {
+  width: 26px;
+  height: 26px;
+  margin-bottom: 8px;
+}
+
+.HomePage-CreatorSection-stat strong {
+  font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.HomePage-CreatorSection-stat-light {
+  background-color: var(--creator-light);
+}
+
+.HomePage-CreatorSection-stat-dark {
+  background-color: var(--creator-charcoal);
+  color: #ffffff;
+}
+
+/* ---------- Enlace al portafolio ---------- */
+.HomePage-CreatorSection-portfolio {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: clamp(150px, 20vh, 216px);
+  padding: 22px;
+  border-radius: var(--creator-radius);
+  background-color: var(--creator-ink);
+  color: #ffffff;
+  text-decoration: none;
+  overflow: hidden;
+  transition: filter 0.3s ease;
+}
+
+/* Tablero de fondo que se revela al pasar el ratón */
+.HomePage-CreatorSection-portfolio::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-conic-gradient(
+      rgba(255, 255, 255, 0.07) 0 25%,
+      transparent 0 50%
+    )
+    0 0 / 44px 44px;
+  opacity: 0.4;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.HomePage-CreatorSection-portfolio:hover::before {
+  opacity: 1;
+}
+
+.HomePage-CreatorSection-portfolio-arrow {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  color: var(--creator-ink);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+}
+
+.HomePage-CreatorSection-portfolio-arrow svg {
+  width: 26px;
+  height: 26px;
+}
+
+.HomePage-CreatorSection-portfolio:hover
+  .HomePage-CreatorSection-portfolio-arrow {
+  transform: rotate(45deg) scale(1.08);
+}
+
+.HomePage-CreatorSection-portfolio-label {
+  position: relative;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--creator-muted);
+}
+
+.HomePage-CreatorSection-portfolio strong {
+  position: relative;
+  font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+/* ---------- Lema + stack ---------- */
+.HomePage-CreatorSection-motto {
+  grid-column: 2 / 4;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  padding: 26px 31px;
+  border-radius: var(--creator-radius);
+  background-color: var(--creator-dark);
+  color: #ffffff;
+}
+
+.HomePage-CreatorSection-motto-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--creator-muted);
+}
+
+.HomePage-CreatorSection-motto-text {
+  margin: 0;
+  font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.HomePage-CreatorSection-motto-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.HomePage-CreatorSection-motto-stack li {
+  padding: 7px 17px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+/* ---------- Responsive ---------- */
+
+/* Tablets y portátiles pequeños: una sola columna */
+@media (max-width: 1200px) {
+  .HomePage-CreatorSection-section {
+    min-height: auto;
+    padding: 32px 20px;
+  }
+
+  .HomePage-CreatorSection-card {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 28px;
+  }
+
+  .HomePage-CreatorSection-side-nav {
+    order: 3;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 16px;
+    padding: 4px 4px 0;
+  }
+
+  .HomePage-CreatorSection-side-nav-item {
+    writing-mode: horizontal-tb;
+    transform: none;
+    font-size: 0.8rem;
+  }
+
+  /* Perfil en horizontal: avatar a la izquierda, nombre a la derecha */
+  .HomePage-CreatorSection-profile {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: 1fr auto;
+    column-gap: 40px;
+    align-items: end;
+    min-height: 0;
+    padding: 72px 40px 36px;
+  }
+
+  .HomePage-CreatorSection-avatar-ring {
+    grid-row: 1 / 3;
+    align-self: center;
+    width: clamp(180px, 30vw, 280px);
+    margin-right: 0;
+  }
+
+  .HomePage-CreatorSection-name {
+    margin-top: 0;
+    padding-top: 0;
+    font-size: clamp(2.2rem, 6vw, 3.72rem);
+  }
+
+  .HomePage-CreatorSection-email {
+    margin-top: 20px;
+  }
+
+  .HomePage-CreatorSection-title {
+    font-size: clamp(3rem, 13vw, 7rem);
+  }
+
+  .HomePage-CreatorSection-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto;
+  }
+
+  .HomePage-CreatorSection-media {
+    grid-column: 1 / -1;
+    min-height: 0;
+  }
+
+  .HomePage-CreatorSection-media-text {
+    max-width: none;
+  }
+
+  .HomePage-CreatorSection-stats {
+    grid-column: 1 / -1;
+    flex-direction: row;
+  }
+
+  .HomePage-CreatorSection-stat strong,
+  .HomePage-CreatorSection-portfolio strong,
+  .HomePage-CreatorSection-motto-text {
+    font-size: clamp(1.4rem, 4vw, 2.1rem);
+  }
+
+  .HomePage-CreatorSection-motto {
+    grid-column: 2 / 3;
+  }
+}
+
+/* Móviles */
+@media (max-width: 640px) {
+  .HomePage-CreatorSection-section {
+    padding: 20px 12px;
+  }
+
+  .HomePage-CreatorSection-card {
+    gap: 16px;
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .HomePage-CreatorSection-tab {
+    height: 46px;
+    padding-right: 20px;
+    font-size: 1rem;
+  }
+
+  /* Perfil apilado */
+  .HomePage-CreatorSection-profile {
+    display: flex;
+    align-items: stretch;
+    padding: 24px 22px 26px;
+  }
+
+  .HomePage-CreatorSection-avatar-ring {
+    align-self: flex-end;
+    width: min(58%, 220px);
+    padding: 6px;
+    border-width: 3px;
+  }
+
+  .HomePage-CreatorSection-name {
+    padding-top: 24px;
+    font-size: clamp(2rem, 10vw, 2.6rem);
+  }
+
+  .HomePage-CreatorSection-email {
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .HomePage-CreatorSection-content {
+    gap: 16px;
+  }
+
+  .HomePage-CreatorSection-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .HomePage-CreatorSection-media {
+    gap: 10px;
+    padding: 22px;
+  }
+
+  .HomePage-CreatorSection-media-text {
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .HomePage-CreatorSection-stat {
+    padding: 18px;
+    font-size: 0.9rem;
+  }
+
+  .HomePage-CreatorSection-stat-icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  .HomePage-CreatorSection-portfolio,
+  .HomePage-CreatorSection-motto {
+    grid-column: 1 / -1;
+  }
+
+  .HomePage-CreatorSection-portfolio {
+    min-height: 140px;
+  }
+
+  .HomePage-CreatorSection-portfolio-arrow {
+    width: 46px;
+    height: 46px;
+  }
+
+  .HomePage-CreatorSection-motto {
+    padding: 22px;
+  }
+
+  .HomePage-CreatorSection-motto-stack li {
+    padding: 6px 14px;
+    font-size: 0.82rem;
+  }
+
+  .HomePage-CreatorSection-side-nav {
+    justify-content: space-around;
+  }
+
+  .HomePage-CreatorSection-side-nav-item {
+    font-size: 0.7rem;
+  }
+}

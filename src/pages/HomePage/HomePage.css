@@ -1,4 +1,7 @@
 .HomePage-container {
+  /* Alto fijo del header: el HeroSection lo descuenta para que ambos sumen 100% de la pantalla */
+  --header-height: 70px;
+
   display: flex;
   flex-direction: column;
   min-height: 100vh;

@@ -3,7 +3,7 @@ import { ChessBoard } from '../../../components/Chess/ChessBoard/ChessBoard';
 
 export function GameSection() {
   return (
-    <section className={styles.gameSection}>
+    <section id="game" className={styles.gameSection}>
       <div className={styles.container}>
         <ChessBoard
           showMoveHistory
