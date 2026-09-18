@@ -71,7 +71,7 @@ export function hasAnyLegalMove(board: ChessBoardPositions, color: string): bool
   return false
 }
 
-function wouldLeaveKingInCheck(
+export function wouldLeaveKingInCheck(
   board: ChessBoardPositions,
   fromCell: ChessBoardCell,
   toCoords: { row: number, col: number },

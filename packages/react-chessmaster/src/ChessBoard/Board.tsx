@@ -6,14 +6,19 @@ import { CoronationPanel } from '../CoronationPanel/CoronationPanel';
 import { GameOverModal } from '../GameOverModal/GameOverModal';
 import { PIECE_ASSETS } from '../assets/pieces';
 import { useBoardDrag } from './useBoardDrag';
+import { toDisplay, useBoardFlipped } from './orientation';
+
+const INDEXES = [0, 1, 2, 3, 4, 5, 6, 7];
 
 export function Board() {
   const positions = useChessStore((state) => state.chessBoardpositions);
   const coronation = useChessStore((state) => state.coronation);
   const lastMove = useChessStore((state) => state.moveHistory[state.moveHistory.length - 1]);
+  const flipped = useBoardFlipped();
 
   const boardRef = useRef<HTMLElement>(null);
-  const { drag, hoverCell, ghostRef, handlers } = useBoardDrag(boardRef);
+  const { drag, hoverCell, ghostRef, handlers } = useBoardDrag(boardRef, flipped);
+  const hoverDisplay = hoverCell && toDisplay(hoverCell, flipped);
 
   return (
     <section
@@ -21,21 +26,27 @@ export function Board() {
       className={`${styles.chessBoard}${drag ? ` ${styles.dragging}` : ''}`}
       {...handlers}
     >
-      {positions.map((row, rowIndex) =>
-        row.map((cell, colIndex) => (
-          <ChessCell
-            key={`${rowIndex}-${colIndex}`}
-            cellInformation={cell}
-            isLastMove={cell.cellName === lastMove?.from || cell.cellName === lastMove?.to}
-            isDragOrigin={drag?.origin.row === rowIndex && drag?.origin.col === colIndex}
-          />
-        ))
+      {/* Cells are laid out in visual order: from white's side, or from black's when flipped */}
+      {INDEXES.map((displayRow) =>
+        INDEXES.map((displayCol) => {
+          const { row, col } = toDisplay({ row: displayRow, col: displayCol }, flipped);
+          const cell = positions[row][col];
+          return (
+            <ChessCell
+              key={cell.cellName}
+              cellInformation={cell}
+              flipped={flipped}
+              isLastMove={cell.cellName === lastMove?.from || cell.cellName === lastMove?.to}
+              isDragOrigin={drag?.origin.row === row && drag?.origin.col === col}
+            />
+          );
+        })
       )}
 
-      {drag && hoverCell && (
+      {drag && hoverDisplay && (
         <div
           className={styles.dropTarget}
-          style={{ top: `${hoverCell.row * 12.5}%`, left: `${hoverCell.col * 12.5}%` }}
+          style={{ top: `${hoverDisplay.row * 12.5}%`, left: `${hoverDisplay.col * 12.5}%` }}
           aria-hidden="true"
         />
       )}
@@ -51,7 +62,7 @@ export function Board() {
         />
       )}
 
-      {coronation.status && <CoronationPanel cords={coronation.coordinates} />}
+      {coronation.status && <CoronationPanel cords={coronation.coordinates} flipped={flipped} />}
       <GameOverModal />
     </section>
   );

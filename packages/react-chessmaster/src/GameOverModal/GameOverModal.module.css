@@ -50,7 +50,7 @@
   border: none;
   border-radius: 999px;
   background: var(--accent, #d6ae6b);
-  color: #1b1712;
+  color: var(--on-accent);
   font: inherit;
   font-size: 0.85rem;
   font-weight: 700;

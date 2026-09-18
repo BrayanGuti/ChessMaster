@@ -32,6 +32,8 @@
   --control: rgba(255, 255, 255, 0.1); /* botón del engranaje activo */
   --track: rgba(255, 255, 255, 0.14); /* switches apagados y scrollbar */
   --track-strong: rgba(255, 255, 255, 0.28);
+  --on-accent: #1b1712; /* texto sobre fondos de --accent (botones principales, opción elegida) */
+  --on-check: #ffffff; /* texto sobre fondos de --check (confirmaciones destructivas) */
 
   color-scheme: dark;
   container: chess-root / inline-size;
@@ -92,6 +94,44 @@
   .stage:has(.withBadges.withSidePanel) {
     aspect-ratio: 1 / 2;
   }
+
+  /*
+   * Con el panel Game la zona de abajo crece (más aún en "vs Computer": color y nivel).
+   * Como los paneles miden px fijos, ninguna proporción sirve para todo ancho: estas están
+   * calculadas para ~360px (un celular), el caso típico de contenedor angosto sin alto definido.
+   * Con un alto definido por el contenedor no se usan.
+   */
+  .stage:has(.withGamePanel) {
+    aspect-ratio: 2 / 3;
+  }
+
+  .stage:has(.withGamePanel.withBadges) {
+    aspect-ratio: 4 / 7;
+  }
+
+  .stage:has(.withGamePanel [data-game-mode='computer']) {
+    aspect-ratio: 3 / 5;
+  }
+
+  .stage:has(.withGamePanel.withBadges [data-game-mode='computer']) {
+    aspect-ratio: 13 / 25;
+  }
+
+  .stage:has(.withGamePanel.withHistory) {
+    aspect-ratio: 1 / 2;
+  }
+
+  .stage:has(.withGamePanel.withHistory.withBadges) {
+    aspect-ratio: 6 / 13;
+  }
+
+  .stage:has(.withGamePanel.withHistory [data-game-mode='computer']) {
+    aspect-ratio: 9 / 19;
+  }
+
+  .stage:has(.withGamePanel.withHistory.withBadges [data-game-mode='computer']) {
+    aspect-ratio: 11 / 26;
+  }
 }
 
 .layout {
@@ -101,6 +141,8 @@
   --toolbar-h: 28px;
   --panel-w: 260px;
   --panel-h: 150px;
+  /* Alto aproximado del panel Game (ver GamePanel.module.css) */
+  --game-h: 128px;
 
   --top: 0px;
   --bottom: 0px;
@@ -253,6 +295,11 @@
   min-height: 0;
 }
 
+/* Panel Game: su altura natural al pie de la columna; el historial se queda con el resto (~75/25) */
+.game {
+  flex: 0 0 auto;
+}
+
 /* Sin historial, las capturas de las blancas bajan al pie del tablero (lado de las blancas) */
 .sidePanel > :last-child:not(:first-child) {
   margin-top: auto;
@@ -272,6 +319,8 @@
       "bottom ."
       "side   side"
       "foot   foot";
+    /* Los paneles de abajo nunca más angostos que 300px aunque el tablero se achique */
+    width: min(100%, max(var(--board), 300px));
   }
 
   /* Sin jugadores la fila superior ya no hace falta: el engranaje vive en el pie */
@@ -286,6 +335,28 @@
   .layout.withSidePanel {
     --side: 0px;
     --below: calc(var(--panel-h) + var(--gap));
+  }
+
+  /* Debajo del tablero: historial (150px) + panel Game, o solo el panel Game */
+  .layout:has([data-game-mode='computer']) {
+    --game-h: 196px;
+  }
+
+  .layout.withGamePanel {
+    --panel-h: var(--game-h);
+  }
+
+  /*
+   * El historial cede antes que el tablero: toma el alto que queda tras un tablero a todo el
+   * ancho, entre 56px y 150px. Así un contenedor bajo no deja el tablero diminuto.
+   */
+  .layout.withGamePanel.withHistory {
+    --history-h: clamp(
+      56px,
+      100cqh - 100cqw - var(--top) - var(--bottom) - var(--foot) - var(--game-h) - 8px - var(--gap),
+      150px
+    );
+    --panel-h: calc(var(--history-h) + 8px + var(--game-h));
   }
 
   .withGear .topBadge {

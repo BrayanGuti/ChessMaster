@@ -1,16 +1,38 @@
 import styles from './ChessBoard.module.css';
-import { useChessStore } from '../store/useChessStore';
+import { useChessStore, useChessStoreApi } from '../store/useChessStore';
 import { ChessGameProvider } from '../store/ChessGameProvider';
 import { MoveHistory } from '../MoveHistory/MoveHistory';
 import { CapturedPieces } from '../CapturedPieces/CapturedPieces';
 import { PlayerBadge } from '../PlayerBadge/PlayerBadge';
 import { ChessErrorBoundary } from '../ErrorBoundary/ChessErrorBoundary';
 import { ChessSettings } from '../ChessSettings/ChessSettings';
+import { GamePanel } from '../GamePanel/GamePanel';
 import { Board } from './Board';
+import { useBoardFlipped } from './orientation';
+import { useComputerOpponent } from '../engine/useComputerOpponent';
 import { useRef, useEffect, CSSProperties } from 'react';
 import { SOUND_ASSETS } from '../assets/sounds';
 import { resolveStorageKey } from '../store/persistence';
-import type { ChessBoardProps } from '../store/types';
+import type { ChessBoardProps, ColorChoice, GameConfig, GameMode } from '../store/types';
+
+const ALL_MODES: GameMode[] = ['local', 'computer'];
+
+/** Valid, de-duplicated `modes` prop; both modes when missing or empty. */
+function resolveModes(modes: GameMode[] | undefined): GameMode[] {
+  const valid = ALL_MODES.filter((mode) => modes?.includes(mode));
+  return valid.length > 0 ? valid : ALL_MODES;
+}
+
+/** The first game's configuration from the props. `opponent.color` is the computer's color. */
+function resolveInitialGame({ modes, defaultMode, opponent }: ChessBoardProps): GameConfig {
+  const allowed = resolveModes(modes);
+  const computerColor: ColorChoice = opponent?.color ?? 'B';
+  return {
+    mode: defaultMode && allowed.includes(defaultMode) ? defaultMode : allowed[0],
+    colorChoice: computerColor === 'random' ? 'random' : computerColor === 'W' ? 'B' : 'W',
+    level: opponent?.level ?? 2,
+  };
+}
 
 /*
  * The callbacks below compare against the value seen on the previous run and skip the first
@@ -22,6 +44,8 @@ function ChessBoardContent({
   colorScheme = 'dark',
   className,
   showSettings = true,
+  showGamePanel = true,
+  modes,
   onMove,
   onGameEnd,
   onReset,
@@ -31,6 +55,22 @@ function ChessBoardContent({
   const gameId = useChessStore((state) => state.gameId);
   const settings = useChessStore((state) => state.displaySettings);
   const setSettings = useChessStore((state) => state.setDisplaySettings);
+  const gameMode = useChessStore((state) => state.gameMode);
+  const playerColor = useChessStore((state) => state.playerColor);
+  const flipped = useBoardFlipped();
+  const store = useChessStoreApi();
+  const allowedModes = resolveModes(modes);
+
+  useComputerOpponent();
+
+  // A saved game may use a mode the developer no longer allows: start over in an allowed one
+  const modeAllowed = allowedModes.includes(gameMode);
+  useEffect(() => {
+    if (modeAllowed) return;
+    const { colorChoice, opponentLevel, startGame } = store.getState();
+    startGame({ mode: allowedModes[0], colorChoice, level: opponentLevel });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [modeAllowed]);
 
   const previousMoveCount = useRef<number | null>(null);
   useEffect(() => {
@@ -49,11 +89,12 @@ function ChessBoardContent({
     wasGameOver.current = isGameOver;
     if (previous !== false || !isGameOver || !onGameEnd) return;
 
+    const context = { mode: gameMode, playerColor: gameMode === 'computer' ? playerColor : null };
     if (checkState.isCheckmate) {
       const winner = checkState.colorOfCheck === 'W' ? 'B' : 'W';
-      onGameEnd({ winner, reason: 'checkmate' });
+      onGameEnd({ winner, reason: 'checkmate', ...context });
     } else {
-      onGameEnd({ winner: null, reason: 'stalemate' });
+      onGameEnd({ winner: null, reason: 'stalemate', ...context });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkState.isCheckmate, checkState.isStalemate]);
@@ -79,11 +120,16 @@ function ChessBoardContent({
   ) as CSSProperties;
 
   const { playerBadges, capturedPieces, moveHistory: showHistory } = settings;
+  const showGame = showGamePanel && settings.gamePanel;
+
+  // The player whose side of the board is at the top of the screen
+  const topColor = flipped ? 'W' : 'B';
+  const bottomColor = flipped ? 'B' : 'W';
 
   // With badges visible, captured pieces live inside each player's badge
   const capturedInBadges = playerBadges && capturedPieces;
   const capturedInPanel = capturedPieces && !playerBadges;
-  const hasSidePanel = showHistory || capturedInPanel;
+  const hasSidePanel = showHistory || capturedInPanel || showGame;
 
   const layoutClassName = [
     styles.layout,
@@ -91,6 +137,8 @@ function ChessBoardContent({
     !playerBadges && showSettings && styles.withToolbar,
     showSettings && styles.withGear,
     hasSidePanel && styles.withSidePanel,
+    (showHistory || capturedInPanel) && styles.withHistory,
+    showGame && styles.withGamePanel,
   ]
     .filter(Boolean)
     .join(' ');
@@ -104,27 +152,30 @@ function ChessBoardContent({
         <div className={layoutClassName}>
           {playerBadges && (
             <PlayerBadge
-              color="B"
+              key={topColor}
+              color={topColor}
               showCapturedPieces={capturedInBadges}
               className={styles.topBadge}
             />
           )}
           {showSettings && (
             <div className={styles.gear}>
-              <ChessSettings settings={settings} onChange={setSettings} />
+              <ChessSettings settings={settings} onChange={setSettings} allowGamePanel={showGamePanel} />
             </div>
           )}
           <div className={styles.boardArea}><Board /></div>
           {hasSidePanel && (
             <aside className={styles.sidePanel}>
-              {capturedInPanel && <CapturedPieces color="B" />}
+              {capturedInPanel && <CapturedPieces color={topColor} />}
               {showHistory && <MoveHistory className={styles.history} />}
-              {capturedInPanel && <CapturedPieces color="W" />}
+              {capturedInPanel && <CapturedPieces color={bottomColor} />}
+              {showGame && <GamePanel modes={allowedModes} className={styles.game} />}
             </aside>
           )}
           {playerBadges && (
             <PlayerBadge
-              color="W"
+              key={bottomColor}
+              color={bottomColor}
               showCapturedPieces={capturedInBadges}
               className={styles.bottomBadge}
             />
@@ -137,7 +188,7 @@ function ChessBoardContent({
 }
 
 export function ChessBoard(props: ChessBoardProps = {}) {
-  // Both only seed the store on mount; after that the settings menu owns the layout
+  // All of these only seed the store on mount; after that the player's choices rule
   const { persist, showPlayerBadges, showCapturedPieces, showMoveHistory } = props;
 
   return (
@@ -147,7 +198,9 @@ export function ChessBoard(props: ChessBoardProps = {}) {
         playerBadges: Boolean(showPlayerBadges),
         capturedPieces: Boolean(showCapturedPieces),
         moveHistory: Boolean(showMoveHistory),
+        gamePanel: true,
       }}
+      initialGameConfig={resolveInitialGame(props)}
     >
       <ChessErrorBoundary>
         <ChessBoardContent {...props} />
@@ -174,4 +227,3 @@ function PlaySound() {
 
   return <audio ref={audioRef} />;
 }
-

@@ -5,8 +5,10 @@ import { calculateAvailableMoves } from '../hooks/CalculateMoves'
 import { markCellsUnderAttack } from '../hooks/MarkCellsUnderAttack'
 import { hasAnyLegalMove } from '../hooks/CheckMate'
 import { isCastling } from '../hooks/Castling'
-import { ChessBoardState, ChessBoardCell, ChessDisplaySettings, ChessStoreApi, MoveRecord, CheckStatus } from './types'
-import { PERSIST_VERSION, PersistedGame, isPersistedGame, restoreGame, safeLocalStorage, toPersistedGame } from './persistence'
+import { getLegalMoves, parseUci } from '../hooks/LegalMoves'
+import { toFEN } from '../hooks/Fen'
+import { ChessBoardState, ChessBoardCell, ChessDisplaySettings, ChessStoreApi, ColorChoice, GameConfig, MoveRecord, CheckStatus, PieceColor } from './types'
+import { PERSIST_VERSION, PersistedGame, isPersistedGame, migratePersistedGame, restoreGame, safeLocalStorage, toPersistedGame } from './persistence'
 
 const INITIAL_CHECK_STATE: CheckStatus = {
   protectors: [],
@@ -24,7 +26,14 @@ const INITIAL_CHECK_STATE: CheckStatus = {
 const DEFAULT_DISPLAY_SETTINGS: ChessDisplaySettings = {
   playerBadges: false,
   capturedPieces: false,
-  moveHistory: false
+  moveHistory: false,
+  gamePanel: true
+}
+
+export const DEFAULT_GAME_CONFIG: GameConfig = {
+  mode: 'local',
+  colorChoice: 'W',
+  level: 2
 }
 
 export interface ChessStoreOptions {
@@ -32,12 +41,22 @@ export interface ChessStoreOptions {
   storageKey?: string | null
   /** Panels shown on a fresh game (a saved game keeps its own) */
   initialDisplaySettings?: ChessDisplaySettings
+  /** Mode, human color and level of the first game (a saved game keeps its own) */
+  initialGameConfig?: GameConfig
 }
 
 type PersistableStore = ChessStoreApi & { persist?: { rehydrate: () => Promise<void> | void } }
 
-export function createChessStore({ storageKey, initialDisplaySettings }: ChessStoreOptions = {}): ChessStoreApi {
-  const initializer = createGameState(initialDisplaySettings ?? DEFAULT_DISPLAY_SETTINGS)
+export function resolveColorChoice(choice: ColorChoice): PieceColor {
+  if (choice === 'random') return Math.random() < 0.5 ? 'W' : 'B'
+  return choice
+}
+
+export function createChessStore({ storageKey, initialDisplaySettings, initialGameConfig }: ChessStoreOptions = {}): ChessStoreApi {
+  const initializer = createGameState(
+    initialDisplaySettings ?? DEFAULT_DISPLAY_SETTINGS,
+    initialGameConfig ?? DEFAULT_GAME_CONFIG
+  )
   if (!storageKey) return create<ChessBoardState>()(initializer)
 
   return create<ChessBoardState>()(
@@ -48,8 +67,8 @@ export function createChessStore({ storageKey, initialDisplaySettings }: ChessSt
       // Loaded from ChessGameProvider after mount, so server and first client render match
       skipHydration: true,
       partialize: (state): PersistedGame => toPersistedGame(state),
-      // Saved games from another version are discarded by merge()
-      migrate: (persisted) => persisted as PersistedGame,
+      // Older formats are upgraded; anything unrecognized is discarded by merge()
+      migrate: (persisted, version) => migratePersistedGame(persisted, version) as PersistedGame,
       merge: (persisted, current) =>
         isPersistedGame(persisted) ? { ...current, ...restoreGame(persisted) } : current
     })
@@ -61,42 +80,96 @@ export function hydrateChessStore(store: ChessStoreApi) {
   void (store as PersistableStore).persist?.rehydrate()
 }
 
-function createGameState(initialDisplaySettings: ChessDisplaySettings): StateCreator<ChessBoardState> {
+/** A game at the starting position (everything a new game resets). */
+function freshGame() {
+  return {
+    chessBoardpositions: startGame(),
+    turn: 'W' as const,
+    checkState: { ...INITIAL_CHECK_STATE },
+    cellOfPieceSelected: null,
+    coronation: { status: false, coordinates: { col: 0, row: 0 }, cellName: '' },
+    soundToPlay: null,
+    moveHistory: [],
+    aiThinking: false
+  }
+}
+
+function createGameState(initialDisplaySettings: ChessDisplaySettings, initialGameConfig: GameConfig): StateCreator<ChessBoardState> {
   return (set, get) => ({
-      chessBoardpositions: startGame(),
-      turn: 'W',
-      checkState: { ...INITIAL_CHECK_STATE },
-      cellOfPieceSelected: null,
-      coronation: {
-          status: false,
-          coordinates: { col: 0, row: 0 },
-          cellName: ''
-      },
-      soundToPlay: null,
-      moveHistory: [],
+      ...freshGame(),
       displaySettings: { ...initialDisplaySettings },
       gameId: 0,
+      gameMode: initialGameConfig.mode,
+      colorChoice: initialGameConfig.colorChoice,
+      // Deterministic so server and client render the same board; ChessGameProvider draws 'random' after mount
+      playerColor: initialGameConfig.colorChoice === 'random' ? 'W' : initialGameConfig.colorChoice,
+      opponentLevel: initialGameConfig.level,
       setDisplaySettings: (update) => set(state => ({ displaySettings: update(state.displaySettings) })),
 
       setSoundToPlay: (sound) => set({ soundToPlay: sound }),
 
+      setAiThinking: (thinking) => set({ aiThinking: thinking }),
+
       addMoveRecord: (record) => set(state => ({ moveHistory: [...state.moveHistory, record] })),
 
-      // Keeps displaySettings: a new game should not change the player's layout
+      // Keeps displaySettings and the game configuration: a new game should not change the player's choices
       resetGame: () => set(state => ({
-          chessBoardpositions: startGame(),
-          turn: 'W',
-          checkState: { ...INITIAL_CHECK_STATE },
-          cellOfPieceSelected: null,
-          coronation: { status: false, coordinates: { col: 0, row: 0 }, cellName: '' },
-          soundToPlay: null,
-          moveHistory: [],
+          ...freshGame(),
+          // A rematch re-rolls a 'random' color
+          playerColor: resolveColorChoice(state.colorChoice),
           gameId: state.gameId + 1
       })),
 
-      clickCell: (cellInformation) => {
-          const { cellOfPieceSelected, coronation, checkState} = get()
+      startGame: ({ mode, colorChoice, level }) => set(state => ({
+          ...freshGame(),
+          gameMode: mode,
+          colorChoice,
+          playerColor: resolveColorChoice(colorChoice),
+          opponentLevel: level,
+          gameId: state.gameId + 1
+      })),
 
+      legalMoves: () => {
+          const { chessBoardpositions, turn, checkState, coronation } = get()
+          if (coronation.status || checkState.isCheckmate || checkState.isStalemate) return []
+          return getLegalMoves(chessBoardpositions, turn).map(move => move.uci)
+      },
+
+      // Plays through the same path as a human move (movePiece), so castling, captures, history,
+      // sounds and check detection behave identically; a promotion is completed right away.
+      applyMove: (uci) => {
+          const parsed = parseUci(uci)
+          const { chessBoardpositions, turn } = get()
+          if (!parsed || !get().legalMoves().includes(uci.trim().toLowerCase())) {
+              // A promotion given without its piece ("e7e8") is accepted as a queen
+              if (parsed && !parsed.promotion && get().legalMoves().includes(`${uci.trim().toLowerCase()}q`)) {
+                  return get().applyMove(`${uci.trim().toLowerCase()}q`)
+              }
+              return false
+          }
+
+          const origin = chessBoardpositions[parsed.from.row][parsed.from.col]
+          get().removeAvailableMoves()
+          set({ cellOfPieceSelected: origin })
+          get().showAvailableMoves([parsed.to])
+          get().movePiece(parsed.to)
+
+          if (get().coronation.status) {
+              get().makeCoronation(turn + (parsed.promotion ?? 'q').toUpperCase())
+          }
+          return true
+      },
+
+      toFEN: () => {
+          const { chessBoardpositions, turn, moveHistory } = get()
+          return toFEN(chessBoardpositions, turn, moveHistory)
+      },
+
+      clickCell: (cellInformation) => {
+          const { cellOfPieceSelected, coronation, checkState, gameMode, playerColor, turn } = get()
+
+          // Against the computer, the human only plays their own color (applyMove plays the engine's moves)
+          if(gameMode === 'computer' && turn !== playerColor) return
           if(coronation.status) return
           if(checkState.isCheckmate || checkState.isStalemate) return
 
@@ -197,7 +270,8 @@ function createGameState(initialDisplaySettings: ChessDisplaySettings): StateCre
           })
           set({ chessBoardpositions: newChessBoardPositions, coronation: { status: false, coordinates: { col: 0, row: 0 }, cellName:''} })
           get().removeAvailableMoves()
-          get().updateCellsUnderAttack()
+          // movePiece already switched the turn: the side to move now is the promoting side's opponent
+          get().updateCellsUnderAttack(get().turn)
       },
 
       movePiece: (destinyCoords) => {
@@ -305,11 +379,13 @@ function createGameState(initialDisplaySettings: ChessDisplaySettings): StateCre
           set({ chessBoardpositions: newChessBoardPositions })
       },
 
-      updateCellsUnderAttack: () => {
+      updateCellsUnderAttack: (sideToMove) => {
           const { newBoard, checkState } = markCellsUnderAttack(get().chessBoardpositions)
-          const nextTurnColor = get().turn === 'W' ? 'B' : 'W'
+          const nextTurnColor = sideToMove ?? (get().turn === 'W' ? 'B' : 'W')
 
-          if (!checkState.check && !checkState.isCheckmate && !hasAnyLegalMove(newBoard, nextTurnColor)) {
+          // With a promotion pending the pawn is still on the last rank: the position is final only
+          // after makeCoronation, which calls this again
+          if (!get().coronation.status && !checkState.check && !checkState.isCheckmate && !hasAnyLegalMove(newBoard, nextTurnColor)) {
               checkState.isStalemate = true
           }
 

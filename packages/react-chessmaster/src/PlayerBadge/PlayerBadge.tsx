@@ -23,9 +23,21 @@ export function PlayerBadge({
 }) {
   const turn = useChessStore((state) => state.turn);
   const checkState = useChessStore((state) => state.checkState);
+  const gameMode = useChessStore((state) => state.gameMode);
+  const playerColor = useChessStore((state) => state.playerColor);
+  const opponentLevel = useChessStore((state) => state.opponentLevel);
+  const aiThinking = useChessStore((state) => state.aiThinking);
 
   const isGameOver = checkState.isCheckmate || checkState.isStalemate;
   const isActive = turn === color && !isGameOver;
+  const isComputer = gameMode === "computer" && color !== playerColor;
+
+  const defaultLabel =
+    gameMode !== "computer"
+      ? DEFAULT_LABELS[color]
+      : isComputer
+        ? `Computer · Level ${opponentLevel}`
+        : "You";
 
   const classNames = [
     styles.playerBadge,
@@ -48,7 +60,16 @@ export function PlayerBadge({
       </div>
 
       <div className={styles.info}>
-        <span className={styles.label}>{label || DEFAULT_LABELS[color]}</span>
+        <div className={styles.nameRow}>
+          <span className={styles.label}>{label || defaultLabel}</span>
+          {isComputer && aiThinking && (
+            <span className={styles.thinking} role="status" aria-label="Computer is thinking">
+              <span />
+              <span />
+              <span />
+            </span>
+          )}
+        </div>
         {showCapturedPieces && (
           <CapturedPieces color={color} variant="inline" />
         )}

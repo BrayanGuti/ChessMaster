@@ -2,6 +2,7 @@ import { useCallback, useRef, useState } from 'react';
 import type { PointerEvent as ReactPointerEvent, RefObject } from 'react';
 import { useChessStoreApi } from '../store/useChessStore';
 import type { ChessBoardCell } from '../store/types';
+import { toDisplay } from './orientation';
 
 // Distance (px) the pointer must travel before a press becomes a drag
 const DRAG_THRESHOLD = 4;
@@ -33,7 +34,7 @@ export interface DragState {
  * Uses Pointer Events (mouse, touch and pen) with delegation on the board element,
  * and moves the ghost piece through its style so dragging never re-renders React.
  */
-export function useBoardDrag(boardRef: RefObject<HTMLElement>) {
+export function useBoardDrag(boardRef: RefObject<HTMLElement>, flipped = false) {
   const store = useChessStoreApi();
   const sessionRef = useRef<DragSession | null>(null);
   const ghostElementRef = useRef<HTMLElement | null>(null);
@@ -41,6 +42,7 @@ export function useBoardDrag(boardRef: RefObject<HTMLElement>) {
   const [drag, setDrag] = useState<DragState | null>(null);
   const [hoverCell, setHoverCell] = useState<Coords | null>(null);
 
+  // Board coordinates (not screen position) of the square under the pointer
   const cellFromPoint = useCallback(
     (clientX: number, clientY: number): Coords | null => {
       const board = boardRef.current;
@@ -49,9 +51,9 @@ export function useBoardDrag(boardRef: RefObject<HTMLElement>) {
       const col = Math.floor(((clientX - rect.left) / rect.width) * 8);
       const row = Math.floor(((clientY - rect.top) / rect.height) * 8);
       if (col < 0 || col > 7 || row < 0 || row > 7) return null;
-      return { col, row };
+      return toDisplay({ col, row }, flipped);
     },
-    [boardRef]
+    [boardRef, flipped]
   );
 
   const positionGhost = useCallback(() => {

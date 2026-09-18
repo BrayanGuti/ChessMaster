@@ -3,6 +3,11 @@ export { ChessBoard } from './ChessBoard/ChessBoard';
 export type {
   ChessBoardProps,
   ChessBoardTheme,
+  ColorChoice,
   GameEndResult,
+  GameMode,
   MoveRecord,
+  OpponentLevel,
+  OpponentOptions,
+  PieceColor,
 } from './store/types';

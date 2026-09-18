@@ -1,6 +1,6 @@
 import { createContext, useEffect, useLayoutEffect, useRef, useState, ReactNode } from 'react'
-import { createChessStore, hydrateChessStore } from './createChessStore'
-import { ChessDisplaySettings, ChessStoreApi } from './types'
+import { createChessStore, hydrateChessStore, resolveColorChoice } from './createChessStore'
+import { ChessDisplaySettings, ChessStoreApi, GameConfig } from './types'
 
 export const ChessStoreContext = createContext<ChessStoreApi | null>(null)
 
@@ -14,16 +14,18 @@ export function ChessGameProvider({
   children,
   storageKey = null,
   initialDisplaySettings,
+  initialGameConfig,
 }: {
   children: ReactNode
   /** Read once on mount; changing it later has no effect */
   storageKey?: string | null
   initialDisplaySettings?: ChessDisplaySettings
+  initialGameConfig?: GameConfig
 }) {
   const storeRef = useRef<ChessStoreApi | null>(null)
 
   if (!storeRef.current) {
-    storeRef.current = createChessStore({ storageKey, initialDisplaySettings })
+    storeRef.current = createChessStore({ storageKey, initialDisplaySettings, initialGameConfig })
   }
 
   const keyRef = useRef(storageKey)
@@ -34,9 +36,19 @@ export function ChessGameProvider({
   const [ready, setReady] = useState(!keyRef.current)
 
   useIsomorphicLayoutEffect(() => {
-    if (!storeRef.current || !keyRef.current) return
-    hydrateChessStore(storeRef.current)
-    setReady(true)
+    const store = storeRef.current
+    if (!store) return
+    if (keyRef.current) hydrateChessStore(store)
+
+    // A 'random' color is drawn here, on the client: drawing it while rendering would give the
+    // server and the browser different boards (one flipped, one not). A restored game in
+    // progress keeps the color it was being played with.
+    const { colorChoice, moveHistory } = store.getState()
+    if (colorChoice === 'random' && moveHistory.length === 0) {
+      store.setState({ playerColor: resolveColorChoice('random') })
+    }
+
+    if (keyRef.current) setReady(true)
   }, [])
 
   useEffect(() => {

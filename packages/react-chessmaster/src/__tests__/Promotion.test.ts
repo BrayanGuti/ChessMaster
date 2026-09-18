@@ -40,10 +40,9 @@ const PROMOTION_STALEMATE = [
 ]
 
 describe('promotion', () => {
-  // KNOWN BUG: makeCoronation calls updateCellsUnderAttack() after changeTurn(), so the
-  // stalemate check runs for the side that just promoted instead of the opponent.
-  // Remove `.fails` once it is fixed.
-  it.fails('detects a stalemate caused by the promoted piece', () => {
+  // Regression: makeCoronation runs after changeTurn(), and used to check stalemate for the
+  // side that had just promoted instead of its opponent
+  it('detects a stalemate caused by the promoted piece', () => {
     const store = storeWithPosition(PROMOTION_STALEMATE)
     expect(store.getState().checkState.isStalemate).toBe(false)
 

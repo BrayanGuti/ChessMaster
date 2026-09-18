@@ -27,15 +27,20 @@ const OPTIONS: Array<{ key: keyof ChessDisplaySettings; label: string; hint: str
   { key: 'playerBadges', label: 'Players', hint: 'Photos and names' },
   { key: 'capturedPieces', label: 'Captured pieces', hint: 'Material gained' },
   { key: 'moveHistory', label: 'History', hint: 'Move list' },
+  { key: 'gamePanel', label: 'Game', hint: 'Mode, color and level' },
 ];
 
 export function ChessSettings({
   settings,
   onChange,
+  allowGamePanel = true,
 }: {
   settings: ChessDisplaySettings;
   onChange: (update: (previous: ChessDisplaySettings) => ChessDisplaySettings) => void;
+  /** False when the developer removed the Game panel (showGamePanel={false}): no switch for it */
+  allowGamePanel?: boolean;
 }) {
+  const options = allowGamePanel ? OPTIONS : OPTIONS.filter(({ key }) => key !== 'gamePanel');
   const [open, setOpen] = useState(false);
   // "New game" asks for a second click so a game can't be lost by accident
   const [confirmingReset, setConfirmingReset] = useState(false);
@@ -69,14 +74,12 @@ export function ChessSettings({
   const toggle = (key: keyof ChessDisplaySettings) =>
     onChange((previous) => ({ ...previous, [key]: !previous[key] }));
 
-  const isBoardOnly = !settings.playerBadges && !settings.capturedPieces && !settings.moveHistory;
+  const isBoardOnly = options.every(({ key }) => !settings[key]);
 
   const setBoardOnly = () =>
     onChange((previous) => ({
       ...previous,
-      playerBadges: isBoardOnly,
-      capturedPieces: isBoardOnly,
-      moveHistory: isBoardOnly,
+      ...Object.fromEntries(options.map(({ key }) => [key, isBoardOnly])),
     }));
 
   const handleReset = () => {
@@ -104,7 +107,7 @@ export function ChessSettings({
       {open && (
         <div id={menuId} className={styles.menu} role="menu">
           <div className={styles.menuTitle}>Show</div>
-          {OPTIONS.map(({ key, label, hint }) => (
+          {options.map(({ key, label, hint }) => (
             <button
               key={key}
               type="button"

@@ -51,7 +51,36 @@ export interface ChessBoardState {
     /** Increments on every resetGame(), so the UI can tell a new game started */
     gameId: number;
 
+    /** 'local': two people on one device. 'computer': one person against the engine */
+    gameMode: GameMode;
+
+    /** The human's color in 'computer' mode ('random' is resolved when the game starts) */
+    playerColor: PieceColor;
+
+    /** What the player picked for their color, kept so a rematch can re-roll 'random' */
+    colorChoice: ColorChoice;
+
+    /** Engine strength in 'computer' mode */
+    opponentLevel: OpponentLevel;
+
+    /** The engine is computing its move (not persisted) */
+    aiThinking: boolean;
+
     setDisplaySettings: (update: (previous: ChessDisplaySettings) => ChessDisplaySettings) => void;
+
+    /** Starts a new game with this configuration; the previous game is discarded */
+    startGame: (config: GameConfig) => void;
+
+    setAiThinking: (thinking: boolean) => void;
+
+    /** Legal moves of the side to move, in UCI notation ("e2e4", "e7e8q") */
+    legalMoves: () => string[];
+
+    /** Plays a move given in UCI notation for the side to move. Returns false if it is not legal */
+    applyMove: (uci: string) => boolean;
+
+    /** The current position in FEN, as chess engines expect it */
+    toFEN: () => string;
 
     setSoundToPlay: (sound: string | null) => void;
 
@@ -67,7 +96,9 @@ export interface ChessBoardState {
 
     removeAvailableMoves: () => void;
 
-    updateCellsUnderAttack: () => void;
+    /** Recomputes attacks and check/stalemate. `sideToMove` defaults to the opponent of `turn`
+     *  (movePiece calls it before changeTurn) */
+    updateCellsUnderAttack: (sideToMove?: PieceColor) => void;
 
     isCoronation: (destinyCoords: { col: number; row: number }) => void;
 
@@ -88,9 +119,39 @@ export type ChessBoardPositions = Array<Array<ChessBoardCell>>
 
 export type ChessStoreApi = StoreApi<ChessBoardState>
 
+export type PieceColor = 'W' | 'B';
+
+export type GameMode = 'local' | 'computer';
+
+export type ColorChoice = PieceColor | 'random';
+
+export type OpponentLevel = 1 | 2 | 3 | 4 | 5;
+
+export interface GameConfig {
+  mode: GameMode;
+  /** The human's color in 'computer' mode */
+  colorChoice: ColorChoice;
+  level: OpponentLevel;
+}
+
 export interface GameEndResult {
   winner: 'W' | 'B' | null;
   reason: 'checkmate' | 'stalemate' | null;
+  mode: GameMode;
+  /** The human's color in 'computer' mode; null in 'local' mode */
+  playerColor: PieceColor | null;
+}
+
+export interface OpponentOptions {
+  /** The computer's color. Default: 'B' */
+  color?: ColorChoice;
+  /** Strength from 1 (weakest) to 5. Default: 2 */
+  level?: OpponentLevel;
+  /**
+   * Your own engine: receives the position in FEN and resolves a move in UCI notation
+   * ("e2e4", "e7e8q"). Not used yet: the built-in engine plays every move for now.
+   */
+  getMove?: (fen: string) => Promise<string>;
 }
 
 export interface MoveRecord {
@@ -119,6 +180,7 @@ export interface ChessDisplaySettings {
   playerBadges: boolean;
   capturedPieces: boolean;
   moveHistory: boolean;
+  gamePanel: boolean;
 }
 
 export interface ChessBoardProps {
@@ -133,6 +195,17 @@ export interface ChessBoardProps {
   showPlayerBadges?: boolean;
   /** Shows the gear menu that lets the player toggle the panels above at runtime. Default: true */
   showSettings?: boolean;
+  /**
+   * The "Game" panel to pick the mode, color and level and start a new game. Default: true.
+   * `false` removes it completely (it cannot be turned back on from the settings menu).
+   */
+  showGamePanel?: boolean;
+  /** Game modes the player can choose from. Default: both. With one mode the selector is hidden */
+  modes?: GameMode[];
+  /** Mode of the first game. Default: the first entry of `modes` */
+  defaultMode?: GameMode;
+  /** Initial settings of the computer opponent (the player can change them in the Game panel) */
+  opponent?: OpponentOptions;
   /**
    * Saves the game (and the panel layout) in localStorage so it survives reloads.
    * `true` uses the key "react-chessmaster:default"; a string uses "react-chessmaster:<string>",

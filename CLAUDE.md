@@ -30,7 +30,7 @@ apps/web/                     # The ChessMaster website: demo + docs, consumes t
 
 ## Project Overview
 
-**ChessMaster** is a local two-player chess game built with React + TypeScript + Vite, using Zustand for state management. The app implements full chess rules including special moves (castling, en passant, promotion) and game states (check, checkmate).
+**ChessMaster** is a chess game built with React + TypeScript + Vite, using Zustand for state management: two players on one device, or one player against the computer. It implements castling, promotion, check, checkmate and stalemate. **En passant is NOT implemented yet** (the two `SpecialMoves` tests named after it only check that pawns exist); it is the first step of phase 4.5b.
 
 **Tech Stack:**
 - React 18 with TypeScript
@@ -58,10 +58,13 @@ apps/web/src/pages/
 packages/react-chessmaster/src/
 ├── index.ts           # Public API (ChessBoard + public types). Import the component only from here.
 ├── ChessBoard/        # Public <ChessBoard> (layout, panels, sounds) + Board.tsx (8x8 grid) + drag logic
+│                      #   orientation.ts: board flip (useBoardFlipped, toDisplay board<->screen coords)
 ├── ChessCell/         # Individual cell component with click handlers
 ├── ChessPiece/        # Piece SVG renderer with position styling
 ├── CoronationPanel/   # Modal for pawn promotion (choosing Queen/Rook/Bishop/Knight)
 ├── ChessSettings/     # Gear menu to toggle panels at runtime
+├── GamePanel/         # "Game" panel: mode (2 players / vs Computer), human color, level, New game/Play
+├── engine/            # ChessEngine interface + provisional randomEngine; useComputerOpponent plays the computer's turns
 ├── PlayerBadge/ CapturedPieces/ MoveHistory/ GameOverModal/ ErrorBoundary/
 ├── assets/            # Pieces, sounds and avatars, imported as ES modules (pieces.ts, sounds.ts, avatars.ts)
 ├── __tests__/         # Vitest tests for the chess logic
@@ -71,7 +74,9 @@ packages/react-chessmaster/src/
 │   ├── Castling.ts            # Handle castling move validation and execution
 │   ├── CheckMate.ts           # Detect checkmate conditions
 │   ├── ChessCellCharacteristics.ts  # Identify cell properties (color, coordinates)
-│   └── MarkCellsUnderAttack.ts      # Calculate attacked cells & check state
+│   ├── MarkCellsUnderAttack.ts      # Calculate attacked cells & check state
+│   ├── LegalMoves.ts          # getLegalMoves (UCI) by simulating each move with wouldLeaveKingInCheck; parseUci
+│   └── Fen.ts                 # toFEN (castling from hasMoved; en passant always "-")
 └── store/
     ├── types.ts               # All types, including the public ChessBoardProps
     ├── createChessStore.ts    # Zustand store factory (one store per board instance)
@@ -91,8 +96,15 @@ Each `<ChessBoard>` gets its own store from `createChessStore()` via `ChessGameP
 - **cellOfPieceSelected**: Currently selected piece (for UI highlighting available moves)
 - **coronation**: State for pawn promotion modal (whether active, coordinates, which pawn)
 - **soundToPlay**: Audio trigger for move/check/capture sounds
+- **gameMode** ('local' | 'computer'), **playerColor** (the human's color), **colorChoice** ('W' | 'B' | 'random', kept for rematches), **opponentLevel** (1–5), **aiThinking**
 
-Key methods: `clickCell()`, `selectPieceToMove()`, `movePiece()`, `makeCoronation()`, `updateCellsUnderAttack()`, `changeTurn()`
+Key methods: `clickCell()`, `selectPieceToMove()`, `movePiece()`, `makeCoronation()`, `updateCellsUnderAttack(sideToMove?)`, `changeTurn()`, `startGame(config)`, `resetGame()` (rematch: keeps the configuration), `legalMoves()`, `applyMove(uci)`, `toFEN()`
+
+### Game Modes (vs Computer)
+- `clickCell` ignores input on the computer's turn; the drag path starts with `clickCell`, so it is covered too. The engine plays through `applyMove`, which reuses `movePiece` and completes promotions immediately.
+- The board is flipped when the human plays black against the computer (`ChessBoard/orientation.ts`); `Board`, `useBoardDrag`, `ChessCell` corners, `CoronationPanel` and the badge order all go through it.
+- `useComputerOpponent` runs on the computer's turn (also right after mount, so a game reloaded on its turn continues), waits at least `MIN_THINKING_MS`, and drops the answer if the game changed meanwhile. Engines implement `ChessEngine` in `engine/engine.ts`; `randomEngine` is PROVISIONAL (phase 4.5b replaces it).
+- A 'random' color is drawn in `ChessGameProvider`'s mount effect, not while rendering, so server and client render the same board.
 
 ## Key Implementation Details
 
@@ -132,5 +144,5 @@ Pieces are encoded as 4-character strings: `[Color][Type][File][Rank]`
 - **TypeScript strict mode** is enabled; all pieces of state have defined types in `store/types.ts`
 - **CSS structure**: Chess components use CSS Modules (`*.module.css`); all theme tokens (`--light-square`, `--accent`, `--text`, `--panel`, `--popover`, `--hover`, `--track`, ...) are defined on `.chessGame` in `ChessBoard.module.css` with dark-scheme values, and `.light` (prop `colorScheme="light"`) redefines them for light pages. Never hardcode UI colors in component CSS: use a token, or the component becomes unreadable on one of the two backgrounds. Site pages use global styles in `apps/web/src/index.css`
 - **Tests**: `npm test` (Vitest) covers the chess logic in `packages/react-chessmaster/src/__tests__/`; verify UI changes manually in the dev server
-- **Persistence (opt-in)**: the `persist` prop saves each board to localStorage under `react-chessmaster:<key>` (see `store/persistence.ts`). Only a minimal snapshot is stored (pieces, hasMoved, turn, history, promotion, layout); everything derived is rebuilt with `markCellsUnderAttack` on restore. Bump `PERSIST_VERSION` when that snapshot changes shape
+- **Persistence (opt-in)**: the `persist` prop saves each board to localStorage under `react-chessmaster:<key>` (see `store/persistence.ts`). Only a minimal snapshot is stored (pieces, hasMoved, turn, history, promotion, layout, game mode/colors/level); everything derived is rebuilt with `markCellsUnderAttack` on restore. When that snapshot changes shape, bump `PERSIST_VERSION` (now 2) and teach `migratePersistedGame` to upgrade the previous version
 - **Build**: `npm run build` runs `tsc -b` — a plain `tsc` checks nothing because the root tsconfig only has project references
