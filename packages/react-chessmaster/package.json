@@ -1,0 +1,23 @@
+{
+  "name": "@brayanguti/react-chessmaster",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A complete, drop-in chess board for React: full rules, drag and drop, sounds, themes and saved games.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "dependencies": {
+    "zustand": "^4.5.7"
+  }
+}

@@ -1,5 +1,5 @@
 import styles from "./GameSection.module.css";
-import { ChessBoard } from "../../../components/Chess";
+import { ChessBoard } from "@brayanguti/react-chessmaster";
 import {
   LayoutGrid,
   Maximize2,

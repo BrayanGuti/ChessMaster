@@ -4,13 +4,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Common Development Commands
 
+All commands run from the repo root (npm workspaces):
+
 ```bash
-npm run dev       # Start dev server (Vite) on http://localhost:5173
-npm run build     # Compile TypeScript and build for production
-npm run lint      # Run ESLint on all TypeScript/TSX files
-npm run preview   # Preview the production build locally
-npm run deploy    # Deploy to GitHub Pages (requires npm run build first)
+npm install       # Installs everything and links packages/react-chessmaster into apps/web
+npm run dev       # Site dev server (Vite) on http://localhost:5173
+npm run build     # Type-checks the package, then type-checks and builds the site
+npm run lint      # ESLint on the whole monorepo
+npm test          # Vitest for the package (watch mode; `npm test -- --run` for a single run)
+npm run preview   # Preview the site's production build
+npm run deploy    # Deploy the site to GitHub Pages
 ```
+
+## Monorepo Layout
+
+```
+packages/react-chessmaster/   # The npm package @brayanguti/react-chessmaster (the Chess component)
+apps/web/                     # The ChessMaster website: demo + docs, consumes the package
+```
+
+- `apps/web` imports the component as `@brayanguti/react-chessmaster`; npm workspaces symlink it, and its `exports` points at `src/index.ts`, so Vite serves the package source directly with HMR (no package build needed in development).
+- The package is `"private": true` until it is ready to publish, to prevent accidental `npm publish`.
+- Shared dev tooling (TypeScript, Vite, Vitest, ESLint) lives in the root `package.json`.
 
 ## Project Overview
 
@@ -28,7 +43,7 @@ npm run deploy    # Deploy to GitHub Pages (requires npm run build first)
 
 ### Page Structure
 ```
-src/pages/
+apps/web/src/pages/
 ├── HomePage/          # Main chess game interface
 │   ├── Header/        # Top banner with title/info
 │   ├── Main/          # Contains ChessBoard component
@@ -39,7 +54,7 @@ src/pages/
 
 ### Chess Game System
 ```
-src/components/Chess/
+packages/react-chessmaster/src/
 ├── index.ts           # Public API (ChessBoard + public types). Import the component only from here.
 ├── ChessBoard/        # Public <ChessBoard> (layout, panels, sounds) + Board.tsx (8x8 grid) + drag logic
 ├── ChessCell/         # Individual cell component with click handlers
@@ -63,7 +78,7 @@ src/components/Chess/
     └── useChessStore.ts       # Selector hook used by the components
 ```
 
-The Chess folder is meant to become a standalone npm package: it must not import anything from outside `src/components/Chess` (no site CSS, no `public/`, no site-only dependencies like `lucide-react`).
+The package must stay self-contained and lightweight: it must not import anything from outside `packages/react-chessmaster` (no site CSS, no `apps/web/public/`), and its only runtime dependencies are `react` (peer) and `zustand`. No icon or UI libraries (e.g. `lucide-react`): icons are inline SVGs, assets live in `src/assets/`.
 
 ### Game State Management (Zustand Store)
 
@@ -98,8 +113,8 @@ Pieces are encoded as 4-character strings: `[Color][Type][File][Rank]`
 - Example: "WPe2" = white pawn at e2
 
 ### Assets
-- **SVG pieces** in `src/components/Chess/assets/Pieces/` (named like WP.svg, BK.svg for piece notation)
-- **Sound effects** in `src/components/Chess/assets/Sound/` (move, capture, castling, check, game-over variations)
+- **SVG pieces** in `packages/react-chessmaster/src/assets/Pieces/` (named like WP.svg, BK.svg for piece notation)
+- **Sound effects** in `packages/react-chessmaster/src/assets/Sound/` (move, capture, castling, check, game-over variations)
 - Pieces are licensed/sourced separately and styled via CSS positioning
 
 ## Git Commit Policy
@@ -114,7 +129,7 @@ Pieces are encoded as 4-character strings: `[Color][Type][File][Rank]`
 
 - **ESLint rules** focus on React hooks (dependency arrays) and React Refresh for hot module reloading
 - **TypeScript strict mode** is enabled; all pieces of state have defined types in `store/types.ts`
-- **CSS structure**: Chess components use CSS Modules (`*.module.css`); all theme tokens (`--light-square`, `--accent`, `--text`, ...) are defined on `.chessGame` in `ChessBoard.module.css`. Site pages use global styles in `src/index.css`
-- **Tests**: `npm test` (Vitest) covers the chess logic in `src/components/Chess/__tests__/`; verify UI changes manually in the dev server
+- **CSS structure**: Chess components use CSS Modules (`*.module.css`); all theme tokens (`--light-square`, `--accent`, `--text`, ...) are defined on `.chessGame` in `ChessBoard.module.css`. Site pages use global styles in `apps/web/src/index.css`
+- **Tests**: `npm test` (Vitest) covers the chess logic in `packages/react-chessmaster/src/__tests__/`; verify UI changes manually in the dev server
 - **Persistence (opt-in)**: the `persist` prop saves each board to localStorage under `react-chess:<key>` (see `store/persistence.ts`). Only a minimal snapshot is stored (pieces, hasMoved, turn, history, promotion, layout); everything derived is rebuilt with `markCellsUnderAttack` on restore. Bump `PERSIST_VERSION` when that snapshot changes shape
 - **Build**: `npm run build` runs `tsc -b` — a plain `tsc` checks nothing because the root tsconfig only has project references

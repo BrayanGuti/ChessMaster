@@ -1,25 +1,20 @@
 {
-  "name": "chessmaster",
+  "name": "chessmaster-monorepo",
   "private": true,
-  "version": "0.0.0",
   "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "npm run dev -w apps/web",
+    "build": "npm run typecheck -w packages/react-chessmaster && npm run build -w apps/web",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "test": "vitest",
-    "test:ui": "vitest --ui",
-    "test:coverage": "vitest --coverage",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
-  },
-  "dependencies": {
-    "lucide-react": "^0.469.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^6.26.2",
-    "zustand": "^4.5.x"
+    "preview": "npm run preview -w apps/web",
+    "test": "npm test -w packages/react-chessmaster --",
+    "test:ui": "npm run test:ui -w packages/react-chessmaster",
+    "test:coverage": "npm run test:coverage -w packages/react-chessmaster",
+    "deploy": "npm run deploy -w apps/web"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
