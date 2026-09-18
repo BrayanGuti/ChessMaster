@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -16,7 +16,7 @@
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.45);
+  color: var(--text-muted);
 }
 
 .scrollArea {
@@ -58,11 +58,11 @@
   position: sticky;
   top: 0;
   z-index: 1;
-  background: rgba(20, 20, 22, 0.85);
+  background: rgba(26, 23, 20, 0.92);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-muted);
   font-size: 0.68rem;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -85,7 +85,7 @@
 }
 
 .swatchWhite {
-  background: #f2efe8;
+  background: var(--light-square);
 }
 
 .swatchBlack {
@@ -95,7 +95,7 @@
 
 .table td {
   padding: 3px 10px;
-  color: rgba(255, 255, 255, 0.88);
+  color: var(--text);
   font-family: ui-monospace, 'SF Mono', 'Cascadia Code', Consolas, monospace;
   font-variant-numeric: tabular-nums;
 }
@@ -109,7 +109,7 @@
 }
 
 .turnNumber {
-  color: rgba(255, 255, 255, 0.35);
+  color: var(--text-subtle);
 }
 
 .move {
@@ -120,9 +120,9 @@
 }
 
 .lastMove {
-  color: #ffffff;
-  background: color-mix(in srgb, var(--accent, #7daee0) 22%, transparent);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent, #7daee0) 40%, transparent);
+  color: var(--text);
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent);
 }
 
 .table td.empty {
@@ -130,5 +130,5 @@
   text-align: center;
   font-family: inherit;
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--text-subtle);
 }

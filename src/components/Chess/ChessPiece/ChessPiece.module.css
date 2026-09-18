@@ -2,7 +2,8 @@
     width: 90%;
     height: 90%;
     /* El drag nativo de <img> se dispara con clics rapidos y bloquea toda la
-       interaccion. Un drag and drop futuro debe usar Pointer Events en la celda. */
+       interaccion. El drag and drop real usa Pointer Events en el tablero
+       (ver ChessBoard/useBoardDrag.ts). */
     pointer-events: none;
     user-select: none;
     -webkit-user-drag: none;

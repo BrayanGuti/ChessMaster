@@ -1,14 +1,12 @@
 import styles from './ChessBoard.module.css';
 import { useChessStore } from '../store/useChessStore';
 import { ChessGameProvider } from '../store/ChessGameProvider';
-import { ChessCell } from '../ChessCell/ChessCell';
-import { CoronationPanel } from '../CoronationPanel/CoronationPanel';
 import { MoveHistory } from '../MoveHistory/MoveHistory';
 import { CapturedPieces } from '../CapturedPieces/CapturedPieces';
 import { PlayerBadge } from '../PlayerBadge/PlayerBadge';
-import { GameOverModal } from '../GameOverModal/GameOverModal';
 import { ChessErrorBoundary } from '../ErrorBoundary/ChessErrorBoundary';
 import { ChessSettings } from '../ChessSettings/ChessSettings';
+import { Board } from './Board';
 import { useRef, useEffect, useState, CSSProperties } from 'react';
 import { SOUND_ASSETS } from '../assets/sounds';
 import type { ChessBoardProps, ChessDisplaySettings } from '../store/types';
@@ -23,8 +21,6 @@ function ChessBoardContent({
   onMove,
   onGameEnd,
 }: ChessBoardProps) {
-  const positions = useChessStore((state) => state.chessBoardpositions);
-  const coronation = useChessStore((state) => state.coronation);
   const moveHistory = useChessStore((state) => state.moveHistory);
   const checkState = useChessStore((state) => state.checkState);
 
@@ -55,29 +51,17 @@ function ChessBoardContent({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkState.isCheckmate, checkState.isStalemate]);
 
-  const themeVars: CSSProperties = theme
-    ? ({
-        '--light-square': theme.lightSquare || '#f0d9b5',
-        '--dark-square': theme.darkSquare || '#b58863',
-        '--highlight': theme.highlight || '#baca44',
-        '--accent': theme.accent || '#7daee0',
-      } as CSSProperties)
-    : {};
-
-  const board = (
-    <section className={styles.chessBoard}>
-      {positions.map((row, rowIndex) =>
-        row.map((cell, colIndex) => (
-          <ChessCell
-            key={`${rowIndex}-${colIndex}`}
-            cellInformation={cell}
-          />
-        ))
-      )}
-      {coronation.status && <CoronationPanel cords={coronation.coordinates} />}
-      <GameOverModal />
-    </section>
-  );
+  // Only the provided tokens are overridden; the rest keep the defaults from ChessBoard.module.css
+  const themeVars = Object.fromEntries(
+    Object.entries({
+      '--light-square': theme?.lightSquare,
+      '--dark-square': theme?.darkSquare,
+      '--highlight': theme?.highlight,
+      '--accent': theme?.accent,
+      '--check': theme?.check,
+      '--move-hint': theme?.moveHint,
+    }).filter(([, value]) => value)
+  ) as CSSProperties;
 
   const { playerBadges, capturedPieces, moveHistory: showHistory, sound } = settings;
 
@@ -109,7 +93,7 @@ function ChessBoardContent({
             </div>
           )}
           <div className={styles.row}>
-            <div className={styles.boardArea}>{board}</div>
+            <div className={styles.boardArea}><Board /></div>
             {hasSidePanel && (
               <aside className={styles.sidePanel}>
                 {capturedInPanel && <CapturedPieces color="B" />}

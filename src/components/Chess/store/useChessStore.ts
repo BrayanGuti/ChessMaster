@@ -12,3 +12,12 @@ export function useChessStore<T>(
   }
   return useStore(store, selector)
 }
+
+/** Direct access to the store instance, for event handlers that need fresh state via getState() */
+export function useChessStoreApi() {
+  const store = useContext(ChessStoreContext)
+  if (!store) {
+    throw new Error('useChessStoreApi must be used within ChessGameProvider')
+  }
+  return store
+}

@@ -1,46 +1,116 @@
+/*
+ * Capas de cada casilla:
+ *   background -> color de la casilla
+ *   ::before   -> tinte de estado (último movimiento, selección, jaque)
+ *   pieza      -> encima del tinte
+ *   ::after    -> pista de movimiento (punto o anillo de captura)
+ * Los colores salen de los tokens definidos en .chessGame (ChessBoard.module.css).
+ */
+
 .chessCell {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.isClickable {
-  cursor: pointer;
+.chessCell::before,
+.chessCell::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+}
+
+.chessCell::before {
+  inset: 0;
+  border-radius: inherit;
+  background: transparent;
+  transition: background-color 0.15s ease;
+}
+
+.chessCell > * {
+  position: relative;
+  z-index: 1;
 }
 
 .black {
-  background-color: var(--dark-square, #222);
+  background-color: var(--dark-square, #b58863);
 }
 
 .white {
-  background-color: var(--light-square, #DDD);
+  background-color: var(--light-square, #f0d9b5);
 }
 
-.thisIsTheSelectedPiece {
-  background-color: blue;
+.isClickable {
+  cursor: grab;
 }
 
-.youCanMoveHere {
+/* --- Tintes de estado --- */
+
+.lastMove::before {
+  background-color: color-mix(in srgb, var(--highlight, #f4cd5c) 42%, transparent);
+}
+
+.selected::before {
+  background-color: color-mix(in srgb, var(--highlight, #f4cd5c) 62%, transparent);
+}
+
+.kingInCheck::before {
+  background:
+    radial-gradient(
+      circle at center,
+      var(--check, #e5484d) 0%,
+      color-mix(in srgb, var(--check, #e5484d) 85%, transparent) 35%,
+      color-mix(in srgb, var(--check, #e5484d) 35%, transparent) 65%,
+      transparent 85%
+    );
+  animation: checkPulse 1.8s ease-in-out infinite;
+}
+
+/* --- Pistas de movimiento --- */
+
+.youCanMoveHere,
+.youCanAttackHere {
   cursor: pointer;
 }
 
 .youCanMoveHere::after {
-  content: "";
-  display: block;
-  width: 30%;
-  height: 30%;
+  z-index: 2;
+  width: 32%;
+  height: 32%;
   border-radius: 50%;
-  background-color: var(--highlight, green);
+  background-color: var(--move-hint, rgba(20, 16, 12, 0.22));
+  transition: transform 0.15s ease;
 }
 
-.youCanAttackHere {
-  cursor: pointer;
-  background-color: red;
+.youCanAttackHere::after {
+  z-index: 2;
+  inset: 3%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle closest-side,
+    transparent 79%,
+    var(--move-hint, rgba(20, 16, 12, 0.22)) 81%
+  );
 }
 
-.kingInCheck {
-  background-color: rgb(165, 114, 4);
+@media (hover: hover) {
+  .youCanMoveHere:hover::after {
+    transform: scale(1.25);
+  }
+
+  .youCanMoveHere:hover::before,
+  .youCanAttackHere:hover::before {
+    background-color: color-mix(in srgb, var(--highlight, #f4cd5c) 30%, transparent);
+  }
 }
+
+/* Pieza que se está arrastrando: queda un rastro tenue en su casilla */
+.dragOrigin > * {
+  opacity: 0.3;
+}
+
+/* --- Esquinas redondeadas del tablero --- */
 
 .cornerUpLeft {
   border-top-left-radius: 15%;
@@ -56,4 +126,25 @@
 
 .cornerDownRight {
   border-bottom-right-radius: 15%;
+}
+
+@keyframes checkPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.72;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kingInCheck::before {
+    animation: none;
+  }
+
+  .chessCell::before,
+  .youCanMoveHere::after {
+    transition: none;
+  }
 }

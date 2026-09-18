@@ -97,8 +97,14 @@ export interface MoveRecord {
 export interface ChessBoardTheme {
   lightSquare?: string;
   darkSquare?: string;
+  /** Selected square and last move tint */
   highlight?: string;
+  /** UI accent: active player, switches, last move in the history */
   accent?: string;
+  /** King in check glow */
+  check?: string;
+  /** Legal move dots and capture rings */
+  moveHint?: string;
 }
 
 export interface ChessDisplaySettings {

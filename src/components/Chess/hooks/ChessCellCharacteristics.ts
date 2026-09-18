@@ -4,14 +4,12 @@ import { ChessBoardCell } from "../store/types"
 
 export function useChessCellCharacteristics(cellInformation: ChessBoardCell) {
   const pieceSelected = useChessStore(state => state.cellOfPieceSelected)
-  const clickCell = useChessStore(state => state.clickCell)
   const turn = useChessStore(state => state.turn)
   const colorInCheck = useChessStore(state => state.checkState?.colorOfCheck)
 
   const {
     color,
     corner,
-    handleCellClick,
     youCanMoveHere,
     thisIsTheSelectedPiece,
   } = useMemo(() => {
@@ -34,12 +32,8 @@ export function useChessCellCharacteristics(cellInformation: ChessBoardCell) {
 
     const thisIsTheSelectedPiece = pieceSelected?.piece === cellInformation.piece ? 'thisIsTheSelectedPiece' : ''
 
-    const handleCellClick = () => {
-      clickCell(cellInformation)
-    }
+    return { color, corner, youCanMoveHere, thisIsTheSelectedPiece }
+  }, [cellInformation, pieceSelected])
 
-    return { color, corner, handleCellClick, youCanMoveHere, thisIsTheSelectedPiece, turn, colorInCheck}
-  }, [cellInformation, pieceSelected, clickCell, turn, colorInCheck])
-
-  return { color, corner, handleCellClick, youCanMoveHere, thisIsTheSelectedPiece, turn, colorInCheck }
+  return { color, corner, youCanMoveHere, thisIsTheSelectedPiece, turn, colorInCheck }
 }

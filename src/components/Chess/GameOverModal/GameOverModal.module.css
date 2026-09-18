@@ -5,54 +5,93 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  padding: 8%;
+  background: rgba(14, 12, 10, 0.62);
+  backdrop-filter: blur(3px) saturate(0.8);
+  -webkit-backdrop-filter: blur(3px) saturate(0.8);
   border-radius: inherit;
+  animation: fadeIn 0.3s ease-out;
 }
 
 .panel {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 32px 40px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: #0f0f0f;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9);
+  gap: 10px;
+  max-width: 100%;
+  padding: clamp(20px, 6cqmin, 36px) clamp(24px, 8cqmin, 44px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--accent, #d6ae6b) 10%, transparent), transparent 60%),
+    rgba(22, 20, 18, 0.96);
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.9);
   text-align: center;
+  animation: panelIn 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2);
 }
 
 .title {
   margin: 0;
-  font-size: 1.6rem;
-  font-weight: 900;
-  color: #ffffff;
-  text-transform: uppercase;
-  letter-spacing: -0.02em;
+  font-size: clamp(1.2rem, 5cqmin, 1.7rem);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--text, #f3efe6);
 }
 
 .subtitle {
   margin: 0;
   font-size: 0.9rem;
-  color: #a0a0a0;
+  color: var(--text-muted, rgba(243, 239, 230, 0.55));
 }
 
 .button {
-  margin-top: 8px;
-  background-color: #ffffff;
-  color: #000000;
+  margin-top: 10px;
+  padding: 11px 26px;
   border: none;
-  padding: 12px 28px;
-  border-radius: 50px;
+  border-radius: 999px;
+  background: var(--accent, #d6ae6b);
+  color: #1b1712;
+  font: inherit;
   font-size: 0.85rem;
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.03em;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  box-shadow: 0 8px 20px -8px color-mix(in srgb, var(--accent, #d6ae6b) 70%, transparent);
+  transition: filter 0.2s ease, box-shadow 0.2s ease;
 }
 
 .button:hover {
-  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--text, #f3efe6);
+  outline-offset: 3px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes panelIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .panel {
+    animation: none;
+  }
 }

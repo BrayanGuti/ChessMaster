@@ -10,7 +10,7 @@
   flex-shrink: 0;
   padding: 10px 12px;
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
 }
 
@@ -48,15 +48,15 @@
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
-  color: #d8c08a;
-  background: rgba(216, 192, 138, 0.12);
-  border: 1px solid rgba(216, 192, 138, 0.25);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
 }
 
 .empty {
   font-size: 0.7rem;
   letter-spacing: 0.04em;
-  color: rgba(255, 255, 255, 0.28);
+  color: var(--text-subtle);
 }
 
 @keyframes pieceIn {
