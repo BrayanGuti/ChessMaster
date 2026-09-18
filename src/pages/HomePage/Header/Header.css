@@ -152,18 +152,65 @@
   font-style: italic;
 }
 
-.HomePage-Header-link {
-  color: #a0a0a0;
+.HomePage-Header-link,
+.HomePage-Header-brand {
+  color: #ffffff;
   text-decoration: none;
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  transition: color 0.3s ease;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   position: relative;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
-.HomePage-Header-link:hover {
-  color: #ffffff;
+.HomePage-Header-link {
+  padding: 6px 12px;
+  transition: letter-spacing 0.3s ease;
+}
+
+/* Esquinas en L (mismo motivo que las cards de la página) que enmarcan la palabra en hover */
+.HomePage-Header-link::before,
+.HomePage-Header-link::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  opacity: 0;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+  pointer-events: none;
+}
+
+.HomePage-Header-link::before {
+  top: 0;
+  left: 0;
+  border-top: 2px solid currentColor;
+  border-left: 2px solid currentColor;
+  transform: translate(-6px, -6px);
+}
+
+.HomePage-Header-link::after {
+  bottom: 0;
+  right: 0;
+  border-bottom: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  transform: translate(6px, 6px);
+}
+
+.HomePage-Header-link:hover,
+.HomePage-Header-link:focus-visible {
+  letter-spacing: 0.16em;
+  outline: none;
+}
+
+.HomePage-Header-link:hover::before,
+.HomePage-Header-link:hover::after,
+.HomePage-Header-link:focus-visible::before,
+.HomePage-Header-link:focus-visible::after {
+  opacity: 1;
+  transform: translate(0, 0);
 }
 
 .HomePage-Header-mobile-logo {

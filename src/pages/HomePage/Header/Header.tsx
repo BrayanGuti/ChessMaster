@@ -13,7 +13,7 @@ export function Header() {
         <div className="HomePage-Header-content">
           <nav className="HomePage-Header-nav-desktop">
             <div className="HomePage-Header-nav-item HomePage-Header-nav-item-first">
-              ChessPro
+              <span className="HomePage-Header-brand">Open Source</span>
             </div>
             <div className="HomePage-Header-nav-divider-container HomePage-Header-nav-divider-internal">
               <span className="HomePage-Header-plus">+</span>
