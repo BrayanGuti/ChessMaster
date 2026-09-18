@@ -1,0 +1,376 @@
+.HomePage-GetStartedSection-section {
+  /* Paleta blanco y negro alineada con HeroSection y CreatorSection */
+  --gs-ink: #000000;
+  --gs-dark: rgba(0, 0, 0, 0.9);
+  --gs-charcoal: #1a1a1a;
+  --gs-grey: #6b6b6b;
+  --gs-muted: #8a8a8a;
+  --gs-soft: #f0f0f0;
+  --gs-line: #e4e4e4;
+  --gs-radius: 19px;
+
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: #ffffff;
+  color: var(--gs-ink);
+  position: relative;
+  overflow: hidden;
+}
+
+.HomePage-GetStartedSection-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(0, 0, 0, 0.025) 0%,
+    rgba(0, 0, 0, 0) 60%
+  );
+  pointer-events: none;
+}
+
+.HomePage-GetStartedSection-container {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(24px, 5vh, 56px);
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: clamp(24px, 5vh, 60px) 140px;
+}
+
+/* ---------- Bloque superior: intro + pasos ---------- */
+.HomePage-GetStartedSection-top {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(32px, 5vw, 80px);
+  align-items: center;
+}
+
+.HomePage-GetStartedSection-intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.HomePage-GetStartedSection-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: clamp(12px, 2vh, 20px);
+  padding: 7px 17px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gs-grey);
+}
+
+.HomePage-GetStartedSection-label-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.HomePage-GetStartedSection-title {
+  margin: 0 0 clamp(12px, 2.5vh, 24px);
+  font-size: clamp(2.8rem, min(8vw, 10vh), 6rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  color: var(--gs-ink);
+}
+
+.HomePage-GetStartedSection-description {
+  max-width: 380px;
+  margin: 0 0 clamp(16px, 3.5vh, 36px);
+  font-size: 0.95rem;
+  font-weight: 300;
+  line-height: 1.8;
+  letter-spacing: 0.02em;
+  color: var(--gs-muted);
+}
+
+.HomePage-GetStartedSection-scripts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 380px;
+}
+
+.HomePage-GetStartedSection-scripts-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gs-grey);
+}
+
+.HomePage-GetStartedSection-scripts-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.HomePage-GetStartedSection-scripts-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: clamp(6px, 1.2vh, 10px) 0;
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.18);
+}
+
+.HomePage-GetStartedSection-scripts-list code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gs-ink);
+}
+
+.HomePage-GetStartedSection-scripts-list span {
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: var(--gs-muted);
+  text-align: right;
+}
+
+/* ---------- Pasos ---------- */
+.HomePage-GetStartedSection-steps {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.8vh, 18px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.HomePage-GetStartedSection-step {
+  display: flex;
+  gap: clamp(16px, 2vw, 24px);
+  padding: clamp(16px, 2.4vh, 24px) clamp(18px, 2vw, 28px);
+  border-radius: var(--gs-radius);
+  background-color: var(--gs-soft);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.HomePage-GetStartedSection-step:hover {
+  transform: translateX(8px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+}
+
+.HomePage-GetStartedSection-step-number {
+  flex-shrink: 0;
+  font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--gs-ink);
+}
+
+.HomePage-GetStartedSection-step-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.HomePage-GetStartedSection-step-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.HomePage-GetStartedSection-step-description {
+  margin: 0 0 6px;
+  font-size: 0.85rem;
+  font-weight: 300;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  color: var(--gs-grey);
+}
+
+/* ---------- Bloque de código ---------- */
+.HomePage-GetStartedSection-code {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 10px 10px 16px;
+  border-radius: 12px;
+  background-color: var(--gs-dark);
+  color: #ffffff;
+}
+
+.HomePage-GetStartedSection-code-icon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  color: var(--gs-muted);
+}
+
+.HomePage-GetStartedSection-code-text {
+  flex: 1;
+  min-width: 0;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.82rem;
+  white-space: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.HomePage-GetStartedSection-code-text::-webkit-scrollbar {
+  display: none;
+}
+
+.HomePage-GetStartedSection-copy-button {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: transparent;
+  color: #ffffff;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.HomePage-GetStartedSection-copy-button:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.HomePage-GetStartedSection-copy-button svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* ---------- Guías rápidas ---------- */
+.HomePage-GetStartedSection-guides {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.HomePage-GetStartedSection-guide {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: clamp(20px, 3vh, 29px) 31px;
+  border: 1px solid var(--gs-line);
+  border-radius: var(--gs-radius);
+  background-color: #ffffff;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.HomePage-GetStartedSection-guide:hover {
+  background-color: var(--gs-charcoal);
+  border-color: var(--gs-charcoal);
+  color: #ffffff;
+}
+
+/* Marca de esquina ⌝ */
+.HomePage-GetStartedSection-corner {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 11px;
+  height: 11px;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+}
+
+.HomePage-GetStartedSection-guide-icon {
+  width: 26px;
+  height: 26px;
+  margin-bottom: 4px;
+}
+
+.HomePage-GetStartedSection-guide-title {
+  margin: 0;
+  font-size: clamp(1.3rem, 1.8vw, 1.6rem);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.HomePage-GetStartedSection-guide-description {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 300;
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+  color: var(--gs-grey);
+  transition: color 0.3s ease;
+}
+
+.HomePage-GetStartedSection-guide:hover
+  .HomePage-GetStartedSection-guide-description {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1200px) {
+  .HomePage-GetStartedSection-container {
+    padding: clamp(24px, 5vh, 60px) 100px;
+  }
+}
+
+/* Tablets: una sola columna */
+@media (max-width: 1023px) {
+  .HomePage-GetStartedSection-top {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .HomePage-GetStartedSection-description,
+  .HomePage-GetStartedSection-scripts {
+    max-width: none;
+  }
+
+  .HomePage-GetStartedSection-guides {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+}
+
+/* Móviles */
+@media (max-width: 768px) {
+  .HomePage-GetStartedSection-container {
+    padding: 40px 24px;
+  }
+
+  .HomePage-GetStartedSection-step {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .HomePage-GetStartedSection-step:hover {
+    transform: none;
+  }
+
+  .HomePage-GetStartedSection-guide {
+    padding: 22px;
+  }
+}

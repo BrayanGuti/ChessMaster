@@ -37,7 +37,7 @@ export function Header() {
               <span className="HomePage-Header-plus">+</span>
             </div>
             <div className="HomePage-Header-nav-item HomePage-Header-nav-item-video">
-              <NavLink href="#tournaments">Get started</NavLink>
+              <ScrollLink targetId="get-started">Get started</ScrollLink>
             </div>
             <div className="HomePage-Header-nav-divider-container HomePage-Header-nav-divider-border"></div>
           </nav>
@@ -74,7 +74,12 @@ export function Header() {
             >
               Code Base
             </NavLink>
-            <NavLink href="#tournaments">Get started</NavLink>
+            <ScrollLink
+              targetId="get-started"
+              onNavigate={() => setIsMenuOpen(false)}
+            >
+              Get started
+            </ScrollLink>
           </nav>
         </div>
       )}
