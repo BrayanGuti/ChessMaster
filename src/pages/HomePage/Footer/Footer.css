@@ -1,58 +1,242 @@
 .HomePage-Footer-footer {
+  --footer-line: rgba(255, 255, 255, 0.24);
+  --footer-muted: #8c8c8c;
+
   background-color: rgba(0, 0, 0, 0.98);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
-}
-
-.HomePage-Footer-container {
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: 28px 32px;
-  width: 100%;
-}
-
-.HomePage-Footer-content {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  align-items: center;
-  justify-content: space-between;
-}
-
-@media (min-width: 768px) {
-  .HomePage-Footer-content {
-    flex-direction: row;
-  }
-}
-
-.HomePage-Footer-text {
-  font-size: 0.75rem;
-  color: #777777;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.HomePage-Footer-icons {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.HomePage-Footer-link {
-  color: #888888;
-  transition: color 0.3s;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.HomePage-Footer-link:hover {
   color: #ffffff;
 }
 
-.HomePage-Footer-icon {
-  width: 18px;
-  height: 18px;
+.HomePage-Footer-container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 20px;
 }
-  
+
+@media (min-width: 1000px) {
+  .HomePage-Footer-container {
+    padding: 0 120px;
+  }
+}
+
+/* Columnas separadas por líneas verticales, como las celdas del header */
+.HomePage-Footer-columns {
+  display: grid;
+  grid-template-columns: 1fr;
+  border-left: 1px solid var(--footer-line);
+  border-right: 1px solid var(--footer-line);
+}
+
+@media (min-width: 768px) {
+  .HomePage-Footer-columns {
+    grid-template-columns: 1.6fr 1fr 1fr;
+  }
+}
+
+.HomePage-Footer-column {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 40px 32px;
+}
+
+.HomePage-Footer-column + .HomePage-Footer-column {
+  border-top: 1px solid var(--footer-line);
+}
+
+@media (min-width: 768px) {
+  .HomePage-Footer-column {
+    padding: 56px 48px;
+  }
+
+  .HomePage-Footer-column + .HomePage-Footer-column {
+    border-top: none;
+    border-left: 1px solid var(--footer-line);
+  }
+}
+
+/* "+" donde el divisor vertical se cruza con la línea inferior */
+.HomePage-Footer-plus {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .HomePage-Footer-plus {
+    display: block;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    transform: translate(-50%, 50%);
+    color: var(--footer-muted);
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1;
+    background-color: #000000;
+    padding: 2px 0;
+    z-index: 1;
+  }
+}
+
+/* Marca */
+.HomePage-Footer-brand {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.HomePage-Footer-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  width: 28px;
+  height: 42px;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.HomePage-Footer-grid-cell-filled {
+  background-color: #ffffff;
+}
+
+.HomePage-Footer-wordmark {
+  margin: 0;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+}
+
+.HomePage-Footer-tagline {
+  margin: 12px 0 0;
+  font-size: 0.85rem;
+  font-weight: 300;
+  color: var(--footer-muted);
+  letter-spacing: 0.02em;
+}
+
+/* Listas de links */
+.HomePage-Footer-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--footer-muted);
+}
+
+.HomePage-Footer-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.HomePage-Footer-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  margin-left: -12px;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: letter-spacing 0.3s ease;
+}
+
+.HomePage-Footer-link-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.HomePage-Footer-link-arrow {
+  width: 14px;
+  height: 14px;
+  opacity: 0;
+  transform: translate(-4px, 4px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+/* Esquinas en L, igual que el hover del header */
+.HomePage-Footer-link::before,
+.HomePage-Footer-link::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  opacity: 0;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+  pointer-events: none;
+}
+
+.HomePage-Footer-link::before {
+  top: 0;
+  left: 0;
+  border-top: 2px solid currentColor;
+  border-left: 2px solid currentColor;
+  transform: translate(-6px, -6px);
+}
+
+.HomePage-Footer-link::after {
+  bottom: 0;
+  right: 0;
+  border-bottom: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  transform: translate(6px, 6px);
+}
+
+.HomePage-Footer-link:hover,
+.HomePage-Footer-link:focus-visible {
+  letter-spacing: 0.16em;
+  outline: none;
+}
+
+.HomePage-Footer-link:hover::before,
+.HomePage-Footer-link:hover::after,
+.HomePage-Footer-link:focus-visible::before,
+.HomePage-Footer-link:focus-visible::after,
+.HomePage-Footer-link:hover .HomePage-Footer-link-arrow,
+.HomePage-Footer-link:focus-visible .HomePage-Footer-link-arrow {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+/* Barra inferior */
+.HomePage-Footer-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  padding: 20px 32px;
+  border: 1px solid var(--footer-line);
+  border-bottom: none;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--footer-muted);
+}
+
+@media (min-width: 768px) {
+  .HomePage-Footer-bottom {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 22px 48px;
+  }
+}
+
+.HomePage-Footer-motto {
+  color: #ffffff;
+  font-weight: 700;
+}
