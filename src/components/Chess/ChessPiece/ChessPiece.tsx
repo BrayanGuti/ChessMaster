@@ -1,5 +1,6 @@
 import styles from './ChessPiece.module.css';
 import { PIECE_ASSETS } from '../assets/pieces';
+import type { ChessBoardCell } from '../store/types';
 
 export function ChessPiece({ piece }: { piece: ChessBoardCell['piece'] }) {
     if (piece === '') {

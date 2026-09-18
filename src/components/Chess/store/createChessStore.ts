@@ -1,10 +1,12 @@
-import { create, StoreApi } from 'zustand'
+import { create, StateCreator } from 'zustand'
+import { createJSONStorage, persist } from 'zustand/middleware'
 import { startGame } from '../hooks/StartGame'
 import { calculateAvailableMoves } from '../hooks/CalculateMoves'
 import { markCellsUnderAttack } from '../hooks/MarkCellsUnderAttack'
 import { hasAnyLegalMove } from '../hooks/CheckMate'
 import { isCastling } from '../hooks/Castling'
-import { ChessBoardState, ChessBoardCell, MoveRecord, CheckStatus } from './types'
+import { ChessBoardState, ChessBoardCell, ChessDisplaySettings, ChessStoreApi, MoveRecord, CheckStatus } from './types'
+import { PERSIST_VERSION, PersistedGame, isPersistedGame, restoreGame, safeLocalStorage, toPersistedGame } from './persistence'
 
 const INITIAL_CHECK_STATE: CheckStatus = {
   protectors: [],
@@ -19,9 +21,48 @@ const INITIAL_CHECK_STATE: CheckStatus = {
   colorOfCheck: null
 }
 
-export function createChessStore(): StoreApi<ChessBoardState> {
-  return create<ChessBoardState>(((
-    (set, get) => ({
+const DEFAULT_DISPLAY_SETTINGS: ChessDisplaySettings = {
+  playerBadges: false,
+  capturedPieces: false,
+  moveHistory: false
+}
+
+export interface ChessStoreOptions {
+  /** localStorage key; when set, the game is saved on every change */
+  storageKey?: string | null
+  /** Panels shown on a fresh game (a saved game keeps its own) */
+  initialDisplaySettings?: ChessDisplaySettings
+}
+
+type PersistableStore = ChessStoreApi & { persist?: { rehydrate: () => Promise<void> | void } }
+
+export function createChessStore({ storageKey, initialDisplaySettings }: ChessStoreOptions = {}): ChessStoreApi {
+  const initializer = createGameState(initialDisplaySettings ?? DEFAULT_DISPLAY_SETTINGS)
+  if (!storageKey) return create<ChessBoardState>()(initializer)
+
+  return create<ChessBoardState>()(
+    persist(initializer, {
+      name: storageKey,
+      version: PERSIST_VERSION,
+      storage: createJSONStorage(() => safeLocalStorage),
+      // Loaded from ChessGameProvider after mount, so server and first client render match
+      skipHydration: true,
+      partialize: (state): PersistedGame => toPersistedGame(state),
+      // Saved games from another version are discarded by merge()
+      migrate: (persisted) => persisted as PersistedGame,
+      merge: (persisted, current) =>
+        isPersistedGame(persisted) ? { ...current, ...restoreGame(persisted) } : current
+    })
+  )
+}
+
+/** Loads the saved game into a store created with a storageKey; no-op otherwise. */
+export function hydrateChessStore(store: ChessStoreApi) {
+  void (store as PersistableStore).persist?.rehydrate()
+}
+
+function createGameState(initialDisplaySettings: ChessDisplaySettings): StateCreator<ChessBoardState> {
+  return (set, get) => ({
       chessBoardpositions: startGame(),
       turn: 'W',
       checkState: { ...INITIAL_CHECK_STATE },
@@ -33,19 +74,25 @@ export function createChessStore(): StoreApi<ChessBoardState> {
       },
       soundToPlay: null,
       moveHistory: [],
+      displaySettings: { ...initialDisplaySettings },
+      gameId: 0,
+      setDisplaySettings: (update) => set(state => ({ displaySettings: update(state.displaySettings) })),
+
       setSoundToPlay: (sound) => set({ soundToPlay: sound }),
 
       addMoveRecord: (record) => set(state => ({ moveHistory: [...state.moveHistory, record] })),
 
-      resetGame: () => set({
+      // Keeps displaySettings: a new game should not change the player's layout
+      resetGame: () => set(state => ({
           chessBoardpositions: startGame(),
           turn: 'W',
           checkState: { ...INITIAL_CHECK_STATE },
           cellOfPieceSelected: null,
           coronation: { status: false, coordinates: { col: 0, row: 0 }, cellName: '' },
           soundToPlay: null,
-          moveHistory: []
-      }),
+          moveHistory: [],
+          gameId: state.gameId + 1
+      })),
 
       clickCell: (cellInformation) => {
           const { cellOfPieceSelected, coronation, checkState} = get()
@@ -291,7 +338,6 @@ export function createChessStore(): StoreApi<ChessBoardState> {
           get().showAvailableMoves(coordsOfAvailableMoves)
       }
   })
-  )))
 }
 
 function randomSound(sound1: string, sound2: string) {

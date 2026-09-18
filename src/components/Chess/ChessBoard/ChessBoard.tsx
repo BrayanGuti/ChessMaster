@@ -7,48 +7,63 @@ import { PlayerBadge } from '../PlayerBadge/PlayerBadge';
 import { ChessErrorBoundary } from '../ErrorBoundary/ChessErrorBoundary';
 import { ChessSettings } from '../ChessSettings/ChessSettings';
 import { Board } from './Board';
-import { useRef, useEffect, useState, CSSProperties } from 'react';
+import { useRef, useEffect, CSSProperties } from 'react';
 import { SOUND_ASSETS } from '../assets/sounds';
-import type { ChessBoardProps, ChessDisplaySettings } from '../store/types';
+import { resolveStorageKey } from '../store/persistence';
+import type { ChessBoardProps } from '../store/types';
 
+/*
+ * The callbacks below compare against the value seen on the previous run and skip the first
+ * one: a game restored from localStorage already has moves (or is already over), and that
+ * must not be reported as if it had just happened.
+ */
 function ChessBoardContent({
   theme,
   className,
-  showMoveHistory,
-  showCapturedPieces,
-  showPlayerBadges,
   showSettings = true,
   onMove,
   onGameEnd,
+  onReset,
 }: ChessBoardProps) {
   const moveHistory = useChessStore((state) => state.moveHistory);
   const checkState = useChessStore((state) => state.checkState);
+  const gameId = useChessStore((state) => state.gameId);
+  const settings = useChessStore((state) => state.displaySettings);
+  const setSettings = useChessStore((state) => state.setDisplaySettings);
 
-  // Props only seed the initial layout; the settings menu can change it at runtime
-  const [settings, setSettings] = useState<ChessDisplaySettings>(() => ({
-    playerBadges: Boolean(showPlayerBadges),
-    capturedPieces: Boolean(showCapturedPieces),
-    moveHistory: Boolean(showMoveHistory),
-  }));
-
+  const previousMoveCount = useRef<number | null>(null);
   useEffect(() => {
-    if (onMove && moveHistory.length > 0) {
+    const previous = previousMoveCount.current;
+    previousMoveCount.current = moveHistory.length;
+    if (previous !== null && onMove && moveHistory.length > previous) {
       onMove(moveHistory[moveHistory.length - 1]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [moveHistory]);
 
+  const wasGameOver = useRef<boolean | null>(null);
   useEffect(() => {
-    if (!onGameEnd) return;
+    const isGameOver = checkState.isCheckmate || checkState.isStalemate;
+    const previous = wasGameOver.current;
+    wasGameOver.current = isGameOver;
+    if (previous !== false || !isGameOver || !onGameEnd) return;
 
     if (checkState.isCheckmate) {
       const winner = checkState.colorOfCheck === 'W' ? 'B' : 'W';
       onGameEnd({ winner, reason: 'checkmate' });
-    } else if (checkState.isStalemate) {
+    } else {
       onGameEnd({ winner: null, reason: 'stalemate' });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkState.isCheckmate, checkState.isStalemate]);
+
+  const previousGameId = useRef(gameId);
+  useEffect(() => {
+    if (gameId === previousGameId.current) return;
+    previousGameId.current = gameId;
+    onReset?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameId]);
 
   // Only the provided tokens are overridden; the rest keep the defaults from ChessBoard.module.css
   const themeVars = Object.fromEntries(
@@ -118,8 +133,18 @@ function ChessBoardContent({
 }
 
 export function ChessBoard(props: ChessBoardProps = {}) {
+  // Both only seed the store on mount; after that the settings menu owns the layout
+  const { persist, showPlayerBadges, showCapturedPieces, showMoveHistory } = props;
+
   return (
-    <ChessGameProvider>
+    <ChessGameProvider
+      storageKey={resolveStorageKey(persist)}
+      initialDisplaySettings={{
+        playerBadges: Boolean(showPlayerBadges),
+        capturedPieces: Boolean(showCapturedPieces),
+        moveHistory: Boolean(showMoveHistory),
+      }}
+    >
       <ChessErrorBoundary>
         <ChessBoardContent {...props} />
       </ChessErrorBoundary>

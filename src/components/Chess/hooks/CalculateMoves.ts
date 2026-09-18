@@ -1,4 +1,4 @@
-import { ChessBoardCell, ChessBoardState } from "../store/types";
+import { ChessBoardCell, ChessBoardPositions, ChessBoardState } from "../store/types";
 
 type posiblesMoves = ChessBoardCell['coordinates'][]
 

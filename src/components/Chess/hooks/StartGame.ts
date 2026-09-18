@@ -13,11 +13,19 @@ export function startGame (): ChessBoardPositions {
     ['WRa1', 'WNb1', 'WBc1', 'WQd1', 'WKe1', 'WBf1', 'WNg1', 'WRh1']
   ]
 
-  
+  const initialPosition = createBoard(
+    Position.map(row => row.map(piece => ({ piece, hasMoved: piece === '' })))
+  )
 
-  
-  const initialPosition = Position.map((row, rowIndex) => {
-    const boardRow = row.map((piece, colIndex) => {
+  const { newBoard } = markCellsUnderAttack(initialPosition)
+
+  return newBoard
+}
+
+/** Builds the 8x8 cell grid from each cell's piece and hasMoved flag (row 0 = rank 8). */
+export function createBoard (cells: Array<Array<Pick<ChessBoardCell, 'piece' | 'hasMoved'>>>): ChessBoardPositions {
+  return cells.map((row, rowIndex) => {
+    return row.map(({ piece, hasMoved }, colIndex) => {
     const cellName = String.fromCharCode(97 + colIndex) + (8 - rowIndex);
     const coordinates = { col: colIndex, row: rowIndex };
     /**
@@ -32,28 +40,14 @@ export function startGame (): ChessBoardPositions {
     * -Fifth Parameter -> cellName: The name of the cell (e.g., a8, b8, etc.).
     * -Sixth Parameter -> coordinates: The coordinates of the cell (e.g., {x: 0, y: 0}).
     **/
-    if (piece === '') return {
-                              piece: piece as ChessBoardCell['piece'],
-                              YouCanMoveHere: false, 
-                              isUnderAttackBy: [],
-                              hasMoved: true, 
-                              cellName: cellName as ChessBoardCell['cellName'],
-                              coordinates: coordinates 
-                            }
-  
     return {
-            piece: piece as ChessBoardCell['piece'], 
-            YouCanMoveHere: false, 
-            isUnderAttackBy: [], 
-            hasMoved: false, 
-            cellName: cellName as ChessBoardCell['cellName'], 
-            coordinates: coordinates 
+            piece,
+            YouCanMoveHere: false,
+            isUnderAttackBy: [],
+            hasMoved,
+            cellName: cellName as ChessBoardCell['cellName'],
+            coordinates: coordinates
           }
     })
-    return boardRow
   })
-
-  const { newBoard } = markCellsUnderAttack(initialPosition)
-
-  return newBoard
 }

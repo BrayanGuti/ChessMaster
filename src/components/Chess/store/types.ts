@@ -45,6 +45,14 @@ export interface ChessBoardState {
 
     moveHistory: MoveRecord[];
 
+    /** Panels shown around the board; toggled from the settings menu */
+    displaySettings: ChessDisplaySettings;
+
+    /** Increments on every resetGame(), so the UI can tell a new game started */
+    gameId: number;
+
+    setDisplaySettings: (update: (previous: ChessDisplaySettings) => ChessDisplaySettings) => void;
+
     setSoundToPlay: (sound: string | null) => void;
 
     addMoveRecord: (record: MoveRecord) => void;
@@ -120,7 +128,15 @@ export interface ChessBoardProps {
   showPlayerBadges?: boolean;
   /** Shows the gear menu that lets the player toggle the panels above at runtime. Default: true */
   showSettings?: boolean;
+  /**
+   * Saves the game (and the panel layout) in localStorage so it survives reloads.
+   * `true` uses the key "react-chess:default"; a string uses "react-chess:<string>",
+   * so each board on a page needs its own string. Read once, when the board mounts.
+   */
+  persist?: boolean | string;
   onGameEnd?: (result: GameEndResult) => void;
   onMove?: (move: MoveRecord) => void;
+  /** Called when the player starts a new game (settings menu, game over panel or error screen) */
+  onReset?: () => void;
   className?: string;
 }

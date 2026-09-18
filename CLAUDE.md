@@ -116,5 +116,5 @@ Pieces are encoded as 4-character strings: `[Color][Type][File][Rank]`
 - **TypeScript strict mode** is enabled; all pieces of state have defined types in `store/types.ts`
 - **CSS structure**: Chess components use CSS Modules (`*.module.css`); all theme tokens (`--light-square`, `--accent`, `--text`, ...) are defined on `.chessGame` in `ChessBoard.module.css`. Site pages use global styles in `src/index.css`
 - **Tests**: `npm test` (Vitest) covers the chess logic in `src/components/Chess/__tests__/`; verify UI changes manually in the dev server
-- **No persistence**: Game state is not saved to localStorage; reloading resets the board
-- Comments in store note future features: persist middleware and confetti animations
+- **Persistence (opt-in)**: the `persist` prop saves each board to localStorage under `react-chess:<key>` (see `store/persistence.ts`). Only a minimal snapshot is stored (pieces, hasMoved, turn, history, promotion, layout); everything derived is rebuilt with `markCellsUnderAttack` on restore. Bump `PERSIST_VERSION` when that snapshot changes shape
+- **Build**: `npm run build` runs `tsc -b` — a plain `tsc` checks nothing because the root tsconfig only has project references

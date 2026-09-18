@@ -1,5 +1,6 @@
 import styles from './ChessSettings.module.css';
 import { useEffect, useId, useRef, useState } from 'react';
+import { useChessStore } from '../store/useChessStore';
 import type { ChessDisplaySettings } from '../store/types';
 
 // "Settings" icon from Lucide (ISC license), inlined so the package has no icon dependency
@@ -36,11 +37,19 @@ export function ChessSettings({
   onChange: (update: (previous: ChessDisplaySettings) => ChessDisplaySettings) => void;
 }) {
   const [open, setOpen] = useState(false);
+  // "New game" asks for a second click so a game can't be lost by accident
+  const [confirmingReset, setConfirmingReset] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const menuId = useId();
 
+  const hasMoves = useChessStore((state) => state.moveHistory.length > 0);
+  const resetGame = useChessStore((state) => state.resetGame);
+
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      setConfirmingReset(false);
+      return;
+    }
 
     const handlePointerDown = (event: PointerEvent) => {
       if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
@@ -69,6 +78,15 @@ export function ChessSettings({
       capturedPieces: isBoardOnly,
       moveHistory: isBoardOnly,
     }));
+
+  const handleReset = () => {
+    if (!confirmingReset) {
+      setConfirmingReset(true);
+      return;
+    }
+    resetGame();
+    setOpen(false);
+  };
 
   return (
     <div ref={rootRef} className={styles.settings}>
@@ -107,6 +125,15 @@ export function ChessSettings({
           <div className={styles.divider} />
           <button type="button" role="menuitem" className={styles.action} onClick={setBoardOnly}>
             {isBoardOnly ? 'Show all' : 'Board only'}
+          </button>
+          <button
+            type="button"
+            role="menuitem"
+            className={`${styles.action} ${styles.danger}`}
+            onClick={handleReset}
+            disabled={!hasMoves}
+          >
+            {confirmingReset ? 'Click again to confirm' : 'New game'}
           </button>
         </div>
       )}

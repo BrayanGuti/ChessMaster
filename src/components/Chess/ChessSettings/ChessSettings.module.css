@@ -159,6 +159,16 @@
   outline: none;
 }
 
+.danger {
+  color: var(--check);
+}
+
+.action:disabled {
+  color: var(--text-subtle);
+  background: transparent;
+  cursor: default;
+}
+
 /* En pantallas estrechas el engranaje va al pie del juego: el menú se abre hacia arriba */
 @container chess-stage (max-width: 640px) {
   .menu {
