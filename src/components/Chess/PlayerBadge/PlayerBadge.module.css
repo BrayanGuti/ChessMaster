@@ -1,98 +1,51 @@
+/* Fila de jugador plana: avatar cuadrado + nombre + capturas, sin caja ni contorno */
 .playerBadge {
-  --badge-accent: var(--accent);
-
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   width: 100%;
-  padding: 10px 14px 10px 10px;
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015));
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-}
-
-.playerBadge.active {
-  border-color: color-mix(in srgb, var(--badge-accent) 55%, transparent);
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--badge-accent) 25%, transparent),
-    0 8px 24px -12px color-mix(in srgb, var(--badge-accent) 60%, transparent);
-}
-
-.playerBadge.check {
-  --badge-accent: var(--check);
+  min-width: 0;
 }
 
 .avatarFrame {
-  position: relative;
   flex-shrink: 0;
-  width: 52px;
-  height: 52px;
-  padding: 3px;
-  border-radius: 50%;
-  /* Anillo degradado alrededor de la foto */
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.05));
-  box-shadow: 0 6px 16px -4px rgba(0, 0, 0, 0.6);
-  transition: background 0.3s ease, box-shadow 0.3s ease;
-}
-
-.avatarInner {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
   overflow: hidden;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
 }
 
-.white .avatarInner {
-  background: radial-gradient(circle at 35% 30%, #ffffff 0%, #e4e0d8 55%, #b9b3a7 100%);
+.white .avatarFrame {
+  background: linear-gradient(160deg, #ffffff 0%, #e4e0d8 60%, #c9c3b7 100%);
 }
 
-.black .avatarInner {
-  background: radial-gradient(circle at 35% 30%, #f3f3f3 0%, #cfcfd2 55%, #9d9da3 100%);
-}
-
-.playerBadge.active .avatarFrame {
-  background: linear-gradient(
-    145deg,
-    var(--badge-accent),
-    color-mix(in srgb, var(--badge-accent) 30%, transparent)
-  );
-  box-shadow:
-    0 0 0 3px color-mix(in srgb, var(--badge-accent) 18%, transparent),
-    0 6px 18px -4px color-mix(in srgb, var(--badge-accent) 55%, transparent);
+.black .avatarFrame {
+  background: linear-gradient(160deg, #f3f3f3 0%, #cfcfd2 60%, #adadb3 100%);
 }
 
 .avatar {
   display: block;
   width: 100%;
   height: 100%;
-  padding: 12%;
+  padding: 10%;
   object-fit: contain;
-  /* Las fotos tienen fondo blanco: multiply lo funde con el degradado del marco */
+  /* Las fotos tienen fondo blanco: multiply lo funde con el fondo del avatar */
   mix-blend-mode: multiply;
 }
 
 .info {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  justify-content: center;
+  gap: 2px;
   min-width: 0;
   flex: 1;
 }
 
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
 .label {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 600;
+  line-height: 1.2;
   letter-spacing: 0.01em;
   color: var(--text-muted);
   white-space: nowrap;
@@ -105,68 +58,13 @@
   color: var(--text);
 }
 
-.status {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-  padding: 3px 10px;
-  border-radius: 999px;
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-subtle);
-  background: rgba(255, 255, 255, 0.04);
-  transition: color 0.3s ease, background 0.3s ease;
-}
-
-.playerBadge.active .status {
-  color: var(--badge-accent);
-  background: color-mix(in srgb, var(--badge-accent) 14%, transparent);
-}
-
-.statusDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
-  opacity: 0.6;
-}
-
-.playerBadge.active .statusDot {
-  opacity: 1;
-  animation: pulse 1.6s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 0 currentColor;
-  }
-  50% {
-    box-shadow: 0 0 0 4px transparent;
-  }
-}
-
 @container chess-stage (max-width: 480px) {
-  .playerBadge {
-    gap: 10px;
-    padding: 8px 10px 8px 8px;
-  }
-
   .avatarFrame {
-    width: 42px;
-    height: 42px;
+    width: 34px;
+    height: 34px;
   }
 
   .label {
-    font-size: 0.85rem;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .playerBadge.active .statusDot {
-    animation: none;
+    font-size: 0.82rem;
   }
 }

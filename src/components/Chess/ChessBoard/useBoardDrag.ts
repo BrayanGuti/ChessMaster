@@ -60,7 +60,8 @@ export function useBoardDrag(boardRef: RefObject<HTMLElement>) {
     if (!board || !ghost) return;
     const rect = board.getBoundingClientRect();
     const { x, y } = pointerRef.current;
-    ghost.style.transform = `translate(${x - rect.left}px, ${y - rect.top}px) translate(-50%, -50%)`;
+    // Scale last, inside the same transform: the standalone `scale` property would also scale the translation
+    ghost.style.transform = `translate(${x - rect.left}px, ${y - rect.top}px) translate(-50%, -50%) scale(var(--ghost-scale, 1))`;
   }, [boardRef]);
 
   // Callback ref: the ghost mounts after the drag starts, so it is placed as soon as it exists

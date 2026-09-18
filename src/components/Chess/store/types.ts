@@ -111,7 +111,6 @@ export interface ChessDisplaySettings {
   playerBadges: boolean;
   capturedPieces: boolean;
   moveHistory: boolean;
-  sound: boolean;
 }
 
 export interface ChessBoardProps {

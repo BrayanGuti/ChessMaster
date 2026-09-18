@@ -11,8 +11,8 @@ export function HeroSection() {
               CHESS MASTER
             </h1>
             <p className="HomePage-HeroSection-hero-description">
-              Transform your AI chess vision into true mastery with intelligent,
-              results-focused strategy.
+              A complete, open-source chess board for React. Install it from npm
+              and drop a fully playable game into your app.
             </p>
             <button
               className="HomePage-HeroSection-play-button"

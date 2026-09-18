@@ -43,7 +43,8 @@
   container: chess-stage / size;
   display: flex;
   align-items: center;
-  justify-content: center;
+  /* El contenedor puede alinear el juego con --chess-justify (p. ej. flex-start = a la izquierda) */
+  justify-content: var(--chess-justify, center);
   width: 100%;
   height: 100%;
   aspect-ratio: 1 / 1;
@@ -67,8 +68,8 @@
 .layout {
   /* Medidas de los elementos que rodean al tablero (estimadas; el tablero absorbe el resto) */
   --gap: 12px;
-  --badge-h: 74px;
-  --toolbar-h: 36px;
+  --badge-h: 40px;
+  --toolbar-h: 28px;
   --panel-w: 260px;
   --panel-h: 150px;
 
@@ -76,20 +77,36 @@
   --bottom: 0px;
   --side: 0px;
   --below: 0px;
+  --foot: 0px;
 
   --board: max(
     120px,
     min(
       100cqw - var(--side),
-      100cqh - var(--top) - var(--bottom) - var(--below)
+      100cqh - var(--top) - var(--bottom) - var(--below) - var(--foot)
     )
   );
 
-  display: flex;
-  flex-direction: column;
-  gap: var(--gap);
+  /*
+   * Rejilla: columna izquierda = jugador negro / tablero / jugador blanco,
+   * columna derecha = panel lateral (mismo alto que el tablero).
+   * El engranaje va dentro de la columna del tablero, arriba a la derecha.
+   * Cada pista ya incluye su separación, así que las pistas vacías miden 0 y no dejan huecos.
+   */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--side);
+  grid-template-rows: var(--top) minmax(0, 1fr) var(--bottom) var(--below) var(--foot);
+  grid-template-areas:
+    "top    ."
+    "board  side"
+    "bottom ."
+    "below  below"
+    "foot   foot";
   width: min(100%, calc(var(--board) + var(--side)));
-  height: min(100%, calc(var(--board) + var(--top) + var(--bottom) + var(--below)));
+  height: min(
+    100%,
+    calc(var(--board) + var(--top) + var(--bottom) + var(--below) + var(--foot))
+  );
 }
 
 .layout.withBadges {
@@ -105,31 +122,34 @@
   --side: calc(var(--panel-w) + var(--gap));
 }
 
-.topBar {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.topBar .badge {
-  flex: 1 1 auto;
+.topBadge {
+  grid-area: top;
+  align-self: start;
+  height: calc(var(--top) - var(--gap));
   min-width: 0;
 }
 
-.layout > .badge {
-  flex-shrink: 0;
+/* Deja libre la esquina del engranaje */
+.withGear .topBadge {
+  padding-right: calc(var(--toolbar-h) + 8px);
 }
 
-.row {
+.bottomBadge {
+  grid-area: bottom;
+  align-self: end;
+  height: calc(var(--bottom) - var(--gap));
+  min-width: 0;
+}
+
+.gear {
+  grid-area: top;
+  align-self: start;
+  justify-self: end;
   display: flex;
-  gap: var(--gap);
-  flex: 1 1 0;
-  min-height: 0;
 }
 
 .boardArea {
+  grid-area: board;
   /* Contenedor propio: el tablero toma el mayor cuadrado que cabe aquí */
   container-type: size;
   display: flex;
@@ -182,19 +202,20 @@
   z-index: 50;
   width: 12.5%;
   height: 12.5%;
-  /* Un poco más grande que la pieza en reposo, como en chess.com */
-  scale: 1.12;
+  /* Un poco más grande que la pieza en reposo, como en chess.com (se aplica en el transform del hook) */
+  --ghost-scale: 1.12;
   filter: drop-shadow(0 8px 10px rgba(0, 0, 0, 0.45));
   pointer-events: none;
   will-change: transform;
 }
 
 .sidePanel {
+  grid-area: side;
+  justify-self: end;
   display: flex;
   flex-direction: column;
   gap: 8px;
   width: var(--panel-w);
-  flex-shrink: 0;
   min-height: 0;
 }
 
@@ -203,11 +224,34 @@
   min-height: 0;
 }
 
-/* Contenedor estrecho: el panel lateral pasa debajo del tablero */
+/* Sin historial, las capturas de las blancas bajan al pie del tablero (lado de las blancas) */
+.sidePanel > :last-child:not(:first-child) {
+  margin-top: auto;
+}
+
+/*
+ * Contenedor estrecho, una sola columna:
+ * jugador negro / tablero / jugador blanco / panel lateral / engranaje abajo a la derecha
+ */
 @container chess-stage (max-width: 640px) {
   .layout {
     --gap: 10px;
-    --badge-h: 66px;
+    --badge-h: 34px;
+    grid-template-areas:
+      "top    ."
+      "board  board"
+      "bottom ."
+      "side   side"
+      "foot   foot";
+  }
+
+  /* Sin jugadores la fila superior ya no hace falta: el engranaje vive en el pie */
+  .layout.withToolbar {
+    --top: 0px;
+  }
+
+  .layout.withGear {
+    --foot: calc(var(--toolbar-h) + var(--gap));
   }
 
   .layout.withSidePanel {
@@ -215,11 +259,17 @@
     --below: calc(var(--panel-h) + var(--gap));
   }
 
-  .row {
-    flex-direction: column;
+  .withGear .topBadge {
+    padding-right: 0;
+  }
+
+  .gear {
+    grid-area: foot;
+    align-self: end;
   }
 
   .sidePanel {
+    align-self: end;
     width: 100%;
     height: var(--panel-h);
   }

@@ -29,7 +29,6 @@ function ChessBoardContent({
     playerBadges: Boolean(showPlayerBadges),
     capturedPieces: Boolean(showCapturedPieces),
     moveHistory: Boolean(showMoveHistory),
-    sound: true,
   }));
 
   useEffect(() => {
@@ -63,18 +62,18 @@ function ChessBoardContent({
     }).filter(([, value]) => value)
   ) as CSSProperties;
 
-  const { playerBadges, capturedPieces, moveHistory: showHistory, sound } = settings;
+  const { playerBadges, capturedPieces, moveHistory: showHistory } = settings;
 
   // With badges visible, captured pieces live inside each player's badge
   const capturedInBadges = playerBadges && capturedPieces;
   const capturedInPanel = capturedPieces && !playerBadges;
   const hasSidePanel = showHistory || capturedInPanel;
-  const hasTopBar = playerBadges || showSettings;
 
   const layoutClassName = [
     styles.layout,
     playerBadges && styles.withBadges,
     !playerBadges && showSettings && styles.withToolbar,
+    showSettings && styles.withGear,
     hasSidePanel && styles.withSidePanel,
   ]
     .filter(Boolean)
@@ -84,30 +83,36 @@ function ChessBoardContent({
     <div className={`${styles.chessGame}${className ? ` ${className}` : ''}`} style={themeVars}>
       <div className={styles.stage}>
         <div className={layoutClassName}>
-          {hasTopBar && (
-            <div className={styles.topBar}>
-              {playerBadges && (
-                <PlayerBadge color="B" showCapturedPieces={capturedInBadges} className={styles.badge} />
-              )}
-              {showSettings && <ChessSettings settings={settings} onChange={setSettings} />}
+          {playerBadges && (
+            <PlayerBadge
+              color="B"
+              showCapturedPieces={capturedInBadges}
+              className={styles.topBadge}
+            />
+          )}
+          {showSettings && (
+            <div className={styles.gear}>
+              <ChessSettings settings={settings} onChange={setSettings} />
             </div>
           )}
-          <div className={styles.row}>
-            <div className={styles.boardArea}><Board /></div>
-            {hasSidePanel && (
-              <aside className={styles.sidePanel}>
-                {capturedInPanel && <CapturedPieces color="B" />}
-                {showHistory && <MoveHistory className={styles.history} />}
-                {capturedInPanel && <CapturedPieces color="W" />}
-              </aside>
-            )}
-          </div>
+          <div className={styles.boardArea}><Board /></div>
+          {hasSidePanel && (
+            <aside className={styles.sidePanel}>
+              {capturedInPanel && <CapturedPieces color="B" />}
+              {showHistory && <MoveHistory className={styles.history} />}
+              {capturedInPanel && <CapturedPieces color="W" />}
+            </aside>
+          )}
           {playerBadges && (
-            <PlayerBadge color="W" showCapturedPieces={capturedInBadges} className={styles.badge} />
+            <PlayerBadge
+              color="W"
+              showCapturedPieces={capturedInBadges}
+              className={styles.bottomBadge}
+            />
           )}
         </div>
       </div>
-      <PlaySound muted={!sound} />
+      <PlaySound />
     </div>
   );
 }
@@ -122,16 +127,12 @@ export function ChessBoard(props: ChessBoardProps = {}) {
   );
 }
 
-function PlaySound({ muted }: { muted: boolean }) {
+function PlaySound() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const soundToPlay = useChessStore((state) => state.soundToPlay);
   const setSoundToPlay = useChessStore((state) => state.setSoundToPlay);
 
   useEffect(() => {
-    if (soundToPlay && muted) {
-      setSoundToPlay(null);
-      return;
-    }
     if (soundToPlay && audioRef.current && SOUND_ASSETS[soundToPlay]) {
       audioRef.current.src = SOUND_ASSETS[soundToPlay];
       audioRef.current.onended = () => setSoundToPlay(null);
@@ -140,7 +141,7 @@ function PlaySound({ muted }: { muted: boolean }) {
         setSoundToPlay(null);
       });
     }
-  }, [soundToPlay, muted, setSoundToPlay]);
+  }, [soundToPlay, setSoundToPlay]);
 
   return <audio ref={audioRef} />;
 }

@@ -4,10 +4,9 @@ import { Settings } from 'lucide-react';
 import type { ChessDisplaySettings } from '../store/types';
 
 const OPTIONS: Array<{ key: keyof ChessDisplaySettings; label: string; hint: string }> = [
-  { key: 'playerBadges', label: 'Jugadores', hint: 'Fotos y nombres' },
-  { key: 'capturedPieces', label: 'Piezas capturadas', hint: 'Material ganado' },
-  { key: 'moveHistory', label: 'Historial', hint: 'Tabla de movimientos' },
-  { key: 'sound', label: 'Sonido', hint: 'Efectos de movimiento' },
+  { key: 'playerBadges', label: 'Players', hint: 'Photos and names' },
+  { key: 'capturedPieces', label: 'Captured pieces', hint: 'Material gained' },
+  { key: 'moveHistory', label: 'History', hint: 'Move list' },
 ];
 
 export function ChessSettings({
@@ -57,17 +56,17 @@ export function ChessSettings({
       <button
         type="button"
         className={`${styles.trigger}${open ? ` ${styles.triggerOpen}` : ''}`}
-        aria-label="Configuración del tablero"
+        aria-label="Board settings"
         aria-expanded={open}
         aria-controls={menuId}
         onClick={() => setOpen((value) => !value)}
       >
-        <Settings size={18} strokeWidth={2} aria-hidden="true" />
+        <Settings size={16} strokeWidth={2} aria-hidden="true" />
       </button>
 
       {open && (
         <div id={menuId} className={styles.menu} role="menu">
-          <div className={styles.menuTitle}>Mostrar</div>
+          <div className={styles.menuTitle}>Show</div>
           {OPTIONS.map(({ key, label, hint }) => (
             <button
               key={key}
@@ -88,7 +87,7 @@ export function ChessSettings({
           ))}
           <div className={styles.divider} />
           <button type="button" role="menuitem" className={styles.action} onClick={setBoardOnly}>
-            {isBoardOnly ? 'Mostrar todo' : 'Solo tablero'}
+            {isBoardOnly ? 'Show all' : 'Board only'}
           </button>
         </div>
       )}

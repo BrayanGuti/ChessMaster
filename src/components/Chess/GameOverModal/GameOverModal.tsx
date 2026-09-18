@@ -2,8 +2,8 @@ import styles from './GameOverModal.module.css';
 import { useChessStore } from '../store/useChessStore';
 
 const WINNER_LABEL: Record<'W' | 'B', string> = {
-  W: 'Ganan las blancas',
-  B: 'Ganan las negras',
+  W: 'White wins',
+  B: 'Black wins',
 };
 
 export function GameOverModal() {
@@ -15,10 +15,10 @@ export function GameOverModal() {
   const losingColor = checkState.colorOfCheck as 'W' | 'B' | null;
   const winningColor = losingColor === 'W' ? 'B' : 'W';
 
-  const title = checkState.isCheckmate ? '¡Jaque mate!' : 'Tablas';
+  const title = checkState.isCheckmate ? 'Checkmate!' : 'Draw';
   const subtitle = checkState.isCheckmate
     ? WINNER_LABEL[winningColor]
-    : 'Ahogado — nadie tiene movimientos legales';
+    : 'Stalemate — no legal moves left';
 
   return (
     <div className={styles.overlay}>
@@ -26,7 +26,7 @@ export function GameOverModal() {
         <h2 className={styles.title}>{title}</h2>
         <p className={styles.subtitle}>{subtitle}</p>
         <button className={styles.button} onClick={resetGame}>
-          Nueva partida
+          New game
         </button>
       </div>
     </div>

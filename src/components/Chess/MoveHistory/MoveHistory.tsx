@@ -49,7 +49,7 @@ export function MoveHistory({ className }: { className?: string }) {
 
   return (
     <div className={`${styles.moveHistory}${className ? ` ${className}` : ''}`}>
-      <div className={styles.title}>Movimientos</div>
+      <div className={styles.title}>Moves</div>
       <div ref={scrollRef} className={styles.scrollArea}>
         <table className={styles.table}>
           <thead>
@@ -57,11 +57,11 @@ export function MoveHistory({ className }: { className?: string }) {
               <th className={styles.turnHeader}>#</th>
               <th>
                 <span className={`${styles.swatch} ${styles.swatchWhite}`} aria-hidden="true" />
-                Blancas
+                White
               </th>
               <th>
                 <span className={`${styles.swatch} ${styles.swatchBlack}`} aria-hidden="true" />
-                Negras
+                Black
               </th>
             </tr>
           </thead>
@@ -69,7 +69,7 @@ export function MoveHistory({ className }: { className?: string }) {
             {rows.length === 0 ? (
               <tr>
                 <td colSpan={3} className={styles.empty}>
-                  Aún no hay movimientos
+                  No moves yet
                 </td>
               </tr>
             ) : (

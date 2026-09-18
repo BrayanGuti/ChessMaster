@@ -33,9 +33,9 @@ export class ChessErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div className={styles.errorPanel}>
-          <p className={styles.errorMessage}>Algo salió mal en el tablero.</p>
+          <p className={styles.errorMessage}>Something went wrong with the board.</p>
           <button className={styles.errorButton} onClick={this.handleRestart}>
-            Reiniciar partida
+            Restart game
           </button>
         </div>
       );

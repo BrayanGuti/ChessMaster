@@ -8,14 +8,41 @@
 
 .panel {
   flex-shrink: 0;
+  /* Mismo alto con o sin capturas, para que el panel vacío no se vea como una franja */
+  min-height: 46px;
   padding: 10px 12px;
   border-radius: 10px;
   border: 1px solid var(--border);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
 }
 
+/* Debajo del nombre del jugador: una sola línea compacta, grupos por tipo de pieza */
 .inline {
+  flex-wrap: nowrap;
+  gap: 4px;
+  min-height: 18px;
   padding: 0;
+  overflow: hidden;
+}
+
+.inline .icon {
+  width: 18px;
+  height: 18px;
+  margin-left: -8px;
+}
+
+.inline .icon:first-child {
+  margin-left: 0;
+}
+
+.inline .advantage {
+  margin-left: 2px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
 }
 
 .group {
@@ -35,9 +62,19 @@
   margin-left: 0;
 }
 
-/* Dark pieces need a soft halo to stay readable on dark backgrounds */
+.panel .icon {
+  width: 24px;
+  height: 24px;
+  margin-left: -10px;
+}
+
+.panel .icon:first-child {
+  margin-left: 0;
+}
+
+/* Dark pieces need a clear halo to stay readable on dark backgrounds */
 .capturedPieces[data-opponent='B'] .icon {
-  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.35)) drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.85)) drop-shadow(0 0 3px rgba(255, 255, 255, 0.25));
 }
 
 .advantage {
