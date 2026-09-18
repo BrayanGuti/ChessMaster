@@ -25,7 +25,7 @@ apps/web/                     # The ChessMaster website: demo + docs, consumes t
 
 - `apps/web` imports the component as `@brayanguti/react-chessmaster`; npm workspaces symlink it, and its `exports` points at `src/index.ts`, so Vite serves the package source directly with HMR (no package build needed in development).
 - The package is `"private": true` until it is ready to publish, to prevent accidental `npm publish`.
-- Shared dev tooling (TypeScript, Vite, Vitest, ESLint) lives in the root `package.json`.
+- Each workspace declares every tool its own scripts use (e.g. `typescript` and `vite` in both). Vercel builds with Root Directory `apps/web` and installs only that workspace's dependencies, so anything declared only in the root `package.json` (which holds just ESLint) does not exist there.
 
 ## Project Overview
 
