@@ -13,18 +13,35 @@ export function HeroSection() {
               Transform your AI chess vision into true mastery with intelligent,
               results-focused strategy.
             </p>
-            <div className="HomePage-HeroSection-features">
-              <div className="HomePage-HeroSection-feature">
-                <span className="HomePage-HeroSection-feature-number">01/</span>
-                <span className="HomePage-HeroSection-feature-text">
-                  AI POWERED TRAINING
-                </span>
+            <button className="HomePage-HeroSection-play-button">
+              Play Now
+              <span className="HomePage-HeroSection-arrow">→</span>
+            </button>
+            <div className="HomePage-HeroSection-brand">
+              <div className="HomePage-HeroSection-brand-side">
+                <div className="HomePage-HeroSection-brand-line-wrapper">
+                  <div className="HomePage-HeroSection-brand-line"></div>
+                </div>
+                <div className="HomePage-HeroSection-brand-grid">
+                  <span className="HomePage-HeroSection-grid-cell HomePage-HeroSection-grid-cell-filled"></span>
+                  <span className="HomePage-HeroSection-grid-cell"></span>
+                  <span className="HomePage-HeroSection-grid-cell"></span>
+                  <span className="HomePage-HeroSection-grid-cell HomePage-HeroSection-grid-cell-filled"></span>
+                  <span className="HomePage-HeroSection-grid-cell HomePage-HeroSection-grid-cell-filled"></span>
+                  <span className="HomePage-HeroSection-grid-cell"></span>
+                </div>
               </div>
-              <div className="HomePage-HeroSection-feature">
-                <span className="HomePage-HeroSection-feature-number">02/</span>
-                <span className="HomePage-HeroSection-feature-text">
-                  COMPETITIVE RANKINGS
-                </span>
+              <div className="HomePage-HeroSection-brand-text">
+                <h2 className="HomePage-HeroSection-brand-title">
+                  LOGIC.
+                  <br />
+                  FOCUS.
+                  <br />
+                  VICTORY.
+                </h2>
+                <p className="HomePage-HeroSection-brand-subtitle">
+                  Every Move Shapes Your Mind.
+                </p>
               </div>
             </div>
           </div>
