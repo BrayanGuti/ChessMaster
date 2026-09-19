@@ -134,9 +134,10 @@ Pieces are encoded as 4-character strings: `[Color][Type][File][Rank]`
 - Example: "WPe2" = white pawn at e2
 
 ### Assets
-- **SVG pieces** in `packages/react-chessmaster/src/assets/Pieces/` (named like WP.svg, BK.svg for piece notation)
-- **Sound effects** in `packages/react-chessmaster/src/assets/Sound/` (move, capture, castling, check, game-over variations)
-- Pieces are licensed/sourced separately and styled via CSS positioning
+- **SVG pieces** in `packages/react-chessmaster/src/assets/Pieces/` (named like WP.svg, BK.svg for piece notation): public domain, from kmar/chess_svg_piece_sets, optimized with SVGO and given `viewBox="0 0 64 64"` (without it they get clipped instead of scaled)
+- **Sound effects** in `packages/react-chessmaster/src/assets/Sound/`: `move-1`/`move-2` (random), `capture` (also en passant), `castling`, `check`, `game-over`, chosen in that priority by `updateCellsUnderAttack` (game over > check > capture > castling > move). Edited by Brayan from Pixabay recordings
+- **Icons** (gear, sun, moon, random) are inline SVGs with `currentColor`, CC BY from SVG Repo
+- Every third-party asset or code must be credited in `packages/react-chessmaster/THIRD_PARTY_LICENSES.md` (shipped in the package). Only free licenses that do not force copyleft on the package (CC0, MIT, BSD, CC BY; never GPL or CC BY-SA)
 
 ## Git Commit Policy
 

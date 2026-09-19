@@ -359,13 +359,24 @@ function createGameState(initialDisplaySettings: ChessDisplaySettings, initialGa
           }
 
           if(!checkState.check){
-              get().setSoundToPlay(randomSound('move-1', 'move-2'))
+              const { moveHistory } = get()
+              get().setSoundToPlay(moveSound(moveHistory[moveHistory.length - 1]))
               return
           }
 
           get().setSoundToPlay('check')
       }
   })
+}
+
+/** Sound of a move that ends neither in check nor the game (those have their own) */
+function moveSound(lastMove: MoveRecord | undefined): string {
+    if (lastMove?.captured) return 'capture'
+    // Castling is the only king move that crosses two files
+    const isCastling = lastMove?.piece[1] === 'K'
+        && Math.abs(lastMove.from.charCodeAt(0) - lastMove.to.charCodeAt(0)) === 2
+    if (isCastling) return 'castling'
+    return randomSound('move-1', 'move-2')
 }
 
 function randomSound(sound1: string, sound2: string) {

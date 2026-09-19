@@ -17,12 +17,11 @@ const COLOR_OPTIONS: Array<{ value: ColorChoice; label: string }> = [
   { value: 'random', label: 'Random color' },
 ];
 
-/** Half white, half black king-less disc for the "random color" option */
+/** "Random" by FortAwesome (Font Awesome Free, CC BY), for the "random color" option; see THIRD_PARTY_LICENSES.md */
 function RandomColorIcon() {
   return (
-    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-      <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="2" />
-      <path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor" />
+    <svg viewBox="0 0 512 512" width="18" height="18" fill="currentColor" aria-hidden="true">
+      <path d="M504.97 359.03a24 24 0 0 1 0 33.94l-80 79.98c-15 15.01-40.97 4.5-40.97-16.97V416h-58.78a12 12 0 0 1-8.78-3.81l-70.55-75.6 53.33-57.14L352 336h32v-39.98c0-21.44 25.94-32 40.97-16.97zM12 176h84l52.78 56.55 53.33-57.14-70.55-75.6a12 12 0 0 0-8.78-3.81H12a12 12 0 0 0-12 12v56a12 12 0 0 0 12 12m372 0v39.98c0 21.46 25.96 31.98 40.97 16.98l80-79.99a24 24 0 0 0 0-33.94l-80-79.98C409.94 24.02 384 34.58 384 56.02V96h-58.78a12 12 0 0 0-8.78 3.81L96 336H12a12 12 0 0 0-12 12v56a12 12 0 0 0 12 12h110.79a12 12 0 0 0 8.77-3.81L352 176z" />
     </svg>
   );
 }

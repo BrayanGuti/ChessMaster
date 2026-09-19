@@ -126,5 +126,6 @@ Works in the App Router out of the box, even from a Server Component: the bundle
 ## License
 
 [MIT](https://github.com/BrayanGuti/ChessMaster/blob/master/LICENSE) © Brayan Gutierrez.
-Includes [js-chess-engine](https://github.com/josefjadrny/js-chess-engine) (MIT) and a
-[Lucide](https://lucide.dev) icon (ISC); see `THIRD_PARTY_LICENSES.md`.
+Includes [js-chess-engine](https://github.com/josefjadrny/js-chess-engine) (MIT), public-domain
+pieces by Martin Sedlák, CC BY icons from SVG Repo and sounds edited from Pixabay; see
+`THIRD_PARTY_LICENSES.md` for authors and licenses.
