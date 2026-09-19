@@ -2,7 +2,12 @@
   "mcpServers": {
     "chrome-devtools": {
       "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest"]
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest",
+        "--isolated",
+        "--executablePath=C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe"
+      ]
     }
   }
 }

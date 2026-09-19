@@ -9,4 +9,17 @@
   color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Cuando el ChessBoard está en light mode, cambiar todo a light */
+.HomePage-container:has(.chessGame.light) {
+  background-color: #ffffff !important;
+  color: #1f1b16 !important;
+}
+
+html:has(.chessGame.light),
+html:has(.chessGame.light) body {
+  background-color: #ffffff !important;
+  color: #1f1b16 !important;
 }

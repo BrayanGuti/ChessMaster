@@ -29,6 +29,12 @@
   height: 100%;
   padding: 10%;
   object-fit: contain;
+  transition: filter 0.3s ease;
+}
+
+/* En light mode, invertir el color del AI chip */
+.chessGame.light .avatar {
+  filter: invert(0.85) hue-rotate(180deg);
 }
 
 .info {

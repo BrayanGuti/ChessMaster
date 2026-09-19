@@ -5,6 +5,7 @@ import { HeroSection } from './HeroSection/HeroSection'
 import { GameSection } from './GameSection/GameSection'
 import { GetStartedSection } from './GetStartedSection/GetStartedSection'
 import { CreatorSection } from './CreatorSection/CreatorSection'
+import { CreditsSection } from './CreditsSection/CreditsSection'
 
 
 export function HomePage() {
@@ -15,6 +16,7 @@ export function HomePage() {
       <GameSection />
       <GetStartedSection />
       <CreatorSection />
+      <CreditsSection />
       <Footer />
     </div>
   )

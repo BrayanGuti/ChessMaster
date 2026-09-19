@@ -154,7 +154,6 @@ function ChessBoardContent({
       className={[
         styles.chessGame,
         scheme === 'light' && styles.light,
-        scheme !== colorScheme && styles.ownSurface,
         className,
       ]
         .filter(Boolean)
