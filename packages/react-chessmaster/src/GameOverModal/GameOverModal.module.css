@@ -9,7 +9,7 @@
   background: rgba(14, 12, 10, 0.62);
   backdrop-filter: blur(3px) saturate(0.8);
   -webkit-backdrop-filter: blur(3px) saturate(0.8);
-  border-radius: inherit;
+  border-radius: 1.875%;
   animation: fadeIn 0.3s ease-out;
 }
 
@@ -23,7 +23,11 @@
   border-radius: 16px;
   border: 1px solid var(--border);
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--accent, #d6ae6b) 10%, transparent), transparent 60%),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--accent, #d6ae6b) 10%, transparent),
+      transparent 60%
+    ),
     var(--popover);
   box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.9);
   text-align: center;
@@ -56,8 +60,11 @@
   font-weight: 700;
   letter-spacing: 0.03em;
   cursor: pointer;
-  box-shadow: 0 8px 20px -8px color-mix(in srgb, var(--accent, #d6ae6b) 70%, transparent);
-  transition: filter 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 8px 20px -8px
+    color-mix(in srgb, var(--accent, #d6ae6b) 70%, transparent);
+  transition:
+    filter 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .button:hover {
