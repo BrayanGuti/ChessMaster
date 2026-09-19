@@ -89,7 +89,9 @@ apps/web/                     this website, built on the package
 [![Vitest](https://img.shields.io/badge/Vitest-000000?style=for-the-badge&logo=vitest)](https://vitest.dev/)
 
 The computer opponent is [js-chess-engine](https://github.com/josefjadrny/js-chess-engine) (MIT),
-running in a Web Worker so the page never freezes.
+running in a Web Worker so the page never freezes. The website's icons are from
+[Lucide](https://lucide.dev/) (ISC); the package's pieces, sounds and icons are credited in
+[`THIRD_PARTY_LICENSES.md`](packages/react-chessmaster/THIRD_PARTY_LICENSES.md).
 
 ---
 

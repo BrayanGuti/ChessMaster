@@ -51,7 +51,10 @@ const CREDITS: Credit[] = [
     label: "Icons",
     name: "SVG Repo",
     href: "https://www.svgrepo.com",
-    rows: [{ key: "License", value: "CC BY 4.0" }],
+    rows: [
+      { key: "License", value: "CC BY 4.0" },
+      { key: "Website icons", value: "Lucide · ISC" },
+    ],
     items: [
       {
         name: "Settings",
@@ -76,7 +79,7 @@ const CREDITS: Credit[] = [
       {
         name: "Chip AI",
         author: "wishforge.games",
-        href: "https://www.svgrepo.com",
+        href: "https://www.svgrepo.com/svg/235253/chip-ai",
       },
     ],
   },

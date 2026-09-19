@@ -188,7 +188,8 @@ export interface ChessBoardProps {
    * Colors of the panels, menu and dialogs around the board: 'dark' (default) for pages with a
    * dark background, 'light' for light ones ('light' also has green squares; `theme` overrides
    * them). This is the initial scheme: the player can switch it from the settings bar (not saved
-   * with `persist`), and the game then paints its own background to stay readable on the page.
+   * with `persist`). It only changes the colors of the board and panels: the game never paints
+   * a background of its own, so the page behind it is up to the host.
    */
   colorScheme?: 'dark' | 'light';
   showMoveHistory?: boolean;

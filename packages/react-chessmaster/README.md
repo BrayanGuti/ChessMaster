@@ -10,7 +10,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-000000?style=for-the-badge)](https://github.com/BrayanGuti/ChessMaster/blob/master/LICENSE)
 [![React](https://img.shields.io/badge/React-18%20%7C%2019-000000?style=for-the-badge&logo=react)](https://react.dev/)
 
-**[▶️ Live demo](https://chess-master-cvg0svtvz-brayangutis-projects.vercel.app/)**
+**[▶️ Live demo](https://chess-master-phi.vercel.app/)**
 
 </div>
 
@@ -92,8 +92,9 @@ notation (`"e2e4"`, `"e7e8q"`):
 
 `theme` accepts `lightSquare`, `darkSquare`, `highlight`, `accent`, `check` and `moveHint`.
 
-Players can switch between dark and light with the sun/moon button next to the gear; when they
-pick the scheme opposite to `colorScheme`, the game paints its own background so it stays readable.
+Players can switch between dark and light with the sun/moon button next to the gear. The switch
+only recolors the board and the panels: the game never paints a background of its own, so the page
+behind it is yours to style.
 
 ## Props
 
@@ -117,6 +118,30 @@ pick the scheme opposite to `colorScheme`, the game paints its own background so
 
 `show*`, `defaultMode` and `opponent` set the **first** game; after that the player's choices
 (from the Game panel and the gear menu) take over, and are saved with `persist`.
+
+## TypeScript
+
+The package ships its own types. Everything public is exported next to the component:
+
+```tsx
+import { ChessBoard } from '@brayanguti/react-chessmaster'
+import type { ChessBoardProps, GameEndResult, MoveRecord } from '@brayanguti/react-chessmaster'
+
+const onMove = (move: MoveRecord) => console.log(move.notation)
+const onGameEnd = (result: GameEndResult) => console.log(result.winner, result.reason)
+```
+
+| Type | What it is |
+| --- | --- |
+| `ChessBoardProps` | Props of `<ChessBoard>` |
+| `ChessBoardTheme` | The `theme` object: `lightSquare`, `darkSquare`, `highlight`, `accent`, `check`, `moveHint` |
+| `OpponentOptions` | The `opponent` prop: `{ color?, level?, getMove? }` |
+| `OpponentLevel` | `1 \| 2 \| 3 \| 4 \| 5` |
+| `ColorChoice` | `'W' \| 'B' \| 'random'` |
+| `PieceColor` | `'W' \| 'B'` |
+| `GameMode` | `'local' \| 'computer'` |
+| `MoveRecord` | What `onMove` receives: `piece`, `from`, `to`, `captured`, `notation`, `turnNumber` |
+| `GameEndResult` | What `onGameEnd` receives: `{ winner, reason, mode, playerColor }` |
 
 ## Next.js
 
