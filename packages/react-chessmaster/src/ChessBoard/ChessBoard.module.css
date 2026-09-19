@@ -35,7 +35,6 @@
   --track-strong: rgba(255, 255, 255, 0.28);
   --on-accent: #1b1712; /* texto sobre fondos de --accent (botones principales, opción elegida) */
   --on-check: #ffffff; /* texto sobre fondos de --check (confirmaciones destructivas) */
-  --surface: #141210; /* fondo propio, solo cuando el jugador cambia de esquema (.ownSurface) */
 
   color-scheme: dark;
   container: chess-root / inline-size;
@@ -58,27 +57,16 @@
   --text-subtle: rgba(31, 27, 22, 0.42);
   --border: rgba(0, 0, 0, 0.1);
   --border-strong: rgba(0, 0, 0, 0.18);
-  --panel: linear-gradient(180deg, rgba(0, 0, 0, 0.035), rgba(0, 0, 0, 0.015));
+  --panel: linear-gradient(180deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.03));
   --popover: rgba(252, 250, 246, 0.97);
   --header-solid: #f6f4f0;
   --hover: rgba(0, 0, 0, 0.05);
-  --row-alt: rgba(0, 0, 0, 0.025);
-  --control: rgba(0, 0, 0, 0.06);
-  --track: rgba(0, 0, 0, 0.14);
-  --track-strong: rgba(0, 0, 0, 0.26);
-  --surface: #fbfaf7;
+  --row-alt: rgba(0, 0, 0, 0.03);
+  --control: rgba(0, 0, 0, 0.08);
+  --track: rgba(0, 0, 0, 0.16);
+  --track-strong: rgba(0, 0, 0, 0.28);
 
   color-scheme: light;
-}
-
-/*
- * El jugador eligió el esquema contrario al de la página (prop colorScheme): el fondo de la
- * página ya no sirve, así que el juego pinta el suyo para que textos y paneles se lean.
- */
-.ownSurface {
-  padding: 12px;
-  border-radius: 16px;
-  background: var(--surface);
 }
 
 .chessGame,
@@ -356,7 +344,7 @@
     --below: calc(var(--panel-h) + var(--gap));
   }
 
-  /* Debajo del tablero: historial (150px) + panel Game, o solo el panel Game */
+  /* Debajo del tablero: historial (hasta 260px) + panel Game, o solo el panel Game */
   .layout:has([data-game-mode='computer']) {
     --game-h: 196px;
   }
@@ -367,13 +355,13 @@
 
   /*
    * El historial cede antes que el tablero: toma el alto que queda tras un tablero a todo el
-   * ancho, entre 56px y 150px. Así un contenedor bajo no deja el tablero diminuto.
+   * ancho, entre 56px y 260px (con alto de sobra el historial se ve cómodo, no achatado). Así un contenedor bajo no deja el tablero diminuto.
    */
   .layout.withGamePanel.withHistory {
     --history-h: clamp(
       56px,
       100cqh - 100cqw - var(--top) - var(--bottom) - var(--head) - var(--game-h) - 8px - var(--gap),
-      150px
+      260px
     );
     --panel-h: calc(var(--history-h) + 8px + var(--game-h));
   }

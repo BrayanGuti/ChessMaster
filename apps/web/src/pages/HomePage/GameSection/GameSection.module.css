@@ -9,13 +9,16 @@
 
   --section-padding: clamp(16px, 3vh, 32px);
   --container-padding: 24px;
+  --stage-pad: clamp(10px, 1.6vw, 22px);
+  /* Alto de todo lo que va apilado bajo el tablero en tablets y móviles (jugadores, Game, historial) */
+  --stack-extra: 600px;
   --column-gap: clamp(28px, 3.5vw, 72px);
   /* Ancho máximo de la columna de texto */
   --info-max: 620px;
   /* Alto disponible para el juego dentro del marco (con tope para monitores muy grandes) */
   --stage-h: clamp(
     420px,
-    calc(100dvh - 2 * var(--section-padding) - 2 * var(--container-padding) - 2px),
+    calc(100dvh - 2 * var(--section-padding) - 2 * var(--container-padding) - 2 * var(--stage-pad) - 2px),
     1100px
   );
   /* Ancho que necesita el juego completo (tablero + panel lateral) para ese alto */
@@ -30,6 +33,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* ---------- Marco: juego a la izquierda, texto a la derecha ---------- */
@@ -39,23 +43,42 @@
    * La columna del juego crece hasta --game-w antes que la del texto; el texto
    * nunca baja de 320px y se queda con el resto.
    */
-  grid-template-columns: minmax(0, var(--game-w)) minmax(320px, 1fr);
+  grid-template-columns: minmax(0, calc(var(--game-w) + 2 * var(--stage-pad) + 2px)) minmax(320px, 1fr);
   column-gap: var(--column-gap);
   align-items: center;
   width: min(
     100%,
-    calc(var(--game-w) + var(--column-gap) + var(--info-max) + 2 * var(--container-padding) + 2px)
+    calc(var(--game-w) + 2 * var(--stage-pad) + 2px + var(--column-gap) + var(--info-max) + 2 * var(--container-padding) + 2px)
   );
   padding: var(--container-padding);
   background-color: #0f0f0f;
   border: 1px solid rgba(255, 255, 255, 0.15);
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/*
+ * Escenario del tablero: la página siempre es oscura y solo este contenedor
+ * se adapta al tema del juego (el ChessBoard no se toca). El tema claro se
+ * detecta por la clase "light" del módulo del paquete (nombre con hash).
+ */
+.stage {
+  min-width: 0;
+  padding: var(--stage-pad);
+  border-radius: 22px;
+  background-color: #1c1b1a;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.stage:has([class*="_light_"]) {
+  background-color: #ece4d6;
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
 .game {
-  /* Todo el contenido del ChessBoard (jugadores, capturas, historial) pegado a la izquierda */
-  --chess-justify: flex-start;
-
   min-width: 0;
   height: var(--stage-h);
 }
@@ -307,13 +330,29 @@
     width: min(100%, 900px);
   }
 
+  .stage {
+    container: stage / inline-size;
+    justify-self: center;
+    width: min(100%, calc(var(--stage-h) * 0.9 + 2 * var(--stage-pad) + 2px));
+  }
+
   .game {
     --chess-justify: center;
 
-    /* Sin alto fijo: el ChessBoard usa su aspect-ratio y no deja huecos arriba ni abajo */
-    justify-self: center;
-    width: min(100%, calc(var(--stage-h) * 0.9));
+    /* Ancho suficiente: el ChessBoard pone el panel al lado y usa su aspect-ratio */
+    width: 100%;
     height: auto;
+  }
+
+  /*
+   * Ancho estrecho (móviles y tablets pequeñas): tablero cuadrado + paneles apilados.
+   * Con alto explícito el ChessBoard ignora sus proporciones de respaldo y el
+   * historial conserva un alto cómodo de leer en vez de quedar achatado.
+   */
+  @container stage (max-width: 640px) {
+    .game {
+      height: calc(100cqw + var(--stack-extra));
+    }
   }
 
   .title {
@@ -329,6 +368,7 @@
   .gameSection {
     --section-padding: 12px;
     --container-padding: 12px;
+    --stage-pad: 8px;
   }
 
   .container {

@@ -54,13 +54,15 @@ export function GameSection() {
   return (
     <section id="game" className={styles.gameSection}>
       <div className={styles.container}>
-        <div className={styles.game}>
-          <ChessBoard
-            persist
-            showMoveHistory
-            showCapturedPieces
-            showPlayerBadges
-          />
+        <div className={styles.stage}>
+          <div className={styles.game}>
+            <ChessBoard
+              persist
+              showMoveHistory
+              showCapturedPieces
+              showPlayerBadges
+            />
+          </div>
         </div>
 
         <div className={styles.info}>
