@@ -24,19 +24,19 @@ apps/web/                     # The ChessMaster website: demo + docs, consumes t
 ```
 
 - `apps/web` imports the component as `@brayanguti/react-chessmaster`; npm workspaces symlink it. The package's `exports` has a custom `source` condition pointing at `src/index.ts`, enabled only in `apps/web` (`resolve.conditions` in its vite.config.ts and `customConditions` in tsconfig.app.json). So the site always uses the package source with HMR and never needs `dist/`; npm users get `dist/`.
-- Package build (`npm run build:package`): Vite library mode in `packages/react-chessmaster/vite.config.ts` → `dist/index.js` (ESM, starts with `"use client"` and imports `./style.css`), `dist/style.css`, and `dist/index.d.ts` (vite-plugin-dts, rolled up to the public API). react, zustand and js-chess-engine are external (the worker chunk bundles its own copy of js-chess-engine, since a worker cannot resolve bare imports); only the entry chunk gets the banner; images and sounds are inlined as data URIs. CSS module classes are named `rcm_<local>_<hash>`.
+- Package build (`npm run build:package`): Vite library mode in `packages/react-chessmaster/vite.config.ts` → `dist/index.js` (ESM, starts with `"use client"` and imports `./style.css`), `dist/style.css`, and `dist/index.d.ts` (vite-plugin-dts, rolled up to the public API). only react is external: js-chess-engine is bundled (and minified) into the two lazy chunks that use it, the inlined worker and the main-thread fallback, so the package has no runtime dependencies; only the entry chunk gets the banner; images and sounds are inlined as data URIs. CSS module classes are named `rcm_<local>_<hash>`.
 - The package is ready to publish (`0.1.0`, `publishConfig.access: public`, MIT `LICENSE`, npm-facing `README.md`). Brayan publishes it himself (`npm publish -w packages/react-chessmaster`); Claude never runs `npm publish`. Bump `version` before each release.
 - `docs/media/` holds the README screenshots and GIFs. The root README links them relatively; the package README uses absolute `raw.githubusercontent.com/.../master/docs/media/...` URLs, because npmjs.com does not resolve relative image paths (so they appear once pushed to `master`).
 - Each workspace declares every tool its own scripts use (e.g. `typescript` and `vite` in both). Vercel builds with Root Directory `apps/web` and installs only that workspace's dependencies, so anything declared only in the root `package.json` (which holds just ESLint) does not exist there.
 
 ## Project Overview
 
-**ChessMaster** is a chess game built with React + TypeScript + Vite, using Zustand for state management: two players on one device, or one player against the computer. It implements the full rules: castling, en passant, promotion, check, checkmate and stalemate (not the fifty-move rule or threefold repetition).
+**ChessMaster** is a chess game built with React + TypeScript + Vite, with a small built-in store read through React's `useSyncExternalStore`: two players on one device, or one player against the computer. It implements the full rules: castling, en passant, promotion, check, checkmate and stalemate (not the fifty-move rule or threefold repetition).
 
 **Tech Stack:**
 - React 18 with TypeScript
 - Vite (fast build tool)
-- Zustand (lightweight state management)
+- Own minimal store (`store/createStore.ts`) + `useSyncExternalStore`; no state library
 - React Router DOM (page routing)
 - ESLint + TypeScript ESLint (code quality)
 - Deployed on GitHub Pages and Vercel
@@ -81,14 +81,15 @@ packages/react-chessmaster/src/
 │   └── Fen.ts                 # toFEN (castling from hasMoved; en passant square from the last move)
 └── store/
     ├── types.ts               # All types, including the public ChessBoardProps
-    ├── createChessStore.ts    # Zustand store factory (one store per board instance)
+    ├── createStore.ts         # Minimal external store (getState/setState/subscribe)
+    ├── createChessStore.ts    # Chess store factory (one store per board instance) + opt-in saving
     ├── ChessGameProvider.tsx  # Context provider that creates the store for each <ChessBoard>
     └── useChessStore.ts       # Selector hook used by the components
 ```
 
-The package must stay self-contained and lightweight: it must not import anything from outside `packages/react-chessmaster` (no site CSS, no `apps/web/public/`), and its only runtime dependencies are `react` (peer), `zustand` and `js-chess-engine` (MIT, the built-in computer opponent; its notice is in `THIRD_PARTY_LICENSES.md`, shipped in the package). Never add a GPL engine (e.g. Stockfish) to the package: it would force the whole package to be GPL. No icon or UI libraries (e.g. `lucide-react`): icons are inline SVGs, assets live in `src/assets/`.
+The package must stay self-contained and lightweight: it must not import anything from outside `packages/react-chessmaster` (no site CSS, no `apps/web/public/`), and it has no runtime dependencies besides `react` (peer); keep it that way unless there is a strong reason. js-chess-engine (MIT, the built-in computer opponent) is a devDependency bundled into the build; its notice is in `THIRD_PARTY_LICENSES.md`, shipped in the package. `apps/web` declares js-chess-engine too, because it compiles the package source and Vercel installs only its own dependencies. Never add a GPL engine (e.g. Stockfish) to the package: it would force the whole package to be GPL. No icon or UI libraries (e.g. `lucide-react`): icons are inline SVGs, assets live in `src/assets/`.
 
-### Game State Management (Zustand Store)
+### Game State Management (Store)
 
 Each `<ChessBoard>` gets its own store from `createChessStore()` via `ChessGameProvider`, so several boards can coexist. Key state fields:
 

@@ -1,5 +1,4 @@
-import { create, StateCreator } from 'zustand'
-import { createJSONStorage, persist } from 'zustand/middleware'
+import { createStore, StateCreator } from './createStore'
 import { startGame } from '../hooks/StartGame'
 import { markCellsUnderAttack } from '../hooks/MarkCellsUnderAttack'
 import { applyGameEnd, hasAnyLegalMove } from '../hooks/CheckMate'
@@ -8,7 +7,7 @@ import { getLegalMoves, getLegalMovesFrom, parseUci } from '../hooks/LegalMoves'
 import { getEnPassantCapturedSquare, getEnPassantTarget } from '../hooks/EnPassant'
 import { toFEN } from '../hooks/Fen'
 import { ChessBoardState, ChessDisplaySettings, ChessStoreApi, ColorChoice, GameConfig, MoveRecord, CheckStatus, PieceColor } from './types'
-import { PERSIST_VERSION, PersistedGame, isPersistedGame, migratePersistedGame, restoreGame, safeLocalStorage, toPersistedGame } from './persistence'
+import { readSavedGame, restoreGame, writeSavedGame } from './persistence'
 
 const INITIAL_CHECK_STATE: CheckStatus = {
   protectors: [],
@@ -45,8 +44,6 @@ export interface ChessStoreOptions {
   initialGameConfig?: GameConfig
 }
 
-type PersistableStore = ChessStoreApi & { persist?: { rehydrate: () => Promise<void> | void } }
-
 export function resolveColorChoice(choice: ColorChoice): PieceColor {
   if (choice === 'random') return Math.random() < 0.5 ? 'W' : 'B'
   return choice
@@ -57,27 +54,31 @@ export function createChessStore({ storageKey, initialDisplaySettings, initialGa
     initialDisplaySettings ?? DEFAULT_DISPLAY_SETTINGS,
     initialGameConfig ?? DEFAULT_GAME_CONFIG
   )
-  if (!storageKey) return create<ChessBoardState>()(initializer)
+  const store: ChessStoreApi = createStore(initializer)
+  if (!storageKey) return store
 
-  return create<ChessBoardState>()(
-    persist(initializer, {
-      name: storageKey,
-      version: PERSIST_VERSION,
-      storage: createJSONStorage(() => safeLocalStorage),
-      // Loaded from ChessGameProvider after mount, so server and first client render match
-      skipHydration: true,
-      partialize: (state): PersistedGame => toPersistedGame(state),
-      // Older formats are upgraded; anything unrecognized is discarded by merge()
-      migrate: (persisted, version) => migratePersistedGame(persisted, version) as PersistedGame,
-      merge: (persisted, current) =>
-        isPersistedGame(persisted) ? { ...current, ...restoreGame(persisted) } : current
-    })
-  )
+  // Every change is saved, except the load itself: a missing or invalid save stays untouched
+  // until the first move, and a valid one needs no rewrite
+  let hydrating = false
+  store.subscribe(() => {
+    if (!hydrating) writeSavedGame(storageKey, store.getState())
+  })
+
+  // Called from ChessGameProvider after mount, so server and first client render match
+  store.hydrate = () => {
+    const { game, migrated } = readSavedGame(storageKey)
+    hydrating = true
+    if (game) store.setState(restoreGame(game))
+    hydrating = false
+    // A save from an older format is rewritten in the current one; an unrecognized one is replaced
+    if (migrated) writeSavedGame(storageKey, store.getState())
+  }
+  return store
 }
 
 /** Loads the saved game into a store created with a storageKey; no-op otherwise. */
 export function hydrateChessStore(store: ChessStoreApi) {
-  void (store as PersistableStore).persist?.rehydrate()
+  store.hydrate?.()
 }
 
 /** A game at the starting position (everything a new game resets). */

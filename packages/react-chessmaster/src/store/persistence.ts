@@ -1,4 +1,3 @@
-import type { StateStorage } from 'zustand/middleware'
 import { createBoard } from '../hooks/StartGame'
 import { markCellsUnderAttack } from '../hooks/MarkCellsUnderAttack'
 import { applyGameEnd } from '../hooks/CheckMate'
@@ -25,8 +24,8 @@ export function resolveStorageKey(persist: boolean | string | undefined): string
  * quota must never break a move. Unparseable values are removed and reported as missing.
  * (A parseable but invalid game is rejected by isPersistedGame and overwritten on the next move.)
  */
-export const safeLocalStorage: StateStorage = {
-  getItem: (name) => {
+export const safeLocalStorage = {
+  getItem: (name: string): string | null => {
     try {
       const raw = window.localStorage.getItem(name)
       if (raw === null) return null
@@ -41,20 +40,37 @@ export const safeLocalStorage: StateStorage = {
       return null
     }
   },
-  setItem: (name, value) => {
+  setItem: (name: string, value: string) => {
     try {
       window.localStorage.setItem(name, value)
     } catch {
       // Storage unavailable or full: keep playing without saving
     }
   },
-  removeItem: (name) => {
-    try {
-      window.localStorage.removeItem(name)
-    } catch {
-      // Storage unavailable
-    }
-  },
+}
+
+/**
+ * Stored as `{ state, version }`, the format of zustand's persist middleware that earlier
+ * releases used, so games saved by them still load.
+ */
+export function writeSavedGame(key: string, state: ChessBoardState) {
+  safeLocalStorage.setItem(key, JSON.stringify({ state: toPersistedGame(state), version: PERSIST_VERSION }))
+}
+
+/**
+ * Reads the saved game under `key`, upgraded to the current format. `game` is null when there is
+ * none or it is invalid; `migrated` tells that the stored version was not the current one.
+ */
+export function readSavedGame(key: string): { game: PersistedGame | null; migrated: boolean } {
+  const raw = safeLocalStorage.getItem(key)
+  if (raw === null) return { game: null, migrated: false }
+  const stored: unknown = JSON.parse(raw) // getItem only returns parseable values
+  if (!isObject(stored)) return { game: null, migrated: false }
+
+  const version = typeof stored.version === 'number' ? stored.version : 0
+  const migrated = version !== PERSIST_VERSION
+  const state = migrated ? migratePersistedGame(stored.state, version) : stored.state
+  return { game: isPersistedGame(state) ? state : null, migrated }
 }
 
 /**

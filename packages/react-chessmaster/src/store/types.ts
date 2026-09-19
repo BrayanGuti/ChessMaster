@@ -1,4 +1,4 @@
-import { StoreApi } from 'zustand'
+import { StoreApi } from './createStore'
 
 export interface ChessBoardCell {
     piece: string
@@ -111,7 +111,10 @@ export interface ChessBoardState {
 
 export type ChessBoardPositions = Array<Array<ChessBoardCell>>
 
-export type ChessStoreApi = StoreApi<ChessBoardState>
+export type ChessStoreApi = StoreApi<ChessBoardState> & {
+    /** Only on stores created with a storageKey: loads the saved game (see createChessStore) */
+    hydrate?: () => void
+}
 
 export type PieceColor = 'W' | 'B';
 

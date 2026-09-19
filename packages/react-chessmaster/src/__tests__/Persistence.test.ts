@@ -127,6 +127,22 @@ describe('game persistence', () => {
     expect(reload().getState().moveHistory).toHaveLength(0)
   })
 
+  it('upgrades a v1 save and rewrites it in the current format', () => {
+    const store = reload()
+    play(store, 'e2', 'e4')
+    const saved = JSON.parse(localStorage.getItem(KEY)!)
+    const { gameMode, playerColor, colorChoice, opponentLevel, ...v1State } = saved.state
+    delete v1State.displaySettings.gamePanel
+    localStorage.setItem(KEY, JSON.stringify({ state: v1State, version: 1 }))
+
+    const restored = reload()
+    expect(restored.getState().moveHistory.map(move => move.notation)).toEqual(['e4'])
+    expect(restored.getState().gameMode).toBe('local')
+    expect(restored.getState().displaySettings.gamePanel).toBe(true)
+    expect(JSON.parse(localStorage.getItem(KEY)!).version).toBe(PERSIST_VERSION)
+    expect([gameMode, playerColor, colorChoice, opponentLevel]).toEqual(['local', 'W', 'W', 2])
+  })
+
   it('resetGame saves a fresh game but keeps the layout', () => {
     const store = reload()
     store.getState().setDisplaySettings(previous => ({ ...previous, playerBadges: true }))

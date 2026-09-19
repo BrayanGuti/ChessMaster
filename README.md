@@ -85,7 +85,6 @@ apps/web/                     this website, built on the package
 
 [![React](https://img.shields.io/badge/React-000000?style=for-the-badge&logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-000000?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
-[![Zustand](https://img.shields.io/badge/Zustand-000000?style=for-the-badge)](https://github.com/pmndrs/zustand)
 [![Vite](https://img.shields.io/badge/Vite-000000?style=for-the-badge&logo=vite)](https://vite.dev/)
 [![Vitest](https://img.shields.io/badge/Vitest-000000?style=for-the-badge&logo=vitest)](https://vitest.dev/)
 
