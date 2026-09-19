@@ -51,9 +51,9 @@ not yet been invented or conceived.
 
 ## Icons
 
-Inlined as SVG in `ChessSettings` and `GamePanel`, from [SVG Repo](https://www.svgrepo.com), under
+Inlined as SVG in `ChessSettings` and `GamePanel`, and as an image in `PlayerBadge` (the chip), from [SVG Repo](https://www.svgrepo.com), under
 the Creative Commons Attribution license (https://creativecommons.org/licenses/by/4.0/).
-Changes: optimized with SVGO and recolored to `currentColor` so they follow the theme.
+Changes: optimized with SVGO; the inline ones are recolored to `currentColor` so they follow the theme.
 
 | Icon | Used for | Author | Collection | Source |
 | --- | --- | --- | --- | --- |
@@ -61,6 +61,7 @@ Changes: optimized with SVGO and recolored to `currentColor` so they follow the 
 | Sun | Switch to light mode | Dazzle UI | Dazzle Line Icons | https://www.svgrepo.com/svg/532889/sun |
 | Dark mode night moon | Switch to dark mode | nickylimyeanfen | Ink Interface Icons | https://www.svgrepo.com/svg/381213/dark-mode-night-moon |
 | Random | "Random color" option | FortAwesome | Font Awesome Solid Icons | https://www.svgrepo.com/svg/352388/random |
+| Chip AI | The computer's avatar | wishforge.games | Technology And Security Line Vectors | https://www.svgrepo.com |
 
 ## Sounds
 

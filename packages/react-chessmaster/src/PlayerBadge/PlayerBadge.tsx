@@ -1,6 +1,6 @@
 import styles from "./PlayerBadge.module.css";
 import { useChessStore } from "../store/useChessStore";
-import { PLAYER_AVATARS } from "../assets/avatars";
+import { COMPUTER_AVATAR, PLAYER_AVATARS } from "../assets/avatars";
 import { CapturedPieces } from "../CapturedPieces/CapturedPieces";
 
 const DEFAULT_LABELS: Record<"W" | "B", string> = {
@@ -52,7 +52,7 @@ export function PlayerBadge({
     <div className={classNames} aria-current={isActive ? "true" : undefined}>
       <div className={styles.avatarFrame}>
         <img
-          src={avatar || PLAYER_AVATARS[color]}
+          src={avatar || (isComputer ? COMPUTER_AVATAR : PLAYER_AVATARS[color])}
           alt=""
           className={styles.avatar}
           draggable={false}

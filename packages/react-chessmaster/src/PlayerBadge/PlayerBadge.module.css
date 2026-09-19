@@ -29,8 +29,6 @@
   height: 100%;
   padding: 10%;
   object-fit: contain;
-  /* Las fotos tienen fondo blanco: multiply lo funde con el fondo del avatar */
-  mix-blend-mode: multiply;
 }
 
 .info {
