@@ -28,7 +28,7 @@ function RandomColorIcon() {
 }
 
 /**
- * The "Game" panel: pick the mode ("2 players" / "vs Computer"), the human's color and the
+ * The "Game" panel: pick the mode ("vs Computer" / "2 players"), the human's color and the
  * computer's level, then start. Choices are staged until the main button is pressed; if a game
  * is in progress that button asks for a second click, so a game is never lost by accident.
  */

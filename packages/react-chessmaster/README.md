@@ -85,12 +85,15 @@ notation (`"e2e4"`, `"e7e8q"`):
 
 ```tsx
 <ChessBoard
-  colorScheme="light"                    // panels for light pages ('dark' by default)
-  theme={{ lightSquare: '#eeeed2', darkSquare: '#769656', accent: '#b58863' }}
+  colorScheme="light"                    // panels for light pages, green squares ('dark' by default)
+  theme={{ accent: '#b58863' }}
 />
 ```
 
 `theme` accepts `lightSquare`, `darkSquare`, `highlight`, `accent`, `check` and `moveHint`.
+
+Players can switch between dark and light with the sun/moon button next to the gear; when they
+pick the scheme opposite to `colorScheme`, the game paints its own background so it stays readable.
 
 ## Props
 
@@ -100,11 +103,11 @@ notation (`"e2e4"`, `"e7e8q"`):
 | `showCapturedPieces` | `boolean` | `false` | Captured pieces and material |
 | `showPlayerBadges` | `boolean` | `false` | Player avatars and names above and below the board |
 | `showGamePanel` | `boolean` | `true` | Mode / color / level / new game panel. `false` removes it |
-| `showSettings` | `boolean` | `true` | Gear menu to toggle the panels at runtime |
+| `showSettings` | `boolean` | `true` | Light/dark switch and gear menu to toggle the panels at runtime |
 | `modes` | `('local' \| 'computer')[]` | both | Game modes the player can choose |
-| `defaultMode` | `'local' \| 'computer'` | first of `modes` | Mode of the first game |
+| `defaultMode` | `'local' \| 'computer'` | `'computer'` if allowed | Mode of the first game |
 | `opponent` | `{ color?, level?, getMove? }` | `{ color: 'B', level: 2 }` | Computer's color (`'W' \| 'B' \| 'random'`), level `1–5`, custom engine |
-| `colorScheme` | `'dark' \| 'light'` | `'dark'` | Panels for dark or light page backgrounds |
+| `colorScheme` | `'dark' \| 'light'` | `'dark'` | Initial scheme for dark or light pages; light has green squares (the player can switch it) |
 | `theme` | `ChessBoardTheme` | — | Board and accent colors |
 | `persist` | `boolean \| string` | — | Save the game in `localStorage`. A string is the save's key, so each board keeps its own game |
 | `onMove` | `(move: MoveRecord) => void` | — | After every move |

@@ -35,6 +35,7 @@
   --track-strong: rgba(255, 255, 255, 0.28);
   --on-accent: #1b1712; /* texto sobre fondos de --accent (botones principales, opción elegida) */
   --on-check: #ffffff; /* texto sobre fondos de --check (confirmaciones destructivas) */
+  --surface: #141210; /* fondo propio, solo cuando el jugador cambia de esquema (.ownSurface) */
 
   color-scheme: dark;
   container: chess-root / inline-size;
@@ -47,6 +48,10 @@
 }
 
 .light {
+  /* Casillas verdes: la paleta clásica de los tableros claros (la prop `theme` las sigue pisando) */
+  --light-square: #eeeed2;
+  --dark-square: #769656;
+  --move-hint: rgba(18, 30, 10, 0.2);
   --accent: #a8792e; /* el dorado por defecto no contrasta como texto sobre fondo claro */
   --text: #1f1b16;
   --text-muted: rgba(31, 27, 22, 0.62);
@@ -61,8 +66,19 @@
   --control: rgba(0, 0, 0, 0.06);
   --track: rgba(0, 0, 0, 0.14);
   --track-strong: rgba(0, 0, 0, 0.26);
+  --surface: #fbfaf7;
 
   color-scheme: light;
+}
+
+/*
+ * El jugador eligió el esquema contrario al de la página (prop colorScheme): el fondo de la
+ * página ya no sirve, así que el juego pinta el suyo para que textos y paneles se lean.
+ */
+.ownSurface {
+  padding: 12px;
+  border-radius: 16px;
+  background: var(--surface);
 }
 
 .chessGame,
@@ -150,35 +166,36 @@
   --bottom: 0px;
   --side: 0px;
   --below: 0px;
-  --foot: 0px;
+  --head: 0px;
 
   --board: max(
     120px,
     min(
       100cqw - var(--side),
-      100cqh - var(--top) - var(--bottom) - var(--below) - var(--foot)
+      100cqh - var(--head) - var(--top) - var(--bottom) - var(--below)
     )
   );
 
   /*
    * Rejilla: columna izquierda = jugador negro / tablero / jugador blanco,
    * columna derecha = panel lateral (mismo alto que el tablero).
-   * El engranaje va dentro de la columna del tablero, arriba a la derecha.
+   * La barra de ajustes va dentro de la columna del tablero, arriba a la derecha
+   * (la fila "head" solo se usa en contenedores estrechos).
    * Cada pista ya incluye su separación, así que las pistas vacías miden 0 y no dejan huecos.
    */
   display: grid;
   grid-template-columns: minmax(0, 1fr) var(--side);
-  grid-template-rows: var(--top) minmax(0, 1fr) var(--bottom) var(--below) var(--foot);
+  grid-template-rows: var(--head) var(--top) minmax(0, 1fr) var(--bottom) var(--below);
   grid-template-areas:
+    "head   head"
     "top    ."
     "board  side"
     "bottom ."
-    "below  below"
-    "foot   foot";
+    "below  below";
   width: min(100%, calc(var(--board) + var(--side)));
   height: min(
     100%,
-    calc(var(--board) + var(--top) + var(--bottom) + var(--below) + var(--foot))
+    calc(var(--board) + var(--head) + var(--top) + var(--bottom) + var(--below))
   );
 }
 
@@ -202,9 +219,9 @@
   min-width: 0;
 }
 
-/* Deja libre la esquina del engranaje */
+/* Deja libre la esquina de la barra de ajustes (esquema claro/oscuro + engranaje) */
 .withGear .topBadge {
-  padding-right: calc(var(--toolbar-h) + 8px);
+  padding-right: calc(2 * var(--toolbar-h) + 12px);
 }
 
 .bottomBadge {
@@ -309,29 +326,29 @@
 
 /*
  * Contenedor estrecho, una sola columna:
- * jugador negro / tablero / jugador blanco / panel lateral / engranaje abajo a la derecha
+ * barra de ajustes arriba a la derecha / jugador negro / tablero / jugador blanco / panel lateral
  */
 @container chess-stage (max-width: 640px) {
   .layout {
     --gap: 10px;
     --badge-h: 34px;
     grid-template-areas:
+      "head   head"
       "top    ."
       "board  board"
       "bottom ."
-      "side   side"
-      "foot   foot";
+      "side   side";
     /* Los paneles de abajo nunca más angostos que 300px aunque el tablero se achique */
     width: min(100%, max(var(--board), 300px));
   }
 
-  /* Sin jugadores la fila superior ya no hace falta: el engranaje vive en el pie */
+  /* Sin jugadores la fila superior ya no hace falta: la barra de ajustes vive en su propia fila */
   .layout.withToolbar {
     --top: 0px;
   }
 
   .layout.withGear {
-    --foot: calc(var(--toolbar-h) + var(--gap));
+    --head: calc(var(--toolbar-h) + var(--gap));
   }
 
   .layout.withSidePanel {
@@ -355,7 +372,7 @@
   .layout.withGamePanel.withHistory {
     --history-h: clamp(
       56px,
-      100cqh - 100cqw - var(--top) - var(--bottom) - var(--foot) - var(--game-h) - 8px - var(--gap),
+      100cqh - 100cqw - var(--top) - var(--bottom) - var(--head) - var(--game-h) - 8px - var(--gap),
       150px
     );
     --panel-h: calc(var(--history-h) + 8px + var(--game-h));
@@ -366,8 +383,7 @@
   }
 
   .gear {
-    grid-area: foot;
-    align-self: end;
+    grid-area: head;
   }
 
   .sidePanel {

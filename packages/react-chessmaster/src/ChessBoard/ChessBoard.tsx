@@ -10,14 +10,15 @@ import { GamePanel } from '../GamePanel/GamePanel';
 import { Board } from './Board';
 import { useBoardFlipped } from './orientation';
 import { useComputerOpponent } from '../engine/useComputerOpponent';
-import { useRef, useEffect, CSSProperties } from 'react';
+import { useRef, useEffect, useState, CSSProperties } from 'react';
 import { SOUND_ASSETS } from '../assets/sounds';
 import { resolveStorageKey } from '../store/persistence';
 import type { ChessBoardProps, ColorChoice, GameConfig, GameMode } from '../store/types';
 
-const ALL_MODES: GameMode[] = ['local', 'computer'];
+// Also the order of the Game panel's mode switch; the first one is the default mode
+const ALL_MODES: GameMode[] = ['computer', 'local'];
 
-/** Valid, de-duplicated `modes` prop; both modes when missing or empty. */
+/** Valid, de-duplicated `modes` prop, in ALL_MODES order; both modes when missing or empty. */
 function resolveModes(modes: GameMode[] | undefined): GameMode[] {
   const valid = ALL_MODES.filter((mode) => modes?.includes(mode));
   return valid.length > 0 ? valid : ALL_MODES;
@@ -61,6 +62,10 @@ function ChessBoardContent({
   const flipped = useBoardFlipped();
   const store = useChessStoreApi();
   const allowedModes = resolveModes(modes);
+
+  // The prop is the initial scheme; the player can switch it from the settings bar
+  const [scheme, setScheme] = useState(colorScheme);
+  useEffect(() => setScheme(colorScheme), [colorScheme]);
 
   useComputerOpponent(opponent?.getMove);
 
@@ -146,7 +151,14 @@ function ChessBoardContent({
 
   return (
     <div
-      className={[styles.chessGame, colorScheme === 'light' && styles.light, className].filter(Boolean).join(' ')}
+      className={[
+        styles.chessGame,
+        scheme === 'light' && styles.light,
+        scheme !== colorScheme && styles.ownSurface,
+        className,
+      ]
+        .filter(Boolean)
+        .join(' ')}
       style={themeVars}
     >
       <div className={styles.stage}>
@@ -161,7 +173,13 @@ function ChessBoardContent({
           )}
           {showSettings && (
             <div className={styles.gear}>
-              <ChessSettings settings={settings} onChange={setSettings} allowGamePanel={showGamePanel} />
+              <ChessSettings
+                settings={settings}
+                onChange={setSettings}
+                allowGamePanel={showGamePanel}
+                colorScheme={scheme}
+                onColorSchemeChange={setScheme}
+              />
             </div>
           )}
           <div className={styles.boardArea}><Board /></div>

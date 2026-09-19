@@ -63,8 +63,8 @@ packages/react-chessmaster/src/
 ├── ChessCell/         # Individual cell component with click handlers
 ├── ChessPiece/        # Piece SVG renderer with position styling
 ├── CoronationPanel/   # Modal for pawn promotion (choosing Queen/Rook/Bishop/Knight)
-├── ChessSettings/     # Gear menu to toggle panels at runtime
-├── GamePanel/         # "Game" panel: mode (2 players / vs Computer), human color, level, New game/Play
+├── ChessSettings/     # Settings bar: light/dark switch + gear menu to toggle panels at runtime
+├── GamePanel/         # "Game" panel: mode (vs Computer / 2 players, computer by default), human color, level, New game/Play
 ├── engine/            # ChessEngine interface; jsChessEngine (built-in, Web Worker); useComputerOpponent plays the computer's turns
 ├── PlayerBadge/ CapturedPieces/ MoveHistory/ GameOverModal/ ErrorBoundary/
 ├── assets/            # Pieces, sounds and avatars, imported as ES modules (pieces.ts, sounds.ts, avatars.ts)
@@ -149,7 +149,7 @@ Pieces are encoded as 4-character strings: `[Color][Type][File][Rank]`
 
 - **ESLint rules** focus on React hooks (dependency arrays) and React Refresh for hot module reloading
 - **TypeScript strict mode** is enabled; all pieces of state have defined types in `store/types.ts`
-- **CSS structure**: Chess components use CSS Modules (`*.module.css`); all theme tokens (`--light-square`, `--accent`, `--text`, `--panel`, `--popover`, `--hover`, `--track`, ...) are defined on `.chessGame` in `ChessBoard.module.css` with dark-scheme values, and `.light` (prop `colorScheme="light"`) redefines them for light pages. Never hardcode UI colors in component CSS: use a token, or the component becomes unreadable on one of the two backgrounds. Anything that content scrolls under (the move history's sticky header) needs an opaque token (`--header-solid`), not the translucent `--popover`. Site pages use global styles in `apps/web/src/index.css`
+- **CSS structure**: Chess components use CSS Modules (`*.module.css`); all theme tokens (`--light-square`, `--accent`, `--text`, `--panel`, `--popover`, `--hover`, `--track`, ...) are defined on `.chessGame` in `ChessBoard.module.css` with dark-scheme values, and `.light` redefines them for light pages (plus green squares). The prop `colorScheme` is only the initial scheme: the sun/moon button in `ChessSettings` switches it, and when it differs from the prop `.ownSurface` paints `--surface` so the game stays readable on the host page. Never hardcode UI colors in component CSS: use a token, or the component becomes unreadable on one of the two backgrounds. Anything that content scrolls under (the move history's sticky header) needs an opaque token (`--header-solid`), not the translucent `--popover`. Site pages use global styles in `apps/web/src/index.css`
 - **Tests**: `npm test` (Vitest) covers the chess logic in `packages/react-chessmaster/src/__tests__/`; verify UI changes manually in the dev server
 - **Persistence (opt-in)**: the `persist` prop saves each board to localStorage under `react-chessmaster:<key>` (see `store/persistence.ts`). Only a minimal snapshot is stored (pieces, hasMoved, turn, history, promotion, layout, game mode/colors/level); everything derived is rebuilt with `markCellsUnderAttack` on restore. When that snapshot changes shape, bump `PERSIST_VERSION` (now 2) and teach `migratePersistedGame` to upgrade the previous version
 - **Build**: `npm run build` runs `tsc -b` — a plain `tsc` checks nothing because the root tsconfig only has project references

@@ -35,7 +35,7 @@
   text-overflow: ellipsis;
 }
 
-/* Control segmentado "2 players / vs Computer" */
+/* Control segmentado "vs Computer / 2 players" */
 .segmented {
   display: grid;
   grid-auto-columns: 1fr;
@@ -163,7 +163,7 @@
   filter: brightness(1.08);
 }
 
-/* Segundo clic pendiente: mismo aviso rojo que "New game" en el menú de ajustes */
+/* Segundo clic pendiente: aviso rojo de acción destructiva */
 .start.confirming {
   background: var(--check);
   color: var(--on-check);

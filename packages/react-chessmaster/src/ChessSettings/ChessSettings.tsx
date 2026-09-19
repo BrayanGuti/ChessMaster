@@ -1,7 +1,8 @@
 import styles from './ChessSettings.module.css';
 import { useEffect, useId, useRef, useState } from 'react';
-import { useChessStore } from '../store/useChessStore';
 import type { ChessDisplaySettings } from '../store/types';
+
+type ColorScheme = 'dark' | 'light';
 
 // "Settings" icon from Lucide (ISC license), inlined so the package has no icon dependency
 function GearIcon() {
@@ -23,6 +24,44 @@ function GearIcon() {
   );
 }
 
+// "Sun" and "Moon" icons from Lucide (ISC license)
+function SunIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+    </svg>
+  );
+}
+
+function MoonIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+    </svg>
+  );
+}
+
 const OPTIONS: Array<{ key: keyof ChessDisplaySettings; label: string; hint: string }> = [
   { key: 'playerBadges', label: 'Players', hint: 'Photos and names' },
   { key: 'capturedPieces', label: 'Captured pieces', hint: 'Material gained' },
@@ -34,27 +73,23 @@ export function ChessSettings({
   settings,
   onChange,
   allowGamePanel = true,
+  colorScheme,
+  onColorSchemeChange,
 }: {
   settings: ChessDisplaySettings;
   onChange: (update: (previous: ChessDisplaySettings) => ChessDisplaySettings) => void;
   /** False when the developer removed the Game panel (showGamePanel={false}): no switch for it */
   allowGamePanel?: boolean;
+  colorScheme: ColorScheme;
+  onColorSchemeChange: (scheme: ColorScheme) => void;
 }) {
   const options = allowGamePanel ? OPTIONS : OPTIONS.filter(({ key }) => key !== 'gamePanel');
   const [open, setOpen] = useState(false);
-  // "New game" asks for a second click so a game can't be lost by accident
-  const [confirmingReset, setConfirmingReset] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const menuId = useId();
 
-  const hasMoves = useChessStore((state) => state.moveHistory.length > 0);
-  const resetGame = useChessStore((state) => state.resetGame);
-
   useEffect(() => {
-    if (!open) {
-      setConfirmingReset(false);
-      return;
-    }
+    if (!open) return;
 
     const handlePointerDown = (event: PointerEvent) => {
       if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
@@ -82,17 +117,22 @@ export function ChessSettings({
       ...Object.fromEntries(options.map(({ key }) => [key, isBoardOnly])),
     }));
 
-  const handleReset = () => {
-    if (!confirmingReset) {
-      setConfirmingReset(true);
-      return;
-    }
-    resetGame();
-    setOpen(false);
-  };
+  const isDark = colorScheme === 'dark';
+  const schemeLabel = isDark ? 'Switch to light mode' : 'Switch to dark mode';
 
   return (
     <div ref={rootRef} className={styles.settings}>
+      {/* Shows the scheme it switches to: a sun in dark mode, a moon in light mode */}
+      <button
+        type="button"
+        className={styles.trigger}
+        aria-label={schemeLabel}
+        title={schemeLabel}
+        onClick={() => onColorSchemeChange(isDark ? 'light' : 'dark')}
+      >
+        {isDark ? <SunIcon /> : <MoonIcon />}
+      </button>
+
       <button
         type="button"
         className={`${styles.trigger}${open ? ` ${styles.triggerOpen}` : ''}`}
@@ -128,15 +168,6 @@ export function ChessSettings({
           <div className={styles.divider} />
           <button type="button" role="menuitem" className={styles.action} onClick={setBoardOnly}>
             {isBoardOnly ? 'Show all' : 'Board only'}
-          </button>
-          <button
-            type="button"
-            role="menuitem"
-            className={`${styles.action} ${styles.danger}`}
-            onClick={handleReset}
-            disabled={!hasMoves}
-          >
-            {confirmingReset ? 'Click again to confirm' : 'New game'}
           </button>
         </div>
       )}

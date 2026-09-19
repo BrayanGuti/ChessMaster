@@ -183,22 +183,27 @@ export interface ChessBoardProps {
   theme?: ChessBoardTheme;
   /**
    * Colors of the panels, menu and dialogs around the board: 'dark' (default) for pages with a
-   * dark background, 'light' for light ones. The board squares come from `theme`.
+   * dark background, 'light' for light ones ('light' also has green squares; `theme` overrides
+   * them). This is the initial scheme: the player can switch it from the settings bar (not saved
+   * with `persist`), and the game then paints its own background to stay readable on the page.
    */
   colorScheme?: 'dark' | 'light';
   showMoveHistory?: boolean;
   showCapturedPieces?: boolean;
   showPlayerBadges?: boolean;
-  /** Shows the gear menu that lets the player toggle the panels above at runtime. Default: true */
+  /**
+   * Shows the settings bar: a light/dark switch and the gear menu that lets the player toggle the
+   * panels above at runtime. Default: true
+   */
   showSettings?: boolean;
   /**
    * The "Game" panel to pick the mode, color and level and start a new game. Default: true.
    * `false` removes it completely (it cannot be turned back on from the settings menu).
    */
   showGamePanel?: boolean;
-  /** Game modes the player can choose from. Default: both. With one mode the selector is hidden */
+  /** Game modes the player can choose from. Default: both ('computer' first). With one mode the selector is hidden */
   modes?: GameMode[];
-  /** Mode of the first game. Default: the first entry of `modes` */
+  /** Mode of the first game. Default: 'computer' if allowed, otherwise 'local' */
   defaultMode?: GameMode;
   /** Initial settings of the computer opponent (the player can change them in the Game panel) */
   opponent?: OpponentOptions;
@@ -210,7 +215,7 @@ export interface ChessBoardProps {
   persist?: boolean | string;
   onGameEnd?: (result: GameEndResult) => void;
   onMove?: (move: MoveRecord) => void;
-  /** Called when the player starts a new game (settings menu, game over panel or error screen) */
+  /** Called when the player starts a new game (Game panel, game over panel or error screen) */
   onReset?: () => void;
   className?: string;
 }

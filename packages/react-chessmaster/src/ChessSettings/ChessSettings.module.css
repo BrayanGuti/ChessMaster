@@ -1,5 +1,8 @@
+/* Barra de ajustes: cambio de esquema claro/oscuro + engranaje */
 .settings {
   position: relative;
+  display: flex;
+  gap: 4px;
   flex-shrink: 0;
 }
 
@@ -157,24 +160,6 @@
 .action:focus-visible {
   background: var(--hover);
   outline: none;
-}
-
-.danger {
-  color: var(--check);
-}
-
-.action:disabled {
-  color: var(--text-subtle);
-  background: transparent;
-  cursor: default;
-}
-
-/* En pantallas estrechas el engranaje va al pie del juego: el menú se abre hacia arriba */
-@container chess-stage (max-width: 640px) {
-  .menu {
-    top: auto;
-    bottom: calc(100% + 8px);
-  }
 }
 
 @keyframes menuIn {
