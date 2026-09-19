@@ -8,7 +8,7 @@ A complete chess game for the browser, and the open-source React component behin
 
 <img src="docs/media/site-hero.png" alt="ChessMaster website" width="820" />
 
-[![Play](https://img.shields.io/badge/▶_Play_now-000000?style=for-the-badge)](https://chess-master-cvg0svtvz-brayangutis-projects.vercel.app/)
+[![Play](https://img.shields.io/badge/▶_Play_now-000000?style=for-the-badge)](https://chess-master-phi.vercel.app/)
 [![npm](https://img.shields.io/npm/v/@brayanguti/react-chessmaster?style=for-the-badge&color=000000&labelColor=000000&label=npm)](https://www.npmjs.com/package/@brayanguti/react-chessmaster)
 [![License: MIT](https://img.shields.io/badge/License-MIT-000000?style=for-the-badge)](LICENSE)
 
@@ -51,9 +51,9 @@ npm install @brayanguti/react-chessmaster
 ```
 
 ```tsx
-import { ChessBoard } from '@brayanguti/react-chessmaster'
+import { ChessBoard } from "@brayanguti/react-chessmaster";
 
-<ChessBoard showMoveHistory showPlayerBadges defaultMode="computer" />
+<ChessBoard showMoveHistory showPlayerBadges defaultMode="computer" />;
 ```
 
 No stylesheet to import, nothing to configure. It fits any container, works with React 18 and 19,
