@@ -13,7 +13,13 @@ export function Header() {
         <div className="HomePage-Header-content">
           <nav className="HomePage-Header-nav-desktop">
             <div className="HomePage-Header-nav-item HomePage-Header-nav-item-first">
-              <span className="HomePage-Header-brand">Open Source</span>
+              <NavLink
+                href="https://github.com/BrayanGuti/ChessMaster"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Code Base
+              </NavLink>
             </div>
             <div className="HomePage-Header-nav-divider-container HomePage-Header-nav-divider-internal">
               <span className="HomePage-Header-plus">+</span>
@@ -25,13 +31,7 @@ export function Header() {
               <span className="HomePage-Header-plus">+</span>
             </div>
             <div className="HomePage-Header-nav-item">
-              <NavLink
-                href="https://github.com/BrayanGuti/ChessMaster"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Code Base
-              </NavLink>
+              <ScrollLink targetId="credits">Credits</ScrollLink>
             </div>
             <div className="HomePage-Header-nav-divider-container HomePage-Header-nav-divider-internal">
               <span className="HomePage-Header-plus">+</span>
@@ -61,12 +61,6 @@ export function Header() {
       {isMenuOpen && (
         <div className="HomePage-Header-mobile-menu">
           <nav className="HomePage-Header-mobile-nav">
-            <ScrollLink
-              targetId="creator"
-              onNavigate={() => setIsMenuOpen(false)}
-            >
-              Creator
-            </ScrollLink>
             <NavLink
               href="https://github.com/BrayanGuti/ChessMaster"
               target="_blank"
@@ -74,6 +68,18 @@ export function Header() {
             >
               Code Base
             </NavLink>
+            <ScrollLink
+              targetId="creator"
+              onNavigate={() => setIsMenuOpen(false)}
+            >
+              Creator
+            </ScrollLink>
+            <ScrollLink
+              targetId="credits"
+              onNavigate={() => setIsMenuOpen(false)}
+            >
+              Credits
+            </ScrollLink>
             <ScrollLink
               targetId="get-started"
               onNavigate={() => setIsMenuOpen(false)}
