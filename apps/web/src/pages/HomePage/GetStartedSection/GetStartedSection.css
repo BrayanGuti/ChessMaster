@@ -230,13 +230,9 @@
   min-width: 0;
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
   font-size: 0.82rem;
-  white-space: nowrap;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-
-.HomePage-GetStartedSection-code-text::-webkit-scrollbar {
-  display: none;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .HomePage-GetStartedSection-copy-button {
@@ -447,5 +443,113 @@
 
   .HomePage-GetStartedSection-scripts-list span {
     text-align: left;
+  }
+}
+
+/* ---------- Enlaces a la documentación ---------- */
+.HomePage-GetStartedSection-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: clamp(16px, 3.5vh, 36px);
+}
+
+.HomePage-GetStartedSection-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--gs-ink);
+  text-decoration: none;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.HomePage-GetStartedSection-link svg {
+  width: 14px;
+  height: 14px;
+}
+
+.HomePage-GetStartedSection-link:hover,
+.HomePage-GetStartedSection-link--primary {
+  background-color: var(--gs-charcoal);
+  border-color: var(--gs-charcoal);
+  color: #ffffff;
+}
+
+.HomePage-GetStartedSection-link--primary:hover {
+  background-color: #000000;
+}
+
+/* Fragmento de código dentro de las tarjetas */
+.HomePage-GetStartedSection-guide-snippet {
+  margin-top: auto;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background-color: var(--gs-soft);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--gs-ink);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+.HomePage-GetStartedSection-guide:hover
+  .HomePage-GetStartedSection-guide-snippet {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+/* Escritorios grandes (24"+): más ancho y tipografía mayor */
+@media (min-width: 1900px) {
+  .HomePage-GetStartedSection-container {
+    max-width: 1800px;
+    padding-inline: 120px;
+  }
+
+  .HomePage-GetStartedSection-title {
+    font-size: 7.5rem;
+  }
+
+  .HomePage-GetStartedSection-description {
+    max-width: 480px;
+    font-size: 1.1rem;
+  }
+
+  .HomePage-GetStartedSection-scripts {
+    max-width: 480px;
+  }
+
+  .HomePage-GetStartedSection-step-title {
+    font-size: 1.35rem;
+  }
+
+  .HomePage-GetStartedSection-step-description,
+  .HomePage-GetStartedSection-guide-description {
+    font-size: 1rem;
+  }
+
+  .HomePage-GetStartedSection-code-text,
+  .HomePage-GetStartedSection-guide-snippet {
+    font-size: 0.95rem;
+  }
+
+  .HomePage-GetStartedSection-guide-title {
+    font-size: 1.9rem;
+  }
+
+  .HomePage-GetStartedSection-scripts-list code {
+    font-size: 1rem;
   }
 }

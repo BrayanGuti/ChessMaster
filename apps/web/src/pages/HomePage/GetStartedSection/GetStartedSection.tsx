@@ -4,12 +4,17 @@ import {
   BookOpen,
   Check,
   Copy,
-  Crown,
-  MousePointerClick,
-  ShieldAlert,
+  Cpu,
+  ExternalLink,
+  Palette,
+  Save,
   Terminal,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+
+const DOCS_URL =
+  "https://github.com/BrayanGuti/ChessMaster/blob/master/packages/react-chessmaster/README.md";
+const NPM_URL = "https://www.npmjs.com/package/@brayanguti/react-chessmaster";
 
 interface Step {
   title: string;
@@ -21,50 +26,57 @@ interface Guide {
   icon: LucideIcon;
   title: string;
   description: string;
+  snippet: string;
 }
 
 const STEPS: Step[] = [
   {
-    title: "Clone the repository",
-    description: "Grab a local copy of the source code from GitHub.",
-    command: "git clone https://github.com/BrayanGuti/ChessMaster.git",
+    title: "Install the package",
+    description: "Add it to any React 18 or 19 project. No stylesheet to import.",
+    command: "npm install @brayanguti/react-chessmaster",
   },
   {
-    title: "Install dependencies",
-    description: "Move into the project folder and install the packages.",
-    command: "cd ChessMaster && npm install",
+    title: "Import the board",
+    description:
+      "Render <ChessBoard /> in a container with a size; it fills it and stays square.",
+    command:
+      "import { ChessBoard } from '@brayanguti/react-chessmaster'",
   },
   {
-    title: "Start the dev server",
-    description: "Launch Vite and open http://localhost:5173 in your browser.",
-    command: "npm run dev",
+    title: "Play the computer",
+    description: "Pick the computer's color and level (1 to 5).",
+    command: "<ChessBoard opponent={{ color: 'B', level: 3 }} />",
   },
 ];
 
-const SCRIPTS = [
-  { command: "npm run build", description: "Production build" },
-  { command: "npm run lint", description: "Code quality check" },
-  { command: "npm run preview", description: "Preview the build" },
+const PROPS = [
+  { command: "showMoveHistory", description: "Move list panel" },
+  { command: "showCapturedPieces", description: "Captures and material" },
+  { command: "showPlayerBadges", description: "Avatars and names" },
+  { command: "modes", description: "Local, computer or both" },
 ];
 
 const GUIDES: Guide[] = [
   {
-    icon: MousePointerClick,
-    title: "How to Play",
+    icon: Palette,
+    title: "Make It Yours",
     description:
-      "Click a piece to highlight its legal moves, then click a target square. White moves first and turns alternate automatically.",
+      "Switch between light and dark schemes and recolor squares, highlights and accent. Players can also toggle the scheme from the board.",
+    snippet: "theme={{ accent: '#b58863' }}",
   },
   {
-    icon: Crown,
-    title: "Special Moves",
+    icon: Cpu,
+    title: "Bring Your Engine",
     description:
-      "Castling, en passant and pawn promotion are fully supported. Reach the last rank to crown your pawn.",
+      "Plug in any engine: get the position in FEN, return a move in UCI. Illegal answers fall back to a random legal move.",
+    snippet: "opponent={{ getMove: async (fen) => 'e2e4' }}",
   },
   {
-    icon: ShieldAlert,
-    title: "Check & Mate",
+    icon: Save,
+    title: "Save & Listen",
     description:
-      "Check and checkmate are detected after every move, and only moves that keep your king safe are allowed.",
+      "Keep each board's game in localStorage and react to moves, resets and the end of the game with callbacks.",
+    snippet: "persist=\"my-game\" onGameEnd={(r) => r.winner}",
   },
 ];
 
@@ -84,16 +96,37 @@ export function GetStartedSection() {
               Started
             </h2>
             <p className="HomePage-GetStartedSection-description">
-              Run ChessMaster on your machine in less than a minute. A local
-              two-player chess game built with React, TypeScript and Zustand.
+              Add a complete chess board to your React app in less than a
+              minute: two players or vs Computer, every rule included.
             </p>
+
+            <div className="HomePage-GetStartedSection-links">
+              <a
+                className="HomePage-GetStartedSection-link HomePage-GetStartedSection-link--primary"
+                href={DOCS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Read the docs
+                <ExternalLink />
+              </a>
+              <a
+                className="HomePage-GetStartedSection-link"
+                href={NPM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                npm package
+                <ExternalLink />
+              </a>
+            </div>
 
             <div className="HomePage-GetStartedSection-scripts">
               <span className="HomePage-GetStartedSection-scripts-title">
-                Other scripts
+                Useful props
               </span>
               <ul className="HomePage-GetStartedSection-scripts-list">
-                {SCRIPTS.map((script) => (
+                {PROPS.map((script) => (
                   <li key={script.command}>
                     <code>{script.command}</code>
                     <span>{script.description}</span>
@@ -124,7 +157,7 @@ export function GetStartedSection() {
         </div>
 
         <div className="HomePage-GetStartedSection-guides">
-          {GUIDES.map(({ icon: Icon, title, description }) => (
+          {GUIDES.map(({ icon: Icon, title, description, snippet }) => (
             <article key={title} className="HomePage-GetStartedSection-guide">
               <span className="HomePage-GetStartedSection-corner" />
               <Icon className="HomePage-GetStartedSection-guide-icon" />
@@ -134,6 +167,9 @@ export function GetStartedSection() {
               <p className="HomePage-GetStartedSection-guide-description">
                 {description}
               </p>
+              <code className="HomePage-GetStartedSection-guide-snippet">
+                {snippet}
+              </code>
             </article>
           ))}
         </div>
