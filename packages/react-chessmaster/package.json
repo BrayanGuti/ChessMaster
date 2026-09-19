@@ -1,6 +1,6 @@
 {
   "name": "@brayanguti/react-chessmaster",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A complete, drop-in chess board for React: full rules, play a friend or the computer, drag and drop, themes, sounds and saved games.",
   "license": "MIT",
   "author": "Brayan Gutierrez (https://github.com/BrayanGuti)",
