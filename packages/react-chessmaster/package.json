@@ -1,8 +1,7 @@
 {
   "name": "@brayanguti/react-chessmaster",
-  "version": "0.0.0",
-  "private": true,
-  "description": "A complete, drop-in chess board for React: full rules, drag and drop, sounds, themes and saved games.",
+  "version": "0.1.0",
+  "description": "A complete, drop-in chess board for React: full rules, play a friend or the computer, drag and drop, themes, sounds and saved games.",
   "license": "MIT",
   "author": "Brayan Gutierrez (https://github.com/BrayanGuti)",
   "repository": {
@@ -18,8 +17,14 @@
     "react",
     "react-component",
     "board-game",
-    "game"
+    "game",
+    "chess-ai",
+    "chess-engine",
+    "nextjs"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "exports": {
     ".": {

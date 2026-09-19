@@ -26,7 +26,8 @@
   --border: rgba(255, 255, 255, 0.08);
   --border-strong: rgba(255, 255, 255, 0.2);
   --panel: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
-  --popover: rgba(24, 21, 18, 0.96); /* menú, cabecera fija del historial y modal de fin */
+  --popover: rgba(24, 21, 18, 0.96); /* menú y modal de fin */
+  --header-solid: #1a1714; /* cabecera fija del historial: opaca, el contenido pasa por debajo */
   --hover: rgba(255, 255, 255, 0.06);
   --row-alt: rgba(255, 255, 255, 0.025);
   --control: rgba(255, 255, 255, 0.1); /* botón del engranaje activo */
@@ -54,6 +55,7 @@
   --border-strong: rgba(0, 0, 0, 0.18);
   --panel: linear-gradient(180deg, rgba(0, 0, 0, 0.035), rgba(0, 0, 0, 0.015));
   --popover: rgba(252, 250, 246, 0.97);
+  --header-solid: #f6f4f0;
   --hover: rgba(0, 0, 0, 0.05);
   --row-alt: rgba(0, 0, 0, 0.025);
   --control: rgba(0, 0, 0, 0.06);

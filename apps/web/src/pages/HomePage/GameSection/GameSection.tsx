@@ -1,12 +1,13 @@
 import styles from "./GameSection.module.css";
 import { ChessBoard } from "@brayanguti/react-chessmaster";
 import {
-  LayoutGrid,
-  Maximize2,
-  Move,
+  Bot,
+  Cpu,
+  Layers,
   Palette,
   Users,
-  Volume2,
+  Move,
+  Maximize2,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -23,27 +24,30 @@ interface Fact {
 
 const FEATURES: Feature[] = [
   {
-    icon: Move,
-    title: "Click or Drag",
+    icon: Cpu,
+    title: "Web Worker AI",
     description:
-      "Tap a piece to see its moves or drag it to a square, with mouse or touch.",
+      "Play against the computer with 5 difficulty levels running smoothly in a background worker so the page never freezes.",
+  },
+  {
+    icon: Move,
+    title: "Drag & Drop",
+    description:
+      "Intuitive piece movement supporting mouse, touch, and pen interactions with move hints and smooth board flipping.",
   },
   {
     icon: Palette,
-    title: "Your Colors",
-    description: "Restyle the board and its panels with a single theme prop.",
-  },
-  {
-    icon: LayoutGrid,
-    title: "Many Boards",
-    description: "Run several independent games side by side on the same page.",
+    title: "Themeable Design",
+    description:
+      "Easily customize board square colors, highlights, and light/dark panel schemes to fit your application perfectly.",
   },
 ];
 
 const FACTS: Fact[] = [
-  { icon: Users, text: "2 players, same device" },
+  { icon: Bot, text: "5 AI difficulty levels" },
+  { icon: Layers, text: "Move history & persistence" },
+  { icon: Users, text: "Two players, same device" },
   { icon: Maximize2, text: "Fits any container" },
-  { icon: Volume2, text: "Sound on every move" },
 ];
 
 export function GameSection() {
@@ -51,18 +55,23 @@ export function GameSection() {
     <section id="game" className={styles.gameSection}>
       <div className={styles.container}>
         <div className={styles.game}>
-          <ChessBoard persist showMoveHistory showCapturedPieces showPlayerBadges />
+          <ChessBoard
+            persist
+            showMoveHistory
+            showCapturedPieces
+            showPlayerBadges
+          />
         </div>
 
         <div className={styles.info}>
           <h2 className={styles.title}>
-            <span className={styles.titleLine}>Your</span>{" "}
-            <span className={styles.titleLine}>Move</span>
+            <span className={styles.titleLine}>Master</span>{" "}
+            <span className={styles.titleLine}>The Board</span>
           </h2>
           <p className={styles.description}>
-            A drop-in chess board for React, playable right here. Challenge a
-            friend on one screen, and start a new game in one click when the
-            match ends.
+            A complete, high-performance drop-in chess board for React.
+            Challenge a friend locally or test your skills against the computer
+            with a fluid, lag-free experience.
           </p>
 
           <ul className={styles.features}>

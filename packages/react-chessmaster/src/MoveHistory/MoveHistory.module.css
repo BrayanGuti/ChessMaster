@@ -58,9 +58,8 @@
   position: sticky;
   top: 0;
   z-index: 1;
-  background: var(--popover);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  /* Opaco: las filas pasan por debajo al hacer scroll y no deben transparentarse */
+  background: var(--header-solid);
   border-bottom: 1px solid var(--border);
   color: var(--text-muted);
   font-size: 0.68rem;
