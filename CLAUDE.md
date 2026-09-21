@@ -63,7 +63,7 @@ packages/react-chessmaster/src/
 ├── ChessCell/         # Individual cell component with click handlers
 ├── ChessPiece/        # Piece SVG renderer with position styling
 ├── CoronationPanel/   # Modal for pawn promotion (choosing Queen/Rook/Bishop/Knight)
-├── ChessSettings/     # Settings bar: light/dark switch + gear menu to toggle panels at runtime
+├── ChessSettings/     # Settings bar: light/dark switch + undo + gear menu to toggle panels at runtime
 ├── GamePanel/         # "Game" panel: mode (vs Computer / 2 players, computer by default), human color, level, New game/Play
 ├── engine/            # ChessEngine interface; jsChessEngine (built-in, Web Worker); useComputerOpponent plays the computer's turns
 ├── PlayerBadge/ CapturedPieces/ MoveHistory/ GameOverModal/ ErrorBoundary/
@@ -100,8 +100,12 @@ Each `<ChessBoard>` gets its own store from `createChessStore()` via `ChessGameP
 - **coronation**: State for pawn promotion modal (whether active, coordinates, which pawn)
 - **soundToPlay**: Audio trigger for move/check/capture sounds
 - **gameMode** ('local' | 'computer'), **playerColor** (the human's color), **colorChoice** ('W' | 'B' | 'random', kept for rematches), **opponentLevel** (1–5), **aiThinking**
+- **undoStack**: the position before each move played, one entry per ply (see Undo below)
 
-Key methods: `clickCell()`, `selectPieceToMove()`, `movePiece()`, `makeCoronation()`, `updateCellsUnderAttack(sideToMove?)`, `changeTurn()`, `startGame(config)`, `resetGame()` (rematch: keeps the configuration), `legalMoves()`, `applyMove(uci)`, `toFEN()`
+Key methods: `clickCell()`, `selectPieceToMove()`, `movePiece()`, `makeCoronation()`, `updateCellsUnderAttack(sideToMove?)`, `changeTurn()`, `startGame(config)`, `resetGame()` (rematch: keeps the configuration), `undoMove()`, `legalMoves()`, `applyMove(uci)`, `toFEN()`
+
+### Undo
+`movePiece` pushes `toPositionSnapshot(state)` onto `undoStack` before it changes anything, and `undoMove()` pops it and feeds it through `restorePosition()` — the same rebuild a reload uses. It restores rather than reverses the move because `MoveRecord` keeps no `hasMoved` flags, and castling rights are read from them (`Fen.ts`): a reversal would silently lose them. In 'computer' mode it keeps popping until it is the human's turn again, so the engine does not simply replay; it is derived from the turn, not a fixed two plies, because the human's own move can be the last one. It applies everything in **one** `set()`: every `set` notifies, and `useComputerOpponent` reacts to any state where it is the engine's turn. It never bumps `gameId` (that would fire `onReset`). The stack is persisted, so a saved game can still be taken back after a reload.
 
 ### Game Modes (vs Computer)
 - `clickCell` ignores input on the computer's turn; the drag path starts with `clickCell`, so it is covered too. The engine plays through `applyMove`, which reuses `movePiece` and completes promotions immediately.
@@ -136,7 +140,7 @@ Pieces are encoded as 4-character strings: `[Color][Type][File][Rank]`
 ### Assets
 - **SVG pieces** in `packages/react-chessmaster/src/assets/Pieces/` (named like WP.svg, BK.svg for piece notation): public domain, from kmar/chess_svg_piece_sets, optimized with SVGO and given `viewBox="0 0 64 64"` (without it they get clipped instead of scaled)
 - **Sound effects** in `packages/react-chessmaster/src/assets/Sound/`: `move-1`/`move-2` (random), `capture` (also en passant), `castling`, `check`, `game-over`, chosen in that priority by `updateCellsUnderAttack` (game over > check > capture > castling > move). Edited by Brayan from Pixabay recordings
-- **Icons** (gear, sun, moon, random) are inline SVGs with `currentColor`, CC BY from SVG Repo
+- **Icons** (gear, sun, moon, random) are inline SVGs with `currentColor`, CC BY from SVG Repo. The undo arrow was drawn for this package: it has no third-party rights, and THIRD_PARTY_LICENSES.md says so rather than listing it
 - **Avatars** (`PlayerBadge`): white knight (`WN`) and black bishop (`BB`) piece images for the players, `Avatars/ai-chip.svg` (CC BY) for the computer in any color; always on the light square frame so they read on any page background
 - Every third-party asset or code must be credited in `packages/react-chessmaster/THIRD_PARTY_LICENSES.md` (shipped in the package). Only free licenses that do not force copyleft on the package (CC0, MIT, BSD, CC BY; never GPL or CC BY-SA)
 
@@ -148,11 +152,26 @@ Pieces are encoded as 4-character strings: `[Color][Type][File][Rank]`
   - For small/trivial changes, the suggested commit message alone is enough — no extra description is needed.
   - For larger or more complex changes, Claude should also include a brief description of what changed and why, alongside the commit message.
 
+## UI Changes Must Be Verified Responsive
+
+After any non-trivial UI change, Claude must **look at the result** before calling it done — not just check that it compiles and the tests pass. Run `npm run dev` and screenshot the page with headless Chromium at, at least, one width per class:
+
+| Class | Widths to check |
+| --- | --- |
+| Phones | 360×740, 390×844 |
+| Tablets | 768×1024 (portrait), 1024×768 (landscape) |
+| Laptops | 1366×768, 1440×900 |
+| Desktops | 1920×1080, 2560×1440 |
+
+Check **both schemes** (the light/dark switch in the settings bar, not the OS preference: the board follows the `colorScheme` prop and that button, never `prefers-color-scheme`), and check the states a screenshot of a fresh page does not show — disabled controls, panels that only appear mid-game, long names that could overflow.
+
+What to look for: nothing overlapping, nothing clipped or overflowing horizontally, tap targets still reachable, and text still legible on both backgrounds. The board's own layout is driven by **container queries** (`chess-root`, `chess-stage`), not viewport media queries, so it reflows by the size of its container: a change can be fine on the site and broken in a narrow host, and the single-column reflow happens at `chess-stage` ≤ 640px. Attach a representative set of screenshots to the PR.
+
 ## Development Notes
 
 - **ESLint rules** focus on React hooks (dependency arrays) and React Refresh for hot module reloading
 - **TypeScript strict mode** is enabled; all pieces of state have defined types in `store/types.ts`
 - **CSS structure**: Chess components use CSS Modules (`*.module.css`); all theme tokens (`--light-square`, `--accent`, `--text`, `--panel`, `--popover`, `--hover`, `--track`, ...) are defined on `.chessGame` in `ChessBoard.module.css` with dark-scheme values, and `.light` redefines them for light pages (plus green squares). The prop `colorScheme` is only the initial scheme: the sun/moon button in `ChessSettings` switches it. The game never paints a background of its own (always transparent): only the tokens for the board, panels and avatars change. Never hardcode UI colors in component CSS: use a token, or the component becomes unreadable on one of the two backgrounds. Anything that content scrolls under (the move history's sticky header) needs an opaque token (`--header-solid`), not the translucent `--popover`. Site pages use global styles in `apps/web/src/index.css`
 - **Tests**: `npm test` (Vitest) covers the chess logic in `packages/react-chessmaster/src/__tests__/`; verify UI changes manually in the dev server
-- **Persistence (opt-in)**: the `persist` prop saves each board to localStorage under `react-chessmaster:<key>` (see `store/persistence.ts`). Only a minimal snapshot is stored (pieces, hasMoved, turn, history, promotion, layout, game mode/colors/level); everything derived is rebuilt with `markCellsUnderAttack` on restore. When that snapshot changes shape, bump `PERSIST_VERSION` (now 2) and teach `migratePersistedGame` to upgrade the previous version
+- **Persistence (opt-in)**: the `persist` prop saves each board to localStorage under `react-chessmaster:<key>` (see `store/persistence.ts`). Only a minimal snapshot is stored (pieces, hasMoved, turn, history, promotion, layout, game mode/colors/level, undo stack); everything derived is rebuilt with `markCellsUnderAttack` on restore. When that snapshot changes shape, bump `PERSIST_VERSION` (now 3) and teach `migratePersistedGame` to upgrade the previous version — its branches are cumulative (`version <= 1`, then `version <= 2`), so an old save is walked up one version at a time
 - **Build**: `npm run build` runs `tsc -b` — a plain `tsc` checks nothing because the root tsconfig only has project references

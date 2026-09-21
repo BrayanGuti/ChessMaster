@@ -27,6 +27,7 @@ castling, en passant, promotion, check, checkmate and stalemate.
 
 - **Click or drag** — pick a piece to see its moves, or drag it; mouse and touch.
 - **vs Computer** — five levels, choose your color; the board turns around when you play black.
+- **Take it back** — an undo button on the board; against the computer it takes back its reply too.
 - **Your layout** — players, captured pieces, move history and the game panel, each one on demand.
 - **Saved games** — reload the page and pick up where you left off.
 

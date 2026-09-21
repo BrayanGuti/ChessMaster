@@ -45,6 +45,7 @@ function ChessBoardContent({
   colorScheme = 'dark',
   className,
   showSettings = true,
+  showUndo = true,
   showGamePanel = true,
   modes,
   opponent,
@@ -59,6 +60,8 @@ function ChessBoardContent({
   const setSettings = useChessStore((state) => state.setDisplaySettings);
   const gameMode = useChessStore((state) => state.gameMode);
   const playerColor = useChessStore((state) => state.playerColor);
+  const canUndo = useChessStore((state) => state.undoStack.length > 0);
+  const undoMove = useChessStore((state) => state.undoMove);
   const flipped = useBoardFlipped();
   const store = useChessStoreApi();
   const allowedModes = resolveModes(modes);
@@ -161,7 +164,9 @@ function ChessBoardContent({
       style={themeVars}
     >
       <div className={styles.stage}>
-        <div className={layoutClassName}>
+        {/* The settings bar overlaps the top badge's row: how many buttons it has is how much
+            room the badge has to leave free for it */}
+        <div className={layoutClassName} style={{ '--toolbar-buttons': showUndo ? 3 : 2 } as CSSProperties}>
           {playerBadges && (
             <PlayerBadge
               key={topColor}
@@ -178,6 +183,9 @@ function ChessBoardContent({
                 allowGamePanel={showGamePanel}
                 colorScheme={scheme}
                 onColorSchemeChange={setScheme}
+                showUndo={showUndo}
+                canUndo={canUndo}
+                onUndo={undoMove}
               />
             </div>
           )}

@@ -63,6 +63,9 @@ Changes: optimized with SVGO; the inline ones are recolored to `currentColor` so
 | Random | "Random color" option | FortAwesome | Font Awesome Solid Icons | https://www.svgrepo.com/svg/352388/random |
 | Chip AI | The computer's avatar | wishforge.games | Technology And Security Line Vectors | https://www.svgrepo.com/svg/235253/chip-ai |
 
+The undo arrow in `ChessSettings` is not in the table: it was drawn for this package, carries no
+third-party rights, and is covered by the package's own MIT license.
+
 ## Sounds
 
 The move, capture, castling, check and game-over sounds (`src/assets/Sound/`, inlined in

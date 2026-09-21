@@ -145,6 +145,8 @@
   --gap: 12px;
   --badge-h: 40px;
   --toolbar-h: 28px;
+  /* Botones de la barra de ajustes; ChessBoard.tsx lo sube a 3 cuando está el de deshacer */
+  --toolbar-buttons: 2;
   --panel-w: 260px;
   --panel-h: 150px;
   /* Alto aproximado del panel Game (ver GamePanel.module.css) */
@@ -209,7 +211,7 @@
 
 /* Deja libre la esquina de la barra de ajustes (esquema claro/oscuro + engranaje) */
 .withGear .topBadge {
-  padding-right: calc(2 * var(--toolbar-h) + 12px);
+  padding-right: calc(var(--toolbar-buttons) * var(--toolbar-h) + 12px);
 }
 
 .bottomBadge {

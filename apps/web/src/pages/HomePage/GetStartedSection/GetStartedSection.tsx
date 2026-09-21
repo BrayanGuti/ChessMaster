@@ -53,6 +53,7 @@ const PROPS = [
   { command: "showMoveHistory", description: "Move list panel" },
   { command: "showCapturedPieces", description: "Captures and material" },
   { command: "showPlayerBadges", description: "Avatars and names" },
+  { command: "showUndo", description: "Take a move back" },
   { command: "modes", description: "Local, computer or both" },
 ];
 

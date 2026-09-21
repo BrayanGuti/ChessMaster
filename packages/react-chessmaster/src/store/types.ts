@@ -1,4 +1,5 @@
 import { StoreApi } from './createStore'
+import type { PositionSnapshot } from './persistence'
 
 export interface ChessBoardCell {
     piece: string
@@ -44,6 +45,9 @@ export interface ChessBoardState {
     soundToPlay: string | null;
 
     moveHistory: MoveRecord[];
+
+    /** The position before each move played, oldest first: one entry per ply, popped by undoMove */
+    undoStack: PositionSnapshot[];
 
     /** Panels shown around the board; toggled from the settings menu */
     displaySettings: ChessDisplaySettings;
@@ -105,6 +109,12 @@ export interface ChessBoardState {
     makeCoronation: (piece: string) => void;
 
     changeTurn: () => void;
+
+    /**
+     * Takes back the last move. Against the computer it also takes back its reply, so the board
+     * comes back on the player's turn. Does nothing with no move to undo, or while the engine thinks
+     */
+    undoMove: () => void;
 
     resetGame: () => void;
 }
@@ -200,6 +210,11 @@ export interface ChessBoardProps {
    * panels above at runtime. Default: true
    */
   showSettings?: boolean;
+  /**
+   * The undo button in the settings bar, which takes back the last move (and the computer's reply,
+   * so the board comes back on the player's turn). Needs `showSettings`. Default: true
+   */
+  showUndo?: boolean;
   /**
    * The "Game" panel to pick the mode, color and level and start a new game. Default: true.
    * `false` removes it completely (it cannot be turned back on from the settings menu).
