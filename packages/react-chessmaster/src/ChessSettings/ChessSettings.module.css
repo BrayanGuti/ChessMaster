@@ -1,4 +1,4 @@
-/* Barra de ajustes: cambio de esquema claro/oscuro + engranaje */
+/* Barra de ajustes: cambio de esquema claro/oscuro + deshacer + engranaje */
 .settings {
   position: relative;
   display: flex;
@@ -33,6 +33,19 @@
 
 .triggerOpen svg {
   transform: rotate(60deg);
+}
+
+/* Sin jugada que deshacer: el botón sigue visible, pero apagado y sin respuesta al cursor */
+.trigger:disabled {
+  color: var(--text-subtle);
+  opacity: 0.45;
+  cursor: default;
+}
+
+.trigger:disabled:hover {
+  color: var(--text-subtle);
+  background: transparent;
+  border-color: transparent;
 }
 
 .trigger:focus-visible {

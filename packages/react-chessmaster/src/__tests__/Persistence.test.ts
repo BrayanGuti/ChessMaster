@@ -143,6 +143,35 @@ describe('game persistence', () => {
     expect([gameMode, playerColor, colorChoice, opponentLevel]).toEqual(['local', 'W', 'W', 2])
   })
 
+  it('can still take back a move played before the reload', () => {
+    const store = reload()
+    play(store, 'e2', 'e4')
+    play(store, 'e7', 'e5')
+
+    const restored = reload()
+    expect(restored.getState().undoStack).toHaveLength(2)
+    restored.getState().undoMove()
+
+    expect(restored.getState().moveHistory.map(move => move.notation)).toEqual(['e4'])
+    expect(getCellByName(restored.getState().chessBoardpositions, 'e7')!.piece).toBe('BPe7')
+    // And the shorter stack is saved in turn
+    expect(reload().getState().undoStack).toHaveLength(1)
+  })
+
+  it('upgrades a v2 save, whose moves can no longer be taken back', () => {
+    const store = reload()
+    play(store, 'e2', 'e4')
+    const saved = JSON.parse(localStorage.getItem(KEY)!)
+    const { undoStack, ...v2State } = saved.state
+    localStorage.setItem(KEY, JSON.stringify({ state: v2State, version: 2 }))
+
+    const restored = reload()
+    expect(restored.getState().moveHistory.map(move => move.notation)).toEqual(['e4'])
+    expect(restored.getState().undoStack).toEqual([])
+    expect(undoStack).toHaveLength(1)
+    expect(JSON.parse(localStorage.getItem(KEY)!).version).toBe(PERSIST_VERSION)
+  })
+
   it('resetGame saves a fresh game but keeps the layout', () => {
     const store = reload()
     store.getState().setDisplaySettings(previous => ({ ...previous, playerBadges: true }))

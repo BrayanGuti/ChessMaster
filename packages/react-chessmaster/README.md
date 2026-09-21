@@ -21,6 +21,7 @@
 - **Every rule** — castling, en passant, promotion, check, checkmate and stalemate.
 - **Two modes** — two players on one screen, or **vs Computer** with 5 levels, running in a Web Worker so the page never freezes.
 - **Click or drag** — mouse, touch and pen; the board flips when you play black against the computer.
+- **Take a move back** — an undo button in the settings bar; against the computer it takes back its reply too.
 - **Themeable** — square colors, accent, and a `light` / `dark` scheme for any page background.
 - **Saved games** — optional `localStorage` persistence, one save per board.
 - **Just works** — CSS, pieces and sounds included; SSR-safe, ready for Next.js Server Components.
@@ -96,6 +97,14 @@ Players can switch between dark and light with the sun/moon button next to the g
 only recolors the board and the panels: the game never paints a background of its own, so the page
 behind it is yours to style.
 
+## Taking a move back
+
+The settings bar has an undo button between the light/dark switch and the gear. It takes back the
+last move — including castling, en passant and promotions — and against the computer it takes back
+its reply as well, so the board always comes back on the player's turn. It is disabled when there
+is nothing to undo, and greyed out while the engine is thinking. With `persist`, moves played
+before a reload can still be taken back. Remove the button with `showUndo={false}`.
+
 ## Props
 
 | Prop | Type | Default | Description |
@@ -104,7 +113,8 @@ behind it is yours to style.
 | `showCapturedPieces` | `boolean` | `false` | Captured pieces and material |
 | `showPlayerBadges` | `boolean` | `false` | Player avatars and names above and below the board |
 | `showGamePanel` | `boolean` | `true` | Mode / color / level / new game panel. `false` removes it |
-| `showSettings` | `boolean` | `true` | Light/dark switch and gear menu to toggle the panels at runtime |
+| `showSettings` | `boolean` | `true` | Settings bar: light/dark switch, undo button and gear menu to toggle the panels at runtime |
+| `showUndo` | `boolean` | `true` | Undo button in the settings bar. `false` removes it |
 | `modes` | `('local' \| 'computer')[]` | both | Game modes the player can choose |
 | `defaultMode` | `'local' \| 'computer'` | `'computer'` if allowed | Mode of the first game |
 | `opponent` | `{ color?, level?, getMove? }` | `{ color: 'B', level: 2 }` | Computer's color (`'W' \| 'B' \| 'random'`), level `1–5`, custom engine |

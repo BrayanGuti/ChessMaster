@@ -61,6 +61,7 @@ export function GameSection() {
               showMoveHistory
               showCapturedPieces
               showPlayerBadges
+              showUndo
             />
           </div>
         </div>

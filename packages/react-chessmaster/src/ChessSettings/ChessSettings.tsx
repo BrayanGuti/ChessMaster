@@ -44,6 +44,26 @@ function MoonIcon() {
   );
 }
 
+// Drawn for this package (no third-party rights): an arrow curving back over its own start
+function UndoIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M4 5v5h5" />
+      <path d="M5.8 15a7.5 7.5 0 1 0 .7-6.7L4 10.3" />
+    </svg>
+  );
+}
+
 const OPTIONS: Array<{ key: keyof ChessDisplaySettings; label: string; hint: string }> = [
   { key: 'playerBadges', label: 'Players', hint: 'Photos and names' },
   { key: 'capturedPieces', label: 'Captured pieces', hint: 'Material gained' },
@@ -57,6 +77,9 @@ export function ChessSettings({
   allowGamePanel = true,
   colorScheme,
   onColorSchemeChange,
+  showUndo = true,
+  canUndo = false,
+  onUndo,
 }: {
   settings: ChessDisplaySettings;
   onChange: (update: (previous: ChessDisplaySettings) => ChessDisplaySettings) => void;
@@ -64,6 +87,11 @@ export function ChessSettings({
   allowGamePanel?: boolean;
   colorScheme: ColorScheme;
   onColorSchemeChange: (scheme: ColorScheme) => void;
+  /** False when the developer removed the undo button (showUndo={false}) */
+  showUndo?: boolean;
+  /** There is a move to take back: the button is disabled otherwise */
+  canUndo?: boolean;
+  onUndo?: () => void;
 }) {
   const options = allowGamePanel ? OPTIONS : OPTIONS.filter(({ key }) => key !== 'gamePanel');
   const [open, setOpen] = useState(false);
@@ -101,6 +129,7 @@ export function ChessSettings({
 
   const isDark = colorScheme === 'dark';
   const schemeLabel = isDark ? 'Switch to light mode' : 'Switch to dark mode';
+  const undoLabel = canUndo ? 'Undo last move' : 'No move to undo';
 
   return (
     <div ref={rootRef} className={styles.settings}>
@@ -114,6 +143,19 @@ export function ChessSettings({
       >
         {isDark ? <SunIcon /> : <MoonIcon />}
       </button>
+
+      {showUndo && (
+        <button
+          type="button"
+          className={styles.trigger}
+          aria-label={undoLabel}
+          title={undoLabel}
+          disabled={!canUndo}
+          onClick={onUndo}
+        >
+          <UndoIcon />
+        </button>
+      )}
 
       <button
         type="button"

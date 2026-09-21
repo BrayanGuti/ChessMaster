@@ -7,7 +7,7 @@ import { getLegalMoves, getLegalMovesFrom, parseUci } from '../hooks/LegalMoves'
 import { getEnPassantCapturedSquare, getEnPassantTarget } from '../hooks/EnPassant'
 import { toFEN } from '../hooks/Fen'
 import { ChessBoardState, ChessDisplaySettings, ChessStoreApi, ColorChoice, GameConfig, MoveRecord, CheckStatus, PieceColor } from './types'
-import { readSavedGame, restoreGame, writeSavedGame } from './persistence'
+import { readSavedGame, restoreGame, restorePosition, toPositionSnapshot, writeSavedGame } from './persistence'
 
 const INITIAL_CHECK_STATE: CheckStatus = {
   protectors: [],
@@ -91,6 +91,7 @@ function freshGame() {
     coronation: { status: false, coordinates: { col: 0, row: 0 }, cellName: '' },
     soundToPlay: null,
     moveHistory: [],
+    undoStack: [],
     aiThinking: false
   }
 }
@@ -232,6 +233,10 @@ function createGameState(initialDisplaySettings: ChessDisplaySettings, initialGa
 
           const targetCell = chessBoardpositions[destinyCoords.row][destinyCoords.col]
           if (targetCell?.YouCanMoveHere) {
+              // Taken before anything changes, so undo can put this exact position back. A promotion
+              // finished later by makeCoronation is part of the same move, and of this one entry
+              const positionBeforeMove = toPositionSnapshot(get())
+
               // En passant: the captured pawn stands beside the capturing pawn, not on the target square
               const enPassantSquare = getEnPassantCapturedSquare(
                   chessBoardpositions, cellOfPieceSelected.coordinates, destinyCoords, getEnPassantTarget(moveHistory)
@@ -281,7 +286,11 @@ function createGameState(initialDisplaySettings: ChessDisplaySettings, initialGa
               }
               record.notation = buildNotation(cellOfPieceSelected.piece, targetCell.cellName, capturedPiece, gives)
 
-              set({ chessBoardpositions: newChessBoardPositions, cellOfPieceSelected: null })
+              set({
+                  chessBoardpositions: newChessBoardPositions,
+                  cellOfPieceSelected: null,
+                  undoStack: [...get().undoStack, positionBeforeMove]
+              })
               get().addMoveRecord(record)
               get().removeAvailableMoves()
               get().updateCellsUnderAttack()
@@ -292,6 +301,27 @@ function createGameState(initialDisplaySettings: ChessDisplaySettings, initialGa
       changeTurn: () => {
           const { turn } = get()
           set({ turn: turn === 'W' ? 'B' : 'W' })
+      },
+
+      undoMove: () => {
+          const { undoStack, gameMode, playerColor, aiThinking } = get()
+          // While the engine is thinking its answer is still coming; the move count guards it, but
+          // taking back a move the player cannot see yet is confusing
+          if (undoStack.length === 0 || aiThinking) return
+
+          const remaining = [...undoStack]
+          let position = remaining.pop()!
+
+          // Against the computer, stopping on its turn would just let it play again: keep going
+          // back until it is the player's move. Its own mate is the last ply, so this is derived
+          // from the turn rather than always taking back two
+          while (gameMode === 'computer' && position.turn !== playerColor && remaining.length > 0) {
+              position = remaining.pop()!
+          }
+
+          // One set(): every set notifies, and useComputerOpponent reacts to any state where it is
+          // the engine's turn, so it must never observe an intermediate position
+          set({ ...restorePosition(position), undoStack: remaining })
       },
 
       showAvailableMoves: (coordsOfAvailableMoves) => {
