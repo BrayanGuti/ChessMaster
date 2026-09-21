@@ -83,7 +83,7 @@ Do not open a public issue for a vulnerability. Contact the maintainer privately
 
 ## Branches
 
-Create a branch from `main` named `<type>/<short-kebab-description>`, using the same types as commits:
+Create a branch from `master` named `<type>/<short-kebab-description>`, using the same types as commits:
 
 ```
 feat/promotion-sound
