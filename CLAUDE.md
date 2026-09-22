@@ -13,7 +13,6 @@ npm run build     # Type-checks the package, then type-checks and builds the sit
 npm run lint      # ESLint on the whole monorepo
 npm test          # Vitest for the package (watch mode; `npm test -- --run` for a single run)
 npm run preview   # Preview the site's production build
-npm run deploy    # Deploy the site to GitHub Pages
 ```
 
 ## Monorepo Layout
@@ -39,7 +38,7 @@ apps/web/                     # The ChessMaster website: demo + docs, consumes t
 - Own minimal store (`store/createStore.ts`) + `useSyncExternalStore`; no state library
 - React Router DOM (page routing)
 - ESLint + TypeScript ESLint (code quality)
-- Deployed on GitHub Pages and Vercel
+- Deployed on Vercel
 
 ## Architecture
 

@@ -14,8 +14,7 @@
     "preview": "npm run preview -w apps/web",
     "test": "npm test -w packages/react-chessmaster --",
     "test:ui": "npm run test:ui -w packages/react-chessmaster",
-    "test:coverage": "npm run test:coverage -w packages/react-chessmaster",
-    "deploy": "npm run deploy -w apps/web"
+    "test:coverage": "npm run test:coverage -w packages/react-chessmaster"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
