@@ -1,0 +1,32 @@
+version: 2
+
+updates:
+  # One entry for the whole monorepo: the lockfile lives in the root and npm
+  # workspaces are resolved from there, so "/" covers the root, apps/web and
+  # packages/react-chessmaster. Listing the workspace folders separately is
+  # reported to leave the root package-lock.json out of date.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: build
+      include: scope
+    groups:
+      npm-minor-and-patch:
+        update-types: [minor, patch]
+      npm-major:
+        update-types: [major]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+      include: scope
+    groups:
+      actions-minor-and-patch:
+        update-types: [minor, patch]
+      actions-major:
+        update-types: [major]
