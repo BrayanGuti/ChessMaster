@@ -22,6 +22,8 @@
 - **Two modes** — two players on one screen, or **vs Computer** with 5 levels, running in a Web Worker so the page never freezes.
 - **Click or drag** — mouse, touch and pen; the board flips when you play black against the computer.
 - **Take a move back** — an undo button in the settings bar; against the computer it takes back its reply too.
+- **Smooth move animation** — pieces slide to their square, including castling's rook; on by default, off for reduced-motion visitors.
+- **Closable result** — the checkmate/stalemate dialog can be closed to see the final board, and brought back with one click.
 - **Themeable** — square colors, accent, and a `light` / `dark` scheme for any page background.
 - **Saved games** — optional `localStorage` persistence, one save per board.
 - **Just works** — CSS, pieces and sounds included; SSR-safe, ready for Next.js Server Components.
@@ -97,13 +99,29 @@ Players can switch between dark and light with the sun/moon button next to the g
 only recolors the board and the panels: the game never paints a background of its own, so the page
 behind it is yours to style.
 
+## Move animation
+
+Pieces slide to their new square — including the rook when castling — in a fifth of a second or
+so; a piece the player drags there themselves just lands, since they already carried it. It is
+skipped for a new game, a reload, an undo, and for visitors who prefer reduced motion. Turn it off
+with `animateMoves={false}`.
+
 ## Taking a move back
 
-The settings bar has an undo button between the light/dark switch and the gear. It takes back the
-last move — including castling, en passant and promotions — and against the computer it takes back
-its reply as well, so the board always comes back on the player's turn. It is disabled when there
-is nothing to undo, and greyed out while the engine is thinking. With `persist`, moves played
-before a reload can still be taken back. Remove the button with `showUndo={false}`.
+The settings bar has an undo button between the light/dark switch and the gear (`showUndo`, which
+needs `showSettings`). It takes back the last move you made — including castling, en passant and
+promotions — and against the computer it also takes back its reply, so the board comes back on
+your turn. There is nothing to undo until you have actually moved (playing black, that means after
+the computer's opening and your own reply), and the button is greyed out then, and while the
+engine is thinking. With `persist`, moves played before a reload can still be taken back. Remove
+the button with `showUndo={false}`.
+
+## Game over
+
+Checkmate and stalemate open a dialog over the board with the result and a Rematch / New game
+button. It can be closed — with its ✕, Escape, or a click outside it — to see the final position,
+and a trophy button appears in the settings bar to bring it back. Both need `showSettings`: without
+it, the dialog behaves as it always has, with no way to dismiss it.
 
 ## Props
 
@@ -113,8 +131,9 @@ before a reload can still be taken back. Remove the button with `showUndo={false
 | `showCapturedPieces` | `boolean` | `false` | Captured pieces and material |
 | `showPlayerBadges` | `boolean` | `false` | Player avatars and names above and below the board |
 | `showGamePanel` | `boolean` | `true` | Mode / color / level / new game panel. `false` removes it |
-| `showSettings` | `boolean` | `true` | Settings bar: light/dark switch, undo button and gear menu to toggle the panels at runtime |
-| `showUndo` | `boolean` | `true` | Undo button in the settings bar. `false` removes it |
+| `showSettings` | `boolean` | `true` | Settings bar: light/dark switch, undo button, gear menu, and the trophy button that reopens a closed result dialog |
+| `showUndo` | `boolean` | `true` | Undo button in the settings bar. Needs `showSettings`. `false` removes it |
+| `animateMoves` | `boolean` | `true` | Slide pieces to their square when a move is played. `false` makes them jump, like before this existed |
 | `modes` | `('local' \| 'computer')[]` | both | Game modes the player can choose |
 | `defaultMode` | `'local' \| 'computer'` | `'computer'` if allowed | Mode of the first game |
 | `opponent` | `{ color?, level?, getMove? }` | `{ color: 'B', level: 2 }` | Computer's color (`'W' \| 'B' \| 'random'`), level `1–5`, custom engine |

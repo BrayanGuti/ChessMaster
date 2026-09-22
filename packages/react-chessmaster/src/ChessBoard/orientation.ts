@@ -1,7 +1,5 @@
 import { useChessStore } from '../store/useChessStore';
-import type { ChessBoardCell } from '../store/types';
-
-type Coords = ChessBoardCell['coordinates'];
+import type { Coords } from '../store/types';
 
 /**
  * The board is seen from the human's side: flipped when they play black against the computer.

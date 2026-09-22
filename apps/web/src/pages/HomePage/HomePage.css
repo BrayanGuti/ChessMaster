@@ -12,14 +12,19 @@
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Cuando el ChessBoard está en light mode, cambiar todo a light */
-.HomePage-container:has(.chessGame.light) {
+/*
+ * Cuando el ChessBoard está en light mode, cambiar todo a light. El selector va por
+ * [class*="_light_"] y no por ".chessGame.light": CSS Modules le da a cada clase un hash propio
+ * por archivo (p. ej. "_light_ysyu2_31"), así que un selector literal nunca coincide con el DOM
+ * real (mismo motivo por el que GameSection.module.css usa este selector para su propio fondo).
+ */
+.HomePage-container:has([class*="_light_"]) {
   background-color: #ffffff !important;
   color: #1f1b16 !important;
 }
 
-html:has(.chessGame.light),
-html:has(.chessGame.light) body {
+html:has([class*="_light_"]),
+html:has([class*="_light_"]) body {
   background-color: #ffffff !important;
   color: #1f1b16 !important;
 }

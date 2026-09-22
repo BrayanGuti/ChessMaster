@@ -1,9 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { createChessStore, hydrateChessStore } from '../store/createChessStore'
 import { toPersistedGame } from '../store/persistence'
-import { randomEngine } from '../engine/engine'
 import { ChessStoreApi } from '../store/types'
-import { getCellByName } from './fixtures'
+import { getCellByName, randomEngine } from './fixtures'
 
 const KEY = 'react-chessmaster:modes-test'
 

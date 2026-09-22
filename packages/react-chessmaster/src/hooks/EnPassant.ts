@@ -1,6 +1,4 @@
-import { ChessBoardCell, ChessBoardPositions, MoveRecord } from "../store/types"
-
-type Coords = ChessBoardCell['coordinates']
+import { ChessBoardPositions, Coords, MoveRecord } from "../store/types"
 
 /**
  * The square a pawn could capture en passant on right now, or null.

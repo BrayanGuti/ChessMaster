@@ -43,7 +43,7 @@ export function Header() {
           </nav>
           <img
             src="/webicon.png"
-            alt="ChessPro"
+            alt="ChessMaster"
             className="HomePage-Header-mobile-logo"
           />
           <button

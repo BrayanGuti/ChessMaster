@@ -3,22 +3,18 @@ import { startGame } from '../hooks/StartGame'
 import { markCellsUnderAttack } from '../hooks/MarkCellsUnderAttack'
 import { applyGameEnd, hasAnyLegalMove } from '../hooks/CheckMate'
 import { isCastling } from '../hooks/Castling'
+import { boardAfterMove } from '../hooks/BoardAfterMove'
 import { getLegalMoves, getLegalMovesFrom, parseUci } from '../hooks/LegalMoves'
 import { getEnPassantCapturedSquare, getEnPassantTarget } from '../hooks/EnPassant'
 import { toFEN } from '../hooks/Fen'
 import { ChessBoardState, ChessDisplaySettings, ChessStoreApi, ColorChoice, GameConfig, MoveRecord, CheckStatus, PieceColor } from './types'
 import { readSavedGame, restoreGame, restorePosition, toPositionSnapshot, writeSavedGame } from './persistence'
+import { getUndoIndex } from './undo'
 
 const INITIAL_CHECK_STATE: CheckStatus = {
-  protectors: [],
-  blockers: [],
-  allDefenders: [],
-  moves: [],
   isCheckmate: false,
   isStalemate: false,
   check: false,
-  attackers: null,
-  numberOfAttackersIsOne: false,
   colorOfCheck: null
 }
 
@@ -29,7 +25,7 @@ const DEFAULT_DISPLAY_SETTINGS: ChessDisplaySettings = {
   gamePanel: true
 }
 
-export const DEFAULT_GAME_CONFIG: GameConfig = {
+const DEFAULT_GAME_CONFIG: GameConfig = {
   mode: 'local',
   colorChoice: 'W',
   level: 2
@@ -92,7 +88,8 @@ function freshGame() {
     soundToPlay: null,
     moveHistory: [],
     undoStack: [],
-    aiThinking: false
+    aiThinking: false,
+    resultDismissed: false
   }
 }
 
@@ -255,20 +252,7 @@ function createGameState(initialDisplaySettings: ChessDisplaySettings, initialGa
               const updatedBoard = boardWithCastling || chessBoardpositions
               get().isCoronation(destinyCoords)
 
-              const newChessBoardPositions = updatedBoard.map(row =>
-                  row.map(cell => {
-                      if (cell.coordinates.row === destinyCoords.row && cell.coordinates.col === destinyCoords.col) {
-                          return { ...cell, piece: cellOfPieceSelected.piece }
-                      }
-                      if (cell.coordinates.row === cellOfPieceSelected.coordinates.row && cell.coordinates.col === cellOfPieceSelected.coordinates.col) {
-                          return { ...cell, piece: '', hasMoved: true }
-                      }
-                      if (enPassantSquare && cell.coordinates.row === enPassantSquare.row && cell.coordinates.col === enPassantSquare.col) {
-                          return { ...cell, piece: '' }
-                      }
-                      return cell
-                  })
-              )
+              const newChessBoardPositions = boardAfterMove(updatedBoard, cellOfPieceSelected, destinyCoords, enPassantSquare)
 
               const record: MoveRecord = {
                   piece: cellOfPieceSelected.piece,
@@ -304,25 +288,22 @@ function createGameState(initialDisplaySettings: ChessDisplaySettings, initialGa
       },
 
       undoMove: () => {
-          const { undoStack, gameMode, playerColor, aiThinking } = get()
-          // While the engine is thinking its answer is still coming; the move count guards it, but
-          // taking back a move the player cannot see yet is confusing
-          if (undoStack.length === 0 || aiThinking) return
-
-          const remaining = [...undoStack]
-          let position = remaining.pop()!
-
-          // Against the computer, stopping on its turn would just let it play again: keep going
-          // back until it is the player's move. Its own mate is the last ply, so this is derived
-          // from the turn rather than always taking back two
-          while (gameMode === 'computer' && position.turn !== playerColor && remaining.length > 0) {
-              position = remaining.pop()!
-          }
+          const { undoStack } = get()
+          const index = getUndoIndex(get())
+          if (index === null) return
 
           // One set(): every set notifies, and useComputerOpponent reacts to any state where it is
           // the engine's turn, so it must never observe an intermediate position
-          set({ ...restorePosition(position), undoStack: remaining })
+          set({ ...restorePosition(undoStack[index]), undoStack: undoStack.slice(0, index) })
       },
+
+      dismissResult: () => {
+          const { checkState } = get()
+          if (!checkState.isCheckmate && !checkState.isStalemate) return
+          set({ resultDismissed: true })
+      },
+
+      showResult: () => set({ resultDismissed: false }),
 
       showAvailableMoves: (coordsOfAvailableMoves) => {
           const { chessBoardpositions } = get()

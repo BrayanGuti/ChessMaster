@@ -54,6 +54,7 @@ const PROPS = [
   { command: "showCapturedPieces", description: "Captures and material" },
   { command: "showPlayerBadges", description: "Avatars and names" },
   { command: "showUndo", description: "Take a move back" },
+  { command: "animateMoves", description: "Slide pieces, or turn it off" },
   { command: "modes", description: "Local, computer or both" },
 ];
 

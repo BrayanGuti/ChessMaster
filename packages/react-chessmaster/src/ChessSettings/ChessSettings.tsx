@@ -1,5 +1,6 @@
 import styles from './ChessSettings.module.css';
 import { useEffect, useId, useRef, useState } from 'react';
+import type { RefObject } from 'react';
 import type { ChessDisplaySettings } from '../store/types';
 
 type ColorScheme = 'dark' | 'light';
@@ -64,6 +65,17 @@ function UndoIcon() {
   );
 }
 
+// Drawn for this package (no third-party rights), like the undo arrow
+function TrophyIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M7 4h10v4a5 5 0 0 1-10 0z" />
+      <path d="M7 5H4v1a4 4 0 0 0 4 4M17 5h3v1a4 4 0 0 1-4 4" />
+      <path d="M12 13v3m-3 4h6m-6 0c0-2 1-3 3-3s3 1 3 3" />
+    </svg>
+  );
+}
+
 const OPTIONS: Array<{ key: keyof ChessDisplaySettings; label: string; hint: string }> = [
   { key: 'playerBadges', label: 'Players', hint: 'Photos and names' },
   { key: 'capturedPieces', label: 'Captured pieces', hint: 'Material gained' },
@@ -80,6 +92,9 @@ export function ChessSettings({
   showUndo = true,
   canUndo = false,
   onUndo,
+  showResult = false,
+  onShowResult,
+  resultButtonRef,
 }: {
   settings: ChessDisplaySettings;
   onChange: (update: (previous: ChessDisplaySettings) => ChessDisplaySettings) => void;
@@ -92,6 +107,11 @@ export function ChessSettings({
   /** There is a move to take back: the button is disabled otherwise */
   canUndo?: boolean;
   onUndo?: () => void;
+  /** The game just ended: shows the "Show result" button that brings the closed dialog back */
+  showResult?: boolean;
+  onShowResult?: () => void;
+  /** So the dialog can move focus here right after it is closed */
+  resultButtonRef?: RefObject<HTMLButtonElement>;
 }) {
   const options = allowGamePanel ? OPTIONS : OPTIONS.filter(({ key }) => key !== 'gamePanel');
   const [open, setOpen] = useState(false);
@@ -133,6 +153,19 @@ export function ChessSettings({
 
   return (
     <div ref={rootRef} className={styles.settings}>
+      {showResult && (
+        <button
+          ref={resultButtonRef}
+          type="button"
+          className={`${styles.trigger} ${styles.resultTrigger}`}
+          aria-label="Show result"
+          title="Show result"
+          onClick={onShowResult}
+        >
+          <TrophyIcon />
+        </button>
+      )}
+
       {/* Shows the scheme it switches to: a sun in dark mode, a moon in light mode */}
       <button
         type="button"

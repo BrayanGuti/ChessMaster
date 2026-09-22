@@ -100,8 +100,7 @@
   }
 }
 
-.HomePage-HeroSection-hero-title-top,
-.HomePage-HeroSection-hero-title-bottom {
+.HomePage-HeroSection-hero-title-top {
   font-size: clamp(2.8rem, min(11vw, 10vh), 6rem);
   font-weight: 900;
   color: #000000;
@@ -109,16 +108,8 @@
   letter-spacing: -0.04em;
   margin: 0;
   text-transform: uppercase;
-}
-
-.HomePage-HeroSection-hero-title-top {
   text-align: left;
   margin-bottom: clamp(10px, 2vh, 20px);
-}
-
-.HomePage-HeroSection-hero-title-bottom {
-  text-align: right;
-  margin-bottom: 20px;
 }
 
 .HomePage-HeroSection-hero-description {

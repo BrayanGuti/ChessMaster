@@ -24,16 +24,6 @@
   height: 100%;
 }
 
-.HomePage-Header-logo {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #ffffff;
-  letter-spacing: 0.08em;
-  text-decoration: none;
-  font-style: italic;
-  text-transform: uppercase;
-}
-
 .HomePage-Header-nav-desktop {
   display: none;
 }
@@ -141,19 +131,7 @@
   transform: translate(-50%, -50%);
 }
 
-.HomePage-Header-logo-link {
-  color: #ffffff;
-  text-decoration: none;
-  font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: italic;
-  transition: color 0.3s ease;
-  font-style: italic;
-}
-
-.HomePage-Header-link,
-.HomePage-Header-brand {
+.HomePage-Header-link {
   color: #ffffff;
   text-decoration: none;
   font-size: 0.95rem;

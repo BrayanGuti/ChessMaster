@@ -275,6 +275,37 @@
   pointer-events: none;
 }
 
+/*
+ * La pieza recién capturada ya no está en el estado: se dibuja debajo de la que la captura
+ * (que se desliza con z-index 10) hasta que esta llega, y entonces desaparece.
+ */
+.capturedGhost {
+  position: absolute;
+  z-index: 5;
+  width: 12.5%;
+  height: 12.5%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  animation: capturedOut 200ms linear forwards;
+}
+
+.capturedGhost img {
+  width: 90%;
+  height: 90%;
+}
+
+@keyframes capturedOut {
+  0%,
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 .dragGhost {
   position: absolute;
   top: 0;

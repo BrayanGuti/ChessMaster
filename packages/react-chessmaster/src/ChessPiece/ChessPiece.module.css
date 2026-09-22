@@ -7,10 +7,4 @@
     pointer-events: none;
     user-select: none;
     -webkit-user-drag: none;
-    transition: filter 0.3s ease;
-}
-
-/* En light mode, invertir los colores de las piezas para que se vean bien */
-.chessGame.light .chessPiece {
-    filter: invert(0.85) hue-rotate(180deg);
 }

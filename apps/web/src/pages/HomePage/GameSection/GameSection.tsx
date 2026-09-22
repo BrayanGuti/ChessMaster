@@ -8,6 +8,8 @@ import {
   Users,
   Move,
   Maximize2,
+  Sparkles,
+  Undo2,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -41,12 +43,19 @@ const FEATURES: Feature[] = [
     description:
       "Easily customize board square colors, highlights, and light/dark panel schemes to fit your application perfectly.",
   },
+  {
+    icon: Sparkles,
+    title: "Animated Moves",
+    description:
+      "Pieces glide to their square on every move, land instantly when you drop them yourself, and hold still for players who prefer reduced motion.",
+  },
 ];
 
 const FACTS: Fact[] = [
   { icon: Bot, text: "5 AI difficulty levels" },
   { icon: Layers, text: "Move history & persistence" },
   { icon: Users, text: "Two players, same device" },
+  { icon: Undo2, text: "Undo & rematch" },
   { icon: Maximize2, text: "Fits any container" },
 ];
 

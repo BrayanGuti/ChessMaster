@@ -31,9 +31,8 @@ export function createBoard (cells: Array<Array<Pick<ChessBoardCell, 'piece' | '
     /**
     * Each cell has six different values:
     * -First Parameter -> piece: The piece occupying the cell.
-    * -Second Parameter -> YouCanAttackHere/YouCanMoveHere: When you select a piece the other cells 
-    *  indicate that the piece can attack here or move here by this parameter 
-    *  can attack under attack or available to move.
+    * -Second Parameter -> YouCanMoveHere: When you select a piece, the cells it can move to
+    *  (or capture on) are flagged with this parameter.
     * -Third Parameter -> isUnderAttackBy: Indicate which cells(this cell have the same attributes of any cell) 
     *  have a piece thas is attacking the cell.
     * -Fourth Parameter -> Represent if the piece that is in there has make its first move or no.

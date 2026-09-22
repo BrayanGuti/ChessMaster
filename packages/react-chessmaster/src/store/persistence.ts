@@ -4,7 +4,7 @@ import { applyGameEnd } from '../hooks/CheckMate'
 import { getEnPassantTarget } from '../hooks/EnPassant'
 import type { ChessBoardState, ChessDisplaySettings, ColorChoice, GameMode, MoveRecord, OpponentLevel, PieceColor } from './types'
 
-export const STORAGE_PREFIX = 'react-chessmaster:'
+const STORAGE_PREFIX = 'react-chessmaster:'
 
 /**
  * Bump when PersistedGame changes shape and teach migratePersistedGame the previous version.
@@ -25,7 +25,7 @@ export function resolveStorageKey(persist: boolean | string | undefined): string
  * quota must never break a move. Unparseable values are removed and reported as missing.
  * (A parseable but invalid game is rejected by isPersistedGame and overwritten on the next move.)
  */
-export const safeLocalStorage = {
+const safeLocalStorage = {
   getItem: (name: string): string | null => {
     try {
       const raw = window.localStorage.getItem(name)
@@ -128,7 +128,7 @@ export function toPersistedGame(state: ChessBoardState): PersistedGame {
  * Upgrades a save written by an older version to the current shape. The result is still
  * validated by isPersistedGame, so an unknown version simply yields something invalid.
  */
-export function migratePersistedGame(persisted: unknown, version: number): unknown {
+function migratePersistedGame(persisted: unknown, version: number): unknown {
   if (version < 1 || version > PERSIST_VERSION || !isObject(persisted)) return persisted
 
   let game = persisted
@@ -189,7 +189,7 @@ function isPositionSnapshot(value: unknown): value is PositionSnapshot {
 }
 
 /** Rejects anything that could not have been written by toPersistedGame (edited or corrupted storage). */
-export function isPersistedGame(value: unknown): value is PersistedGame {
+function isPersistedGame(value: unknown): value is PersistedGame {
   if (!isObject(value)) return false
   const { displaySettings, gameMode, playerColor, colorChoice, opponentLevel, undoStack } = value
 
@@ -229,6 +229,8 @@ export function restorePosition(saved: PositionSnapshot): Partial<ChessBoardStat
     cellOfPieceSelected: null,
     soundToPlay: null,
     aiThinking: false,
+    // A dismissed dialog for a mate/stalemate being undone away is shown again on reload too
+    resultDismissed: false,
   }
 }
 

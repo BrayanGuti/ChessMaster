@@ -1,4 +1,11 @@
 import { ChessBoardPositions, ChessBoardCell } from '../store/types'
+import type { ChessEngine } from '../engine/engine'
+
+/** Plays a random legal move, ignoring the level (fast self-play). */
+export const randomEngine: ChessEngine = async ({ legalMoves }) => {
+  if (legalMoves.length === 0) throw new Error('No legal moves to choose from')
+  return legalMoves[Math.floor(Math.random() * legalMoves.length)]
+}
 
 /**
  * Helper to build chess board from piece array notation.
