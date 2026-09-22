@@ -1,13 +1,11 @@
 import { useCallback, useRef, useState } from 'react';
 import type { PointerEvent as ReactPointerEvent, RefObject } from 'react';
 import { useChessStoreApi } from '../store/useChessStore';
-import type { ChessBoardCell } from '../store/types';
+import type { Coords } from '../store/types';
 import { toDisplay } from './orientation';
 
 // Distance (px) the pointer must travel before a press becomes a drag
 const DRAG_THRESHOLD = 4;
-
-type Coords = ChessBoardCell['coordinates'];
 
 interface DragSession {
   pointerId: number;
@@ -31,10 +29,12 @@ export interface DragState {
  * - Releasing on a legal square moves; anywhere else snaps back and keeps the selection.
  * - A plain click keeps the classic click-to-select / click-to-move behaviour.
  *
+ * `onDropMove` is called right before a dropped piece is moved.
+ *
  * Uses Pointer Events (mouse, touch and pen) with delegation on the board element,
  * and moves the ghost piece through its style so dragging never re-renders React.
  */
-export function useBoardDrag(boardRef: RefObject<HTMLElement>, flipped = false) {
+export function useBoardDrag(boardRef: RefObject<HTMLElement>, flipped = false, onDropMove?: () => void) {
   const store = useChessStoreApi();
   const sessionRef = useRef<DragSession | null>(null);
   const ghostElementRef = useRef<HTMLElement | null>(null);
@@ -176,10 +176,12 @@ export function useBoardDrag(boardRef: RefObject<HTMLElement>, flipped = false) 
       if (!target) return;
       const targetCell = state.chessBoardpositions[target.row][target.col];
       if (targetCell.YouCanMoveHere) {
+        // The piece is already where the player carried it: it must not slide in from its origin
+        onDropMove?.();
         state.movePiece(target);
       }
     },
-    [cellFromPoint, endSession, store]
+    [cellFromPoint, endSession, onDropMove, store]
   );
 
   return {

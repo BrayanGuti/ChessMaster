@@ -14,9 +14,3 @@ export interface EngineRequest {
  * `opponent.getMove` (wrapped in useComputerOpponent).
  */
 export type ChessEngine = (request: EngineRequest) => Promise<string>
-
-/** Plays a random legal move, ignoring the level. Only used by tests (fast self-play). */
-export const randomEngine: ChessEngine = async ({ legalMoves }) => {
-  if (legalMoves.length === 0) throw new Error('No legal moves to choose from')
-  return legalMoves[Math.floor(Math.random() * legalMoves.length)]
-}

@@ -53,6 +53,26 @@
   outline-offset: 2px;
 }
 
+.resultTrigger {
+  color: var(--accent);
+  animation: resultIn 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+
+.resultTrigger:hover {
+  color: var(--accent);
+}
+
+@keyframes resultIn {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .menu {
   position: absolute;
   top: calc(100% + 8px);
@@ -187,7 +207,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .menu {
+  .menu,
+  .resultTrigger {
     animation: none;
   }
 

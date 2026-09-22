@@ -10,14 +10,10 @@ const DEFAULT_LABELS: Record<"W" | "B", string> = {
 
 export function PlayerBadge({
   color,
-  label,
-  avatar,
   showCapturedPieces = false,
   className,
 }: {
   color: "W" | "B";
-  label?: string;
-  avatar?: string;
   showCapturedPieces?: boolean;
   className?: string;
 }) {
@@ -32,7 +28,7 @@ export function PlayerBadge({
   const isActive = turn === color && !isGameOver;
   const isComputer = gameMode === "computer" && color !== playerColor;
 
-  const defaultLabel =
+  const label =
     gameMode !== "computer"
       ? DEFAULT_LABELS[color]
       : isComputer
@@ -52,7 +48,7 @@ export function PlayerBadge({
     <div className={classNames} aria-current={isActive ? "true" : undefined}>
       <div className={styles.avatarFrame}>
         <img
-          src={avatar || (isComputer ? COMPUTER_AVATAR : PLAYER_AVATARS[color])}
+          src={isComputer ? COMPUTER_AVATAR : PLAYER_AVATARS[color]}
           alt=""
           className={styles.avatar}
           draggable={false}
@@ -61,7 +57,7 @@ export function PlayerBadge({
 
       <div className={styles.info}>
         <div className={styles.nameRow}>
-          <span className={styles.label}>{label || defaultLabel}</span>
+          <span className={styles.label}>{label}</span>
           {isComputer && aiThinking && (
             <span className={styles.thinking} role="status" aria-label="Computer is thinking">
               <span />

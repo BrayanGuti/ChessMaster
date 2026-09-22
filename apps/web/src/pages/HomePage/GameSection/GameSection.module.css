@@ -92,26 +92,6 @@
   min-width: 0;
 }
 
-.label {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: clamp(12px, 2vh, 20px);
-  padding: 7px 17px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 50px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--grey);
-}
-
-.labelIcon {
-  width: 15px;
-  height: 15px;
-}
-
 .title {
   margin: 0 0 clamp(12px, 2.2vh, 22px);
   font-size: clamp(2.6rem, min(5vw, 9vh), 5.5rem);
@@ -275,11 +255,6 @@
 
 /* Portátiles y pantallas bajas: compacta el texto para que quepa junto al tablero */
 @media (min-width: 1200px) and (max-height: 860px) {
-  .label {
-    margin-bottom: 10px;
-    padding: 5px 14px;
-  }
-
   .title {
     font-size: clamp(2.2rem, min(3.6vw, 6.5vh), 4rem);
   }

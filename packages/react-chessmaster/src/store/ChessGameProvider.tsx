@@ -1,11 +1,9 @@
-import { createContext, useEffect, useLayoutEffect, useRef, useState, ReactNode } from 'react'
+import { createContext, useEffect, useRef, useState, ReactNode } from 'react'
 import { createChessStore, hydrateChessStore, resolveColorChoice } from './createChessStore'
 import { ChessDisplaySettings, ChessStoreApi, GameConfig } from './types'
+import { useIsomorphicLayoutEffect } from '../hooks/useIsomorphicLayoutEffect'
 
 export const ChessStoreContext = createContext<ChessStoreApi | null>(null)
-
-// useLayoutEffect warns during server rendering; on the server nothing runs anyway
-const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 // How many mounted boards use each storage key, to warn about boards overwriting each other
 const mountedStorageKeys = new Map<string, number>()

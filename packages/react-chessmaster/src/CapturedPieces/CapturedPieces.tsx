@@ -36,11 +36,9 @@ function materialOf(captured: Captured): number {
 export function CapturedPieces({
   color,
   variant = "panel",
-  className,
 }: {
   color: "W" | "B";
   variant?: "panel" | "inline";
-  className?: string;
 }) {
   const moveHistory = useChessStore((state) => state.moveHistory);
   const allCaptured = deriveCapturedPieces(moveHistory);
@@ -57,7 +55,7 @@ export function CapturedPieces({
 
   return (
     <div
-      className={`${styles.capturedPieces} ${isInline ? styles.inline : styles.panel}${className ? ` ${className}` : ""}`}
+      className={`${styles.capturedPieces} ${isInline ? styles.inline : styles.panel}`}
       data-opponent={opponentColor}
     >
       {groups.map(({ type, count }) => (

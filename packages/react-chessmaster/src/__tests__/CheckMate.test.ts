@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { isCheckmate, hasAnyLegalMove } from '../hooks/CheckMate'
+import { applyGameEnd, hasAnyLegalMove } from '../hooks/CheckMate'
 import { markCellsUnderAttack } from '../hooks/MarkCellsUnderAttack'
 import { startingPosition, buildBoard } from './fixtures'
 
@@ -72,72 +72,17 @@ function positionWithCheckButKingCanEscape() {
 }
 
 describe('CheckMate — Check and Checkmate detection', () => {
-  it('starting position is not checkmate', () => {
-    const board = startingPosition()
-    const status = isCheckmate(board, false)
-    expect(status.isCheckmate).toBe(false)
-    expect(status.check).toBe(false)
+  it('the starting position is neither check, mate nor stalemate', () => {
+    const { checkState } = markCellsUnderAttack(startingPosition())
+    expect(checkState).toEqual({ isCheckmate: false, isStalemate: false, check: false, colorOfCheck: null })
   })
 
-  it('starting position has no attackers', () => {
-    const board = startingPosition()
-    const status = isCheckmate(board, false)
-    expect(status.attackers).toBeNull()
-  })
-
-  it('checkStatus object has required properties', () => {
-    const board = startingPosition()
-    const status = isCheckmate(board, false)
-    expect(status).toHaveProperty('isCheckmate')
-    expect(status).toHaveProperty('check')
-    expect(status).toHaveProperty('attackers')
-    expect(status).toHaveProperty('colorOfCheck')
-  })
-
-  it('isCheckmate returns boolean for check property', () => {
-    const board = startingPosition()
-    const status = isCheckmate(board, false)
-    expect(typeof status.check).toBe('boolean')
-  })
-
-  it('isCheckmate returns boolean for isCheckmate property', () => {
-    const board = startingPosition()
-    const status = isCheckmate(board, false)
-    expect(typeof status.isCheckmate).toBe('boolean')
-  })
-
-  it('deep looking mode parameter does not throw error', () => {
-    const board = startingPosition()
-    expect(() => {
-      isCheckmate(board, false)
-      isCheckmate(board, true)
-    }).not.toThrow()
-  })
-
-  it('protectors and blockers are arrays', () => {
-    const board = startingPosition()
-    const status = isCheckmate(board, false)
-    expect(Array.isArray(status.protectors)).toBe(true)
-    expect(Array.isArray(status.blockers)).toBe(true)
-    expect(Array.isArray(status.allDefenders)).toBe(true)
-  })
-
-  it('moves array is included in checkStatus', () => {
-    const board = startingPosition()
-    const status = isCheckmate(board, false)
-    expect(Array.isArray(status.moves)).toBe(true)
-  })
-
-  it('colorOfCheck is null in starting position', () => {
-    const board = startingPosition()
-    const status = isCheckmate(board, false)
-    expect(status.colorOfCheck).toBeNull()
-  })
-
-  it('numberOfAttackersIsOne is boolean', () => {
-    const board = startingPosition()
-    const status = isCheckmate(board, false)
-    expect(typeof status.numberOfAttackersIsOne).toBe('boolean')
+  it('markCellsUnderAttack only reports the check: mate and stalemate wait for applyGameEnd', () => {
+    const { checkState } = markCellsUnderAttack(positionWithBackRankMate())
+    expect(checkState.check).toBe(true)
+    expect(checkState.colorOfCheck).toBe('W')
+    expect(checkState.isCheckmate).toBe(false)
+    expect(checkState.isStalemate).toBe(false)
   })
 
   it('hasAnyLegalMove is true for black in the starting position', () => {
@@ -151,22 +96,40 @@ describe('CheckMate — Check and Checkmate detection', () => {
     expect(hasAnyLegalMove(newBoard, 'B')).toBe(false)
   })
 
-  it('protectors include a piece that can capture the checking piece', () => {
-    const { checkState } = markCellsUnderAttack(positionWhereKnightCanCaptureChecker())
+  it('reports a stalemate when the side to move has no legal move and is not in check', () => {
+    const { newBoard, checkState } = markCellsUnderAttack(positionWithGenuineStalemate())
+    applyGameEnd(newBoard, checkState, 'B', null, false)
+    expect(checkState.isStalemate).toBe(true)
+    expect(checkState.isCheckmate).toBe(false)
+  })
+
+  it('does not report checkmate when a piece can capture the checking piece', () => {
+    const { newBoard, checkState } = markCellsUnderAttack(positionWhereKnightCanCaptureChecker())
     expect(checkState.check).toBe(true)
-    expect(checkState.protectors.map(p => p.attacker.piece)).toContain('BNc6')
-    expect(checkState.allDefenders.map(d => d.protector.piece)).toContain('BNc6')
+    expect(hasAnyLegalMove(newBoard, 'B')).toBe(true) // Nc6xb4
+    applyGameEnd(newBoard, checkState, 'B', null, false)
+    expect(checkState.isCheckmate).toBe(false)
   })
 
   it('detects a real back-rank checkmate (king boxed in by its own pawns)', () => {
-    const { checkState } = markCellsUnderAttack(positionWithBackRankMate())
+    const { newBoard, checkState } = markCellsUnderAttack(positionWithBackRankMate())
     expect(checkState.check).toBe(true)
+    applyGameEnd(newBoard, checkState, 'W', null, false)
     expect(checkState.isCheckmate).toBe(true)
+    expect(checkState.colorOfCheck).toBe('W') // the loser
   })
 
   it('does not report checkmate when the king has a safe escape square', () => {
-    const { checkState } = markCellsUnderAttack(positionWithCheckButKingCanEscape())
+    const { newBoard, checkState } = markCellsUnderAttack(positionWithCheckButKingCanEscape())
     expect(checkState.check).toBe(true)
+    applyGameEnd(newBoard, checkState, 'W', null, false)
     expect(checkState.isCheckmate).toBe(false)
+  })
+
+  it('waits while a promotion is pending: the position is not final yet', () => {
+    const { newBoard, checkState } = markCellsUnderAttack(positionWithBackRankMate())
+    applyGameEnd(newBoard, checkState, 'W', null, true)
+    expect(checkState.isCheckmate).toBe(false)
+    expect(checkState.isStalemate).toBe(false)
   })
 })

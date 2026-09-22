@@ -14,6 +14,7 @@
 }
 
 .panel {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -32,6 +33,34 @@
   box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.9);
   text-align: center;
   animation: panelIn 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-subtle);
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.close:hover {
+  color: var(--text, #f3efe6);
+  background: var(--control);
+  border-color: var(--border-strong);
+}
+
+.close:focus-visible {
+  outline: 2px solid var(--accent, #d6ae6b);
+  outline-offset: 2px;
 }
 
 .title {

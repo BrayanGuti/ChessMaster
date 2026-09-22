@@ -1,19 +1,44 @@
 import { calculateFuturesMoves } from './CalculateMoves'
-import { isCheckmate } from './CheckMate'
 import { ChessBoardCell, ChessBoardPositions, CheckStatus } from "../store/types"
 
 type PiecesAndMovesList = Array<[ChessBoardCell, Array<{ row: number, col: number }>]>
 
-export function markCellsUnderAttack(newBoard: ChessBoardPositions, deepLooking = false): {newBoard: ChessBoardPositions, checkState: CheckStatus} {
+/**
+ * Marks which pieces attack each square and reports whether a king is in check. Checkmate and
+ * stalemate are not decided here (the returned status has both false): that takes the legal
+ * move rule, which applyGameEnd (CheckMate.ts) applies.
+ */
+export function markCellsUnderAttack(newBoard: ChessBoardPositions): {newBoard: ChessBoardPositions, checkState: CheckStatus} {
 
-  const boardCleared = clearIsUnderAttackByAtribute(newBoard)
-  const allPosibleMoves = calculateMovesForAllPieces(boardCleared)
-  const boardUpdated = updateIsUnderAttackByAtribute(boardCleared, allPosibleMoves)
+  const boardCleared = clearIsUnderAttackByAttribute(newBoard)
+  const allPossibleMoves = calculateMovesForAllPieces(boardCleared)
+  const boardUpdated = updateIsUnderAttackByAttribute(boardCleared, allPossibleMoves)
 
-  return {newBoard: boardUpdated, checkState: isCheckmate(boardUpdated, deepLooking)}
+  return {newBoard: boardUpdated, checkState: checkStatusOf(boardUpdated)}
 }
 
-function clearIsUnderAttackByAtribute(newBoard: ChessBoardPositions){
+function checkStatusOf(board: ChessBoardPositions): CheckStatus {
+  const kingInCheck = getKingInCheck(board)
+  return {
+    isCheckmate: false,
+    isStalemate: false,
+    check: kingInCheck !== null,
+    colorOfCheck: kingInCheck ? kingInCheck.piece[0] : null
+  }
+}
+
+function getKingInCheck(board: ChessBoardPositions): ChessBoardCell | null {
+  for (const row of board) {
+    for (const cell of row) {
+      if (cell.piece[1] === 'K' && cell.isUnderAttackBy.some(attacker => attacker.piece[0] !== cell.piece[0])) {
+        return cell
+      }
+    }
+  }
+  return null
+}
+
+function clearIsUnderAttackByAttribute(newBoard: ChessBoardPositions){
   return newBoard.map((row) =>
     row.map((cell) => ({
       ...cell,
@@ -36,9 +61,9 @@ function calculateMovesForAllPieces(board: ChessBoardPositions): PiecesAndMovesL
   }, [] as Array<[ChessBoardCell, Array<{ row: number, col: number }>]>)
 }
 
-function updateIsUnderAttackByAtribute(board: ChessBoardPositions, allPosibleMoves: PiecesAndMovesList) {
+function updateIsUnderAttackByAttribute(board: ChessBoardPositions, allPossibleMoves: PiecesAndMovesList) {
   const updatedBoard = structuredClone(board)
-  allPosibleMoves.forEach(([piece, cells]) => {
+  allPossibleMoves.forEach(([piece, cells]) => {
     cells.forEach(({ row, col }) => {
       updatedBoard[row][col].isUnderAttackBy.push(piece)
     })

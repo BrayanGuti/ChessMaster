@@ -1,11 +1,9 @@
 import { calculateAvailableMoves } from "./CalculateMoves"
 import { wouldLeaveKingInCheck } from "./CheckMate"
 import { getEnPassantCapturedSquare } from "./EnPassant"
-import { ChessBoardCell, ChessBoardPositions } from "../store/types"
+import { ChessBoardCell, ChessBoardPositions, Coords } from "../store/types"
 
 export type PromotionPiece = 'q' | 'r' | 'b' | 'n'
-
-type Coords = ChessBoardCell['coordinates']
 
 export interface LegalMove {
   from: Coords

@@ -18,16 +18,14 @@ export interface ChessBoardCell {
     coordinates: { col: number, row: number }
 }
 
+/** A square as board coordinates (row 0 = rank 8, col 0 = file a) */
+export type Coords = ChessBoardCell['coordinates']
+
 export type CheckStatus = {
-  protectors: Array<{attacker: ChessBoardCell, cellToAttack: ChessBoardCell[]}>,
-  blockers: Array<{blocker: ChessBoardCell, cellToDefend: ChessBoardCell[]}>,
-  allDefenders: Array<{protector: ChessBoardCell, cellToProtect: ChessBoardCell[]}>,
-  moves: Array<{ row: number, col: number }>,
   isCheckmate: boolean,
   isStalemate: boolean,
   check: boolean,
-  attackers: {path: ChessBoardCell[], attackerCell: ChessBoardCell} | null,
-  numberOfAttackersIsOne: boolean,
+  /** Color of the king in check; the loser when isCheckmate */
   colorOfCheck: string | null
 }
 
@@ -70,6 +68,13 @@ export interface ChessBoardState {
     /** The engine is computing its move (not persisted) */
     aiThinking: boolean;
 
+    /**
+     * The game-over dialog was closed to see the final board; dismissResult/showResult toggle it.
+     * Reset to false (dialog shown again) by resetGame, startGame and restorePosition (undo and
+     * reload). Not persisted: a reload always shows a finished game's result again.
+     */
+    resultDismissed: boolean;
+
     setDisplaySettings: (update: (previous: ChessDisplaySettings) => ChessDisplaySettings) => void;
 
     /** Starts a new game with this configuration; the previous game is discarded */
@@ -111,10 +116,18 @@ export interface ChessBoardState {
     changeTurn: () => void;
 
     /**
-     * Takes back the last move. Against the computer it also takes back its reply, so the board
-     * comes back on the player's turn. Does nothing with no move to undo, or while the engine thinks
+     * Takes back the player's last move. Against the computer it also takes back its reply, so the
+     * board comes back on the player's turn. Does nothing while the engine thinks, or when there is
+     * nothing of the player's to take back yet (e.g. playing black before the player's own first
+     * reply). Does not fire `onMove` or `onReset`
      */
     undoMove: () => void;
+
+    /** Hides the game-over dialog while keeping the result on the board. No-op mid-game */
+    dismissResult: () => void;
+
+    /** Shows the game-over dialog again after it was dismissed */
+    showResult: () => void;
 
     resetGame: () => void;
 }
@@ -206,8 +219,11 @@ export interface ChessBoardProps {
   showCapturedPieces?: boolean;
   showPlayerBadges?: boolean;
   /**
-   * Shows the settings bar: a light/dark switch and the gear menu that lets the player toggle the
-   * panels above at runtime. Default: true
+   * Shows the settings bar: a light/dark switch, the gear menu that lets the player toggle the
+   * panels above at runtime, the undo button (`showUndo`), and, once the game is over, a trophy
+   * button that reopens the checkmate/stalemate dialog after it is closed. Without this bar
+   * neither the dialog's close button nor the trophy exist, so it stays open like it always did.
+   * Default: true
    */
   showSettings?: boolean;
   /**
@@ -220,6 +236,12 @@ export interface ChessBoardProps {
    * `false` removes it completely (it cannot be turned back on from the settings menu).
    */
   showGamePanel?: boolean;
+  /**
+   * Pieces slide to their new square when a move is played (click, computer, castling). A piece
+   * the player drags does not: it is already there. Never animated for visitors who prefer
+   * reduced motion. Default: true
+   */
+  animateMoves?: boolean;
   /** Game modes the player can choose from. Default: both ('computer' first). With one mode the selector is hidden */
   modes?: GameMode[];
   /** Mode of the first game. Default: 'computer' if allowed, otherwise 'local' */

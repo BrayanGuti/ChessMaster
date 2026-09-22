@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { createChessStore } from '../store/createChessStore'
 import { markCellsUnderAttack } from '../hooks/MarkCellsUnderAttack'
 import { ChessStoreApi } from '../store/types'
+import { canUndoMove } from '../store/undo'
 import { buildBoard, getCellByName } from './fixtures'
 
 /** Store with a custom position and white to move. */
@@ -172,14 +173,69 @@ describe('undo', () => {
     expect(store.getState().moveHistory.map(move => move.notation)).toEqual(['e4', 'e5'])
   })
 
-  it('does nothing while the engine is thinking', () => {
+  it('does nothing while the engine is thinking, and the button says so', () => {
     const store = createChessStore({ initialGameConfig: { mode: 'computer', colorChoice: 'W', level: 2 } })
     play(store, 'e2e4')
-    store.getState().setAiThinking(true)
+    expect(canUndoMove(store.getState())).toBe(true)
 
+    store.getState().setAiThinking(true)
+    expect(canUndoMove(store.getState())).toBe(false)
     store.getState().undoMove()
 
     expect(store.getState().moveHistory).toHaveLength(1)
+  })
+
+  // The player has black and the computer opened: its move is the only entry, and it is not
+  // something the player made. Undoing it would just restore the start and let it open again
+  // (differently, below the top level)
+  it('has nothing to take back when only the computer has moved', () => {
+    const store = createChessStore({ initialGameConfig: { mode: 'computer', colorChoice: 'B', level: 2 } })
+    play(store, 'e2e4')
+    expect(canUndoMove(store.getState())).toBe(false)
+
+    store.getState().undoMove()
+
+    expect(store.getState().moveHistory.map(move => move.notation)).toEqual(['e4'])
+    expect(pieceAt(store, 'e4')).toBe('WPe2')
+  })
+
+  it('takes back the black player\'s move but keeps the computer opening', () => {
+    const store = createChessStore({ initialGameConfig: { mode: 'computer', colorChoice: 'B', level: 2 } })
+    play(store, 'e2e4', 'e7e5')
+    expect(canUndoMove(store.getState())).toBe(true)
+
+    store.getState().undoMove()
+
+    const state = store.getState()
+    expect(state.turn).toBe('B')
+    expect(state.moveHistory.map(move => move.notation)).toEqual(['e4'])
+    expect(canUndoMove(state)).toBe(false)
+  })
+
+  // The undo button lives outside the board, so a pending promotion does not block it: it
+  // cancels the promotion and gives the pawn back
+  it('cancels a promotion that is still waiting for its piece', () => {
+    const store = storeWithPosition([
+      ['', '', '', '', '', '', '', ''],
+      ['', 'WP', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', 'WK', '', ''],
+      ['', '', '', '', '', '', '', 'BK'],
+    ])
+    store.getState().clickCell(getCellByName(store.getState().chessBoardpositions, 'b7')!)
+    store.getState().clickCell(getCellByName(store.getState().chessBoardpositions, 'b8')!)
+    expect(store.getState().coronation.status).toBe(true)
+    expect(canUndoMove(store.getState())).toBe(true)
+
+    store.getState().undoMove()
+
+    expect(store.getState().coronation.status).toBe(false)
+    expect(pieceAt(store, 'b7')).toBe('WPb7')
+    expect(pieceAt(store, 'b8')).toBe('')
+    expect(store.getState().turn).toBe('W')
   })
 
   it('a new game leaves nothing to undo', () => {

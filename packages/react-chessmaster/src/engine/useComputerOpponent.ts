@@ -4,7 +4,7 @@ import type { ChessEngine } from './engine'
 import { jsChessEngine } from './jsChessEngine'
 
 /** Minimum time the computer "thinks", so its reply never lands instantly after the player's move */
-export const MIN_THINKING_MS = 500
+const MIN_THINKING_MS = 500
 
 /**
  * Plays the computer's moves in 'computer' mode. Runs whenever it becomes the engine's turn,

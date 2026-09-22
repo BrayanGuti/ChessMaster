@@ -2,7 +2,7 @@ import "./CreatorSection.css";
 import { ArrowUpRight, Github, Inbox, Linkedin } from "lucide-react";
 
 const SIDE_NAV = ["Developer", "Strategy", "Logic", "Chess"];
-const STACK = ["React", "TypeScript", "Zustand", "Vite"];
+const STACK = ["React", "TypeScript", "Vite"];
 
 // TODO: reemplazar por la URL real del portafolio
 const PORTFOLIO_URL = "#";

@@ -140,7 +140,8 @@ refactor(store): extract move recording out of movePiece
 
 ## Pull request title
 
-The PR title becomes the squash-merge commit, so it must follow the same Conventional Commits format:
+GitHub suggests the PR title as the squash-merge commit message, so it should follow the same
+Conventional Commits format even if the PR itself is merged another way:
 
 ```
 <type>(<optional scope>): <short summary>

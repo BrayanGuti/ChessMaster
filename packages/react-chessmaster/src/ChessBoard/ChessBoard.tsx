@@ -13,6 +13,7 @@ import { useComputerOpponent } from '../engine/useComputerOpponent';
 import { useRef, useEffect, useState, CSSProperties } from 'react';
 import { SOUND_ASSETS } from '../assets/sounds';
 import { resolveStorageKey } from '../store/persistence';
+import { canUndoMove } from '../store/undo';
 import type { ChessBoardProps, ColorChoice, GameConfig, GameMode } from '../store/types';
 
 // Also the order of the Game panel's mode switch; the first one is the default mode
@@ -47,6 +48,7 @@ function ChessBoardContent({
   showSettings = true,
   showUndo = true,
   showGamePanel = true,
+  animateMoves = true,
   modes,
   opponent,
   onMove,
@@ -60,11 +62,26 @@ function ChessBoardContent({
   const setSettings = useChessStore((state) => state.setDisplaySettings);
   const gameMode = useChessStore((state) => state.gameMode);
   const playerColor = useChessStore((state) => state.playerColor);
-  const canUndo = useChessStore((state) => state.undoStack.length > 0);
+  const canUndo = useChessStore(canUndoMove);
   const undoMove = useChessStore((state) => state.undoMove);
+  const resultDismissed = useChessStore((state) => state.resultDismissed);
+  const showResult = useChessStore((state) => state.showResult);
   const flipped = useBoardFlipped();
   const store = useChessStoreApi();
   const allowedModes = resolveModes(modes);
+
+  const isGameOver = checkState.isCheckmate || checkState.isStalemate;
+  // The Show result button (and the space it reserves) needs the settings bar: it is the only
+  // way back once the dialog is closed, so without it the dialog just stays put (see GameOverModal)
+  const canShowResult = isGameOver && showSettings;
+
+  const resultButtonRef = useRef<HTMLButtonElement>(null);
+  const wasResultDismissed = useRef(resultDismissed);
+  useEffect(() => {
+    // Closing moves focus here, since the close button that had it just left the document
+    if (!wasResultDismissed.current && resultDismissed) resultButtonRef.current?.focus();
+    wasResultDismissed.current = resultDismissed;
+  }, [resultDismissed]);
 
   // The prop is the initial scheme; the player can switch it from the settings bar
   const [scheme, setScheme] = useState(colorScheme);
@@ -93,7 +110,6 @@ function ChessBoardContent({
 
   const wasGameOver = useRef<boolean | null>(null);
   useEffect(() => {
-    const isGameOver = checkState.isCheckmate || checkState.isStalemate;
     const previous = wasGameOver.current;
     wasGameOver.current = isGameOver;
     if (previous !== false || !isGameOver || !onGameEnd) return;
@@ -166,7 +182,10 @@ function ChessBoardContent({
       <div className={styles.stage}>
         {/* The settings bar overlaps the top badge's row: how many buttons it has is how much
             room the badge has to leave free for it */}
-        <div className={layoutClassName} style={{ '--toolbar-buttons': showUndo ? 3 : 2 } as CSSProperties}>
+        <div
+          className={layoutClassName}
+          style={{ '--toolbar-buttons': 2 + (showUndo ? 1 : 0) + (canShowResult ? 1 : 0) } as CSSProperties}
+        >
           {playerBadges && (
             <PlayerBadge
               key={topColor}
@@ -186,10 +205,15 @@ function ChessBoardContent({
                 showUndo={showUndo}
                 canUndo={canUndo}
                 onUndo={undoMove}
+                showResult={canShowResult}
+                onShowResult={showResult}
+                resultButtonRef={resultButtonRef}
               />
             </div>
           )}
-          <div className={styles.boardArea}><Board /></div>
+          <div className={styles.boardArea}>
+            <Board animateMoves={animateMoves} resultClosable={showSettings} />
+          </div>
           {hasSidePanel && (
             <aside className={styles.sidePanel}>
               {capturedInPanel && <CapturedPieces color={topColor} />}
