@@ -1,0 +1,40 @@
+name: CI
+
+# No `paths:` filters on purpose: the job below is a required status check, and a
+# required check that never runs blocks the pull request forever.
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    # Do not rename: this exact name is the required status check of the
+    # `protect-master` ruleset (see "CI and GitHub configuration" in CLAUDE.md).
+    name: Lint, test and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      # Node 24: js-chess-engine declares engines.node ">=24" and jsdom 30 needs
+      # ^22.22.2 || ^24.15.0 || >=26, so 24 is the one line that satisfies both.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test -- --run
+      # `build` type-checks the package and builds the site only; the library
+      # build (dist/) has its own script.
+      - run: npm run build
+      - run: npm run build:package
