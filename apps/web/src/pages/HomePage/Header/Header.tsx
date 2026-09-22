@@ -6,6 +6,7 @@ import { scrollToSection } from "../scrollToSection";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const myunsedvariable = 42; // This variable is declared but never used, which may lead to a warning in some linters or compilers.
 
   return (
     <header className="HomePage-Header-header">
